@@ -4213,6 +4213,15 @@ $g_search_meilisearch_timeout = 10;
 $g_search_live_enabled = OFF;
 
 /**
+ * Whether to suggest issues like the one being reported below its summary, as
+ * the summary is typed, so the user can see if it has been reported. It needs
+ * {@see $g_search_live_enabled}.
+ *
+ * @global int $g_report_similar_issues
+ */
+$g_report_similar_issues = ON;
+
+/**
  * The number of searches as the user types that a user may make per minute,
  * 0 for no limit.
  *

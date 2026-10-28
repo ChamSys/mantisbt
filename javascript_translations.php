@@ -64,3 +64,4 @@ print_translation( 'search_live_failed' );
 print_translation( 'search_live_too_many' );
 print_translation( 'search_live_results' );
 print_translation( 'search_live_type_more' );
+print_translation( 'similar_issues' );

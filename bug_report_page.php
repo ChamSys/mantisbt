@@ -75,6 +75,13 @@ require_api( 'string_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
 
+# Suggest issues like the one being reported, as the summary is typed
+$t_similar_issues = ON == config_get( 'report_similar_issues' ) && layout_has_quick_search();
+if( $t_similar_issues ) {
+	require_css( 'similar_issues.css' );
+	require_js( 'similar_issues.js' );
+}
+
 # A plugin can provide this page instead, see EVENT_BUG_PAGE
 $t_bug_page = string_get_bug_page( 'report' );
 if( $t_bug_page != basename( $_SERVER['SCRIPT_NAME'] ) ) {
@@ -581,7 +588,18 @@ if( $t_show_attachments ) {
 			<label for="summary"><?php print_documentation_link( 'summary' ) ?></label>
 		</th>
 		<td>
-			<input <?php echo helper_get_tab_index() ?> type="text" id="summary" name="summary" size="105" maxlength="128" value="<?php echo string_attribute( $f_summary ) ?>" required />
+			<input <?php echo helper_get_tab_index() ?> type="text" id="summary" name="summary" size="105" maxlength="128" value="<?php echo string_attribute( $f_summary ) ?>" required<?php
+				if( $t_similar_issues ) {
+					echo ' aria-describedby="similar-issues" data-similar-issues="',
+						string_attribute( helper_mantis_url( 'api/rest/index.php/internal/issue_search' ) ), '"';
+				}
+			?> />
+			<?php if( $t_similar_issues ) { ?>
+			<div id="similar-issues" class="similar-issues" aria-live="polite" hidden>
+				<div class="similar-issues-title"><?php echo lang_get( 'similar_issues' ) ?></div>
+				<ul class="similar-issues-list"></ul>
+			</div>
+			<?php } ?>
 		</td>
 	</tr>
 	<tr>

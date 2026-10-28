@@ -1,0 +1,22 @@
+/* The suggestions of similar issues below the summary of a new issue, see js/similar_issues.js */
+.similar-issues {
+	margin-top: 6px;
+	padding: 6px 10px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	background: #fafafa;
+}
+
+.similar-issues[hidden] {
+	display: none;
+}
+
+.similar-issues-title {
+	font-weight: bold;
+	margin-bottom: 2px;
+}
+
+.similar-issues-list {
+	margin: 0;
+	padding-left: 18px;
+}

@@ -88,6 +88,15 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_report_similar_issues</term>
+			<listitem>
+				<para>Whether to suggest issues like the one being reported, below its summary, as the
+					summary is typed. It works when <emphasis>$g_search_live_enabled</emphasis> does, and
+					defaults to ON.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_search_meilisearch_url</term>
 			<listitem>
 				<para>The address of the Meilisearch server. The default is

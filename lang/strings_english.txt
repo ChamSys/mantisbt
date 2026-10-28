@@ -406,6 +406,7 @@ $s_language = 'Language';
 $s_font_family = 'Font Family';
 $s_skip_to_content = 'Skip to main content';
 $s_issue_id_or_search = 'Issue # or search';
+$s_similar_issues = 'Have you seen these issues?';
 $s_search_live_all_results = 'All results for';
 $s_search_live_no_matches = 'No matches';
 $s_search_live_failed = 'Search failed';
