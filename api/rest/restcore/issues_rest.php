@@ -55,6 +55,14 @@ $g_app->group('/issues', function() use ( $g_app ) {
 	$g_app->post( '/{id}/monitors/', 'rest_issue_monitor_add' );
 	$g_app->post( '/{id}/monitors', 'rest_issue_monitor_add' );
 
+	# Likes
+	$g_app->get( '/{id}/likes', 'rest_issue_likes_get' );
+	$g_app->get( '/{id}/likes/', 'rest_issue_likes_get' );
+	$g_app->post( '/{id}/likes', 'rest_issue_like_add' );
+	$g_app->post( '/{id}/likes/', 'rest_issue_like_add' );
+	$g_app->delete( '/{id}/likes', 'rest_issue_like_delete' );
+	$g_app->delete( '/{id}/likes/', 'rest_issue_like_delete' );
+
 	# Notes
 	$g_app->post( '/{id}/notes/', 'rest_issue_note_add' );
 	$g_app->post( '/{id}/notes', 'rest_issue_note_add' );
@@ -606,4 +614,57 @@ function files_base64_to_temp( $p_files ) {
 	}
 
 	return $t_files;
+}
+/**
+ * Get the likes of an issue.
+ *
+ * @param \Slim\Http\Request  $p_request  The request.
+ * @param \Slim\Http\Response $p_response The response.
+ * @param array                $p_args     Arguments
+ *
+ * @return \Slim\Http\Response The augmented response.
+ */
+function rest_issue_likes_get( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+	$t_issue_id = isset( $p_args['id'] ) ? $p_args['id'] : $p_request->getParam( 'id' );
+
+	$t_command = new IssueLikesGetCommand( array( 'query' => array( 'issue_id' => $t_issue_id ) ) );
+	$t_result = $t_command->execute();
+
+	return $p_response->withStatus( HTTP_STATUS_SUCCESS )->withJson( array( 'likes' => $t_result ) );
+}
+
+/**
+ * Like an issue, as the current user.
+ *
+ * @param \Slim\Http\Request  $p_request  The request.
+ * @param \Slim\Http\Response $p_response The response.
+ * @param array                $p_args     Arguments
+ *
+ * @return \Slim\Http\Response The augmented response.
+ */
+function rest_issue_like_add( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+	$t_issue_id = isset( $p_args['id'] ) ? $p_args['id'] : $p_request->getParam( 'id' );
+
+	$t_command = new IssueLikeAddCommand( array( 'query' => array( 'issue_id' => $t_issue_id ) ) );
+	$t_result = $t_command->execute();
+
+	return $p_response->withStatus( HTTP_STATUS_SUCCESS, "Issue $t_issue_id is now liked" )->withJson( array( 'likes' => $t_result ) );
+}
+
+/**
+ * Take back the like of the current user for an issue.
+ *
+ * @param \Slim\Http\Request  $p_request  The request.
+ * @param \Slim\Http\Response $p_response The response.
+ * @param array                $p_args     Arguments
+ *
+ * @return \Slim\Http\Response The augmented response.
+ */
+function rest_issue_like_delete( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+	$t_issue_id = isset( $p_args['id'] ) ? $p_args['id'] : $p_request->getParam( 'id' );
+
+	$t_command = new IssueLikeDeleteCommand( array( 'query' => array( 'issue_id' => $t_issue_id ) ) );
+	$t_result = $t_command->execute();
+
+	return $p_response->withStatus( HTTP_STATUS_SUCCESS, "Issue $t_issue_id is no longer liked" )->withJson( array( 'likes' => $t_result ) );
 }

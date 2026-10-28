@@ -397,6 +397,50 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+  '/api/rest/issues/{issue_id}/likes':
+    get:
+      summary: Get the likes of an issue
+      operationId: IssueLikesGet
+      description: 'The number of users that like the issue, whether the current user does and can, and who they are if the current user may see that.'
+      tags:
+        - 'Issue Likes'
+      parameters:
+        - $ref: '#/components/parameters/issue_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Like an issue
+      operationId: IssueLike
+      description: 'Makes the current user like the issue. Nothing happens if they already do. Requires $g_enable_likes.'
+      tags:
+        - 'Issue Likes'
+      parameters:
+        - $ref: '#/components/parameters/issue_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Take back the like of an issue
+      operationId: IssueUnlike
+      description: 'Takes the like of the current user for the issue back. Nothing happens if they do not like it.'
+      tags:
+        - 'Issue Likes'
+      parameters:
+        - $ref: '#/components/parameters/issue_id'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/api/rest/lang':
     get:
       summary: Get multiple localized strings
