@@ -166,6 +166,10 @@ event_declare_many( array(
 	# Pages of an issue
 	'EVENT_BUG_PAGE' => EVENT_TYPE_FIRST,
 
+	# Likes of issues
+	'EVENT_BUG_LIKE' => EVENT_TYPE_EXECUTE,
+	'EVENT_BUG_UNLIKE' => EVENT_TYPE_EXECUTE,
+
 	# Names of users
 	'EVENT_DISPLAY_USER_NAME' => EVENT_TYPE_CHAIN,
 

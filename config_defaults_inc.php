@@ -2214,6 +2214,51 @@ $g_mentions_enabled = ON;
  */
 $g_mentions_tag = '@';
 
+###########################
+# MantisBT Likes Settings #
+###########################
+
+/**
+ * Whether to enable the likes of issues: a button that lets users say they
+ * like or are affected by an issue, with a count that can be shown and sorted
+ * on in the issue list. Likes never change when an issue was last updated and
+ * never send an email.
+ *
+ * @global int $g_enable_likes
+ */
+$g_enable_likes = OFF;
+
+/**
+ * Access level threshold needed to like an issue. The anonymous account can
+ * not like issues, whatever its access level.
+ *
+ * @global int $g_like_bug_threshold
+ */
+$g_like_bug_threshold = REPORTER;
+
+/**
+ * Access level threshold needed to see who likes an issue. Everybody who can
+ * see an issue sees how many users like it.
+ *
+ * @global int $g_show_likers_threshold
+ */
+$g_show_likers_threshold = DEVELOPER;
+
+/**
+ * Whether users can like the issues they reported.
+ *
+ * @global int $g_like_own_issue
+ */
+$g_like_own_issue = ON;
+
+/**
+ * Whether users can like issues that are read only (status at or above
+ * {@see $g_bug_readonly_status_threshold}).
+ *
+ * @global int $g_like_readonly_issues
+ */
+$g_like_readonly_issues = OFF;
+
 #################################
 # MantisBT Sponsorship Settings #
 #################################
@@ -5621,6 +5666,7 @@ $g_public_config_names = array(
 	'enable_profiles',
 	'enable_project_documentation',
 	'enable_projection',
+	'enable_likes',
 	'enable_sponsorship',
 	'eta_enum_string',
 	'excel_columns',

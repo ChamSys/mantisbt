@@ -41,6 +41,7 @@
  * @uses helper_api.php
  * @uses history_api.php
  * @uses lang_api.php
+ * @uses like_api.php
  * @uses mention_api.php
  * @uses relationship_api.php
  * @uses search_api.php
@@ -70,6 +71,7 @@ require_api( 'file_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'history_api.php' );
 require_api( 'lang_api.php' );
+require_api( 'like_api.php' );
 require_api( 'mention_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'search_api.php' );
@@ -1559,6 +1561,9 @@ function bug_delete( $p_bug_id ) {
 
 	# Delete all sponsorships
 	sponsorship_delete_all( $p_bug_id );
+
+	# Delete all likes
+	bug_like_delete_all( $p_bug_id );
 
 	# Delete all relationships
 	relationship_delete_all( $p_bug_id );

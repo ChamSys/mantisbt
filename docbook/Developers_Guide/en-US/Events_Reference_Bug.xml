@@ -373,6 +373,26 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.bug.action.buglike">
+			<title>EVENT_BUG_LIKE and EVENT_BUG_UNLIKE (Execute)</title>
+
+			<blockquote>
+				<para>
+					These events are triggered after a user likes an issue, or takes their like back
+					(see <literal>$g_enable_likes</literal>).  They are not triggered when the user
+					already liked, or did not like, the issue.  Liking does not change the date the issue
+					was last updated and does not send emails; a plugin can use these events to tell
+					somebody, for example.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Integer&gt;: Bug ID</para></listitem>
+					<listitem><para>&lt;Integer&gt;: User ID</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 	</section>
 
 	<section id="dev.eventref.bug.noteview">

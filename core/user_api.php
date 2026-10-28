@@ -34,6 +34,7 @@
  * @uses helper_api.php
  * @uses lang_api.php
  * @uses ldap_api.php
+ * @uses like_api.php
  * @uses project_api.php
  * @uses project_hierarchy_api.php
  * @uses string_api.php
@@ -53,6 +54,7 @@ require_api( 'filter_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'ldap_api.php' );
+require_api( 'like_api.php' );
 require_api( 'project_api.php' );
 require_api( 'project_hierarchy_api.php' );
 require_api( 'string_api.php' );
@@ -825,6 +827,9 @@ function user_delete( $p_user_id ) {
 	# preferences, monitored issues, and private or current filters (public
 	# filters are kept, as other users may be using them).
 	token_delete_by_owner( $p_user_id );
+
+	# Remove the likes of the user
+	user_like_delete_all( $p_user_id );
 
 	db_param_push();
 	$t_query = 'DELETE FROM {user_print_pref} WHERE user_id=' . db_param();
