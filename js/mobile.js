@@ -199,6 +199,23 @@
 			choose(tabs[next].getAttribute('data-panel-tab'));
 		}
 
+		// The panel the user was on before the page was left to save something in it, see initSheets()
+		function rememberedPanel() {
+			var name = null;
+
+			try {
+				var saved = JSON.parse(window.sessionStorage.getItem('mantis:mobile-panel'));
+				window.sessionStorage.removeItem('mantis:mobile-panel');
+				if (saved && saved.url === window.location.pathname + window.location.search && panels[saved.panel]) {
+					name = saved.panel;
+				}
+			} catch (error) {
+				// No storage, or nothing saved: the first panel
+			}
+
+			return name;
+		}
+
 		function enable() {
 			tablist.hidden = false;
 
@@ -211,7 +228,7 @@
 			});
 
 			var found = fromHash();
-			select(found ? found.name : tabs[0].getAttribute('data-panel-tab'));
+			select(found ? found.name : (rememberedPanel() || tabs[0].getAttribute('data-panel-tab')));
 			if (found) {
 				followHash();
 			}
@@ -318,9 +335,233 @@
 		});
 	}
 
+	/**
+	 * The form to add a note and the buttons of an issue are in sheets that open from the bottom
+	 * of the screen, from a button: the page stays as it is, and the form or the buttons are
+	 * the ones of the page, drawn as a sheet (they are not copied or moved). While a sheet is
+	 * open it is a modal dialog: the focus goes in and stays in, Escape and a tap on what is
+	 * behind close it, and the focus goes back to the button that opened it.
+	 */
+	function initSheets() {
+		var query = typeof window.matchMedia === 'function' ? window.matchMedia('(max-width: 767px)') : null;
+		var sheets = [];
+		var scrim = null;
+		var active = null;
+
+		[].slice.call(document.querySelectorAll('[data-sheet-open]')).forEach(function (opener) {
+			var element = document.getElementById(opener.getAttribute('aria-controls'));
+			if (element && element.hasAttribute('data-sheet')) {
+				sheets.push({ opener: opener, element: element });
+			}
+		});
+
+		if (sheets.length === 0 || !query) {
+			return;
+		}
+
+		var controls = 'a[href], button:not([disabled]), input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])';
+
+		function visible(element) {
+			return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+		}
+
+		function focusables(sheet) {
+			return [].slice.call(sheet.element.querySelectorAll(controls)).filter(visible);
+		}
+
+		function close(returnFocus) {
+			if (!active) {
+				return;
+			}
+
+			var sheet = active;
+			active = null;
+
+			sheet.element.classList.remove('is-open');
+			sheet.opener.setAttribute('aria-expanded', 'false');
+			scrim.hidden = true;
+			document.body.classList.remove('mobile-sheet-open');
+
+			if (returnFocus && visible(sheet.opener)) {
+				sheet.opener.focus();
+			}
+		}
+
+		function open(sheet) {
+			if (active) {
+				close(false);
+			}
+
+			active = sheet;
+			sheet.element.classList.add('is-open');
+			sheet.opener.setAttribute('aria-expanded', 'true');
+			scrim.hidden = false;
+			document.body.classList.add('mobile-sheet-open');
+
+			// A text area is what a sheet with a form is opened for, otherwise the first control
+			var first = sheet.element.querySelector('textarea') ||
+				focusables(sheet).filter(function (item) {
+					return !item.classList.contains('mobile-sheet-close');
+				})[0] || focusables(sheet)[0];
+			if (first) {
+				first.focus();
+			}
+		}
+
+		function enable() {
+			sheets.forEach(function (sheet) {
+				// Buttons are not shown to those who cannot do anything with the sheet
+				if (!sheet.element.querySelector(controls.replace('button:not([disabled])', 'button:not([disabled]):not(.mobile-sheet-close)'))) {
+					return;
+				}
+
+				var title = sheet.element.querySelector('.mobile-sheet-title, .widget-title');
+				sheet.element.classList.add('is-sheet');
+				sheet.element.setAttribute('role', 'dialog');
+				sheet.element.setAttribute('aria-modal', 'true');
+				if (title && title.id) {
+					sheet.element.setAttribute('aria-labelledby', title.id);
+				}
+
+				// The table row that holds the sheet has nothing else in it
+				var row = sheet.element.closest('tr');
+				if (row) {
+					row.classList.add('mobile-sheet-host');
+				}
+
+				sheet.opener.hidden = false;
+				sheet.enabled = true;
+			});
+
+			if (window.location.hash === '#addbugnote') {
+				var wanted = document.getElementById('bugnote_add');
+				sheets.forEach(function (sheet) {
+					if (sheet.enabled && sheet.element === wanted) {
+						open(sheet);
+					}
+				});
+			}
+		}
+
+		function disable() {
+			close(false);
+
+			sheets.forEach(function (sheet) {
+				sheet.enabled = false;
+				sheet.opener.hidden = true;
+				sheet.element.classList.remove('is-sheet');
+				sheet.element.removeAttribute('role');
+				sheet.element.removeAttribute('aria-modal');
+				sheet.element.removeAttribute('aria-labelledby');
+
+				var row = sheet.element.closest('tr');
+				if (row) {
+					row.classList.remove('mobile-sheet-host');
+				}
+			});
+		}
+
+		function update() {
+			if (query.matches) {
+				enable();
+			} else {
+				disable();
+			}
+		}
+
+		scrim = document.createElement('div');
+		scrim.className = 'mobile-sheet-scrim';
+		scrim.hidden = true;
+		document.body.appendChild(scrim);
+		scrim.addEventListener('click', function () {
+			close(true);
+		});
+
+		// After a note is sent the page loads again: it opens on the notes, where the new note is
+		var noteForm = document.getElementById('bugnoteadd');
+		if (noteForm) {
+			noteForm.addEventListener('submit', function () {
+				try {
+					window.sessionStorage.setItem('mantis:mobile-panel',
+						JSON.stringify({ url: window.location.pathname + window.location.search, panel: 'notes' }));
+				} catch (error) {
+					// No storage: the page opens on the first panel
+				}
+			});
+		}
+
+		sheets.forEach(function (sheet) {
+			sheet.opener.addEventListener('click', function () {
+				open(sheet);
+			});
+
+			[].slice.call(sheet.element.querySelectorAll('.mobile-sheet-close')).forEach(function (button) {
+				button.addEventListener('click', function () {
+					close(true);
+				});
+			});
+		});
+
+		document.addEventListener('keydown', function (event) {
+			if (!active) {
+				return;
+			}
+
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				close(true);
+				return;
+			}
+
+			if (event.key !== 'Tab') {
+				return;
+			}
+
+			// Tab goes round inside the sheet
+			var items = focusables(active);
+			if (items.length === 0) {
+				event.preventDefault();
+				return;
+			}
+
+			var first = items[0];
+			var last = items[items.length - 1];
+			if (!active.element.contains(document.activeElement)) {
+				event.preventDefault();
+				first.focus();
+			} else if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		});
+
+		window.addEventListener('hashchange', function () {
+			if (query.matches && window.location.hash === '#addbugnote') {
+				var wanted = document.getElementById('bugnote_add');
+				sheets.forEach(function (sheet) {
+					if (sheet.enabled && sheet.element === wanted) {
+						open(sheet);
+					}
+				});
+			}
+		});
+
+		if (typeof query.addEventListener === 'function') {
+			query.addEventListener('change', update);
+		} else if (typeof query.addListener === 'function') {
+			query.addListener(update);
+		}
+
+		update();
+	}
+
 	onReady(function () {
 		initMenuButton();
 		initPanels();
 		initFilter();
+		initSheets();
 	});
 })(window, document);

@@ -12,7 +12,10 @@
 /* The bottom bar and the tabs of the issue page are only for phones */
 .mobile-tabbar,
 .mobile-tabbar-spacer,
-.mobile-panel-tabs {
+.mobile-panel-tabs,
+.mobile-sheet-open,
+.mobile-sheet-header,
+.mobile-sheet-close {
 	display: none;
 }
 
@@ -26,6 +29,7 @@
 		--mobile-radius: 6px;
 		--mobile-border: #d5d5d5;
 		--mobile-muted: #6f6f6f;
+		--mobile-text: #333;
 		--mobile-surface: #fff;
 		--mobile-accent: #438eb9;
 	}
@@ -377,6 +381,163 @@
 
 	table.bug-update-table > tbody > tr.spacer {
 		display: none;
+	}
+
+	/*
+	 * Sheets: the form to add a note and the buttons of an issue open from the bottom of the screen.
+	 * The element of the page is the sheet (js/mobile.js adds is-sheet, and is-open while it is open).
+	 */
+
+	.mobile-sheet-open {
+		position: fixed;
+		z-index: 1025;
+		inset-inline-start: 12px;
+		bottom: calc(var(--mobile-bar-height) + 12px + env(safe-area-inset-bottom, 0px));
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 48px;
+		padding: 0 18px;
+		border: 0;
+		border-radius: 24px;
+		background: var(--mobile-accent);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	}
+
+	.mobile-sheet-open[hidden] {
+		display: none;
+	}
+
+	.mobile-sheet-open:focus-visible,
+	.mobile-sheet-close:focus-visible {
+		outline: 2px solid var(--mobile-accent);
+		outline-offset: 2px;
+	}
+
+	[data-sheet].is-sheet {
+		display: none;
+	}
+
+	[data-sheet].is-sheet.is-open {
+		display: block;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1040;
+		margin: 0;
+		max-height: 85vh;
+		max-height: 85dvh;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		background: var(--mobile-surface);
+		border-radius: 12px 12px 0 0;
+		box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+		padding-bottom: env(safe-area-inset-bottom, 0px);
+	}
+
+	.mobile-sheet-scrim {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 1035;
+		background: rgba(0, 0, 0, 0.45);
+	}
+
+	.mobile-sheet-scrim[hidden] {
+		display: none;
+	}
+
+	body.mobile-sheet-open {
+		overflow: hidden;
+	}
+
+	[data-sheet].is-sheet .mobile-sheet-close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--mobile-target);
+		min-height: var(--mobile-target);
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font-size: 20px;
+	}
+
+	[data-sheet].is-sheet .mobile-sheet-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-left: 16px;
+		border-bottom: 1px solid var(--mobile-border);
+		font-weight: 600;
+		position: sticky;
+		top: 0;
+		background: var(--mobile-surface);
+		z-index: 1;
+	}
+
+	.bug-actions .mobile-sheet-header,
+	.bug-actions .mobile-sheet-close {
+		color: var(--mobile-text);
+	}
+
+	/* The button to scroll up is for the page, not for what is over it */
+	body.mobile-sheet-open .btn-scroll-up {
+		display: none;
+	}
+
+	/* The widget of the form keeps its blue header, which has the button to close; it is always open */
+	#bugnote_add.is-sheet > .widget-body {
+		display: block !important;
+	}
+
+	#bugnote_add.is-sheet [data-action="collapse"] {
+		display: none;
+	}
+
+	#bugnote_add.is-sheet .widget-header {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
+	#bugnote_add.is-sheet .mobile-sheet-close {
+		color: #fff;
+	}
+
+	/* The buttons of the issue: one under the other, forms with their control and button on a line */
+	.bug-actions .btn-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding: 12px 16px;
+		float: none;
+	}
+
+	.bug-actions .btn-group > div {
+		float: none;
+		padding: 0;
+	}
+
+	.bug-actions .btn-group form {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+	}
+
+	/* The row of the table that holds the sheet takes no room while the sheet is closed */
+	.mobile-sheet-host > td {
+		padding: 0;
+		border: 0;
+		height: 0;
 	}
 
 	/* Issue list: one card per issue */
