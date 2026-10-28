@@ -1686,15 +1686,16 @@ function print_small_button( $p_link, $p_url_text, $p_new_window = false ) {
  * @param integer $p_page_no        The page number to link to.
  * @param integer $p_page_cur       The current page number.
  * @param integer $p_temp_filter_key Temporary filter key.
+ * @param string  $p_type           The kind of link, for the data-pager attribute: first, prev, page, next or last.
  * @return void
  */
-function print_page_link( $p_page_url, $p_text = '', $p_page_no = 0, $p_page_cur = 0, $p_temp_filter_key = null ) {
+function print_page_link( $p_page_url, $p_text = '', $p_page_no = 0, $p_page_cur = 0, $p_temp_filter_key = null, $p_type = 'page' ) {
 	if( is_blank( $p_text ) ) {
 		$p_text = $p_page_no;
 	}
 
 	if( ( 0 < $p_page_no ) && ( $p_page_no != $p_page_cur ) ) {
-		echo '<li class="pull-right"> ';
+		echo '<li class="pull-right" data-pager="', $p_type, '" data-page="', (int)$p_page_no, '"> ';
 		$t_delimiter = ( strpos( $p_page_url, '?' ) ? '&' : '?' );
 		if( $p_temp_filter_key ) {
 			print_link( $p_page_url . $t_delimiter . 'filter=' . $p_temp_filter_key . '&page_number=' . $p_page_no, $p_text );
@@ -1703,7 +1704,7 @@ function print_page_link( $p_page_url, $p_text = '', $p_page_no = 0, $p_page_cur
 		}
 		echo ' </li>';
 	} else {
-		echo '<li class="disabled pull-right"><a>' . $p_text . '</a></li>';
+		echo '<li class="disabled pull-right" data-pager="', $p_type, '"><a aria-disabled="true">' . $p_text . '</a></li>';
 	}
 }
 
@@ -1739,14 +1740,15 @@ function print_page_links( $p_page, $p_start, $p_end, $p_current, $p_temp_filter
 
 	$t_page_links = 10;
 
+	print( '<nav class="pagination-nav" aria-label="' . lang_get( 'pagination' ) . '">' );
 	print( '<ul class="pagination small no-margin"> ' );
 
 	# Next and Last links
-	print_page_link( $p_page, $t_last, $p_end, $p_current, $p_temp_filter_key );
+	print_page_link( $p_page, $t_last, $p_end, $p_current, $p_temp_filter_key, 'last' );
 	if( $p_current < $p_end ) {
-		print_page_link( $p_page, $t_next, $p_current + 1, $p_current, $p_temp_filter_key );
+		print_page_link( $p_page, $t_next, $p_current + 1, $p_current, $p_temp_filter_key, 'next' );
 	} else {
-		print_page_link( $p_page, $t_next, 0, 0, $p_temp_filter_key );
+		print_page_link( $p_page, $t_next, 0, 0, $p_temp_filter_key, 'next' );
 	}
 
 	# Page numbers ...
@@ -1759,31 +1761,32 @@ function print_page_links( $p_page, $p_start, $p_end, $p_current, $p_temp_filter
 	$t_last_page = min( $t_last_page, $p_end );
 
 	if( $t_last_page < $p_end ) {
-		print( '<li class="pull-right"><a> ... </a></li>' );
+		print( '<li class="pull-right" data-pager="gap"><a aria-hidden="true"> ... </a></li>' );
 	}
 
 	for( $i = $t_last_page;$i >= $t_first_page;$i-- ) {
 		if( $i == $p_current ) {
-			array_push( $t_items, '<li class="active pull-right"><a>' . $i . '</a></li>' );
+			array_push( $t_items, '<li class="active pull-right" data-pager="page" data-page="' . $i . '"><a aria-current="page">' . $i . '</a></li>' );
 		} else {
 			$t_delimiter = ( strpos( $p_page, '?' ) ? '&' : '?' ) ;
 			$t_filter_param = filter_get_temporary_key_param( $p_temp_filter_key );
 			$t_filter_param .= $t_filter_param === null ? '' : '&amp;';
-			array_push( $t_items, '<li class="pull-right"><a href="' . $p_page . $t_delimiter . $t_filter_param . 'page_number=' . $i . '">' . $i . '</a></li>' );
+			array_push( $t_items, '<li class="pull-right" data-pager="page" data-page="' . $i . '"><a href="' . $p_page . $t_delimiter . $t_filter_param . 'page_number=' . $i . '">' . $i . '</a></li>' );
 		}
 	}
 	echo implode( '&#160;', $t_items );
 
 	if( $t_first_page > 1 ) {
-		print( '<li class="pull-right"><a> ... </a></li>' );
+		print( '<li class="pull-right" data-pager="gap"><a aria-hidden="true"> ... </a></li>' );
 	}
 
 
 	# First and previous links
-	print_page_link( $p_page, $t_prev, $p_current - 1, $p_current, $p_temp_filter_key );
-	print_page_link( $p_page, $t_first, 1, $p_current, $p_temp_filter_key );
+	print_page_link( $p_page, $t_prev, $p_current - 1, $p_current, $p_temp_filter_key, 'prev' );
+	print_page_link( $p_page, $t_first, 1, $p_current, $p_temp_filter_key, 'first' );
 
 	print( ' </ul>' );
+	print( '</nav>' );
 }
 
 /**

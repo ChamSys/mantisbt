@@ -406,6 +406,7 @@ $s_language = 'Language';
 $s_font_family = 'Font Family';
 $s_skip_to_content = 'Skip to main content';
 $s_main_menu = 'Main menu';
+$s_pagination = 'Pagination';
 $s_toggle_sidebar = 'Toggle sidebar';
 $s_toggle_user_menu = 'Toggle user menu';
 $s_theme = 'Theme';
