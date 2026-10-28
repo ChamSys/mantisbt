@@ -635,6 +635,30 @@ function project_get_local_user_rows( $p_project_id ) {
 }
 
 /**
+ * Get the SQL conditions that limit a query on users to those that match a text.
+ *
+ * @param DbQuery $p_query          The query, which gets the parameters.
+ * @param string  $p_table          The table or alias of the users in the query.
+ * @param string  $p_search         The text, or an empty string for no condition.
+ * @param boolean $p_search_realname Whether to look in the real names too.
+ * @return string SQL starting with AND, or an empty string.
+ */
+function project_user_search_sql( DbQuery $p_query, $p_table, $p_search, $p_search_realname ) {
+	if( is_blank( $p_search ) ) {
+		return '';
+	}
+
+	# The characters that mean something to LIKE are taken literally
+	$t_pattern = '%' . strtr( $p_search, array( '!' => '!!', '%' => '!%', '_' => '!_' ) ) . '%';
+	$t_sql = ' AND ( ' . $p_query->sql_like( $p_table . '.username', $t_pattern, '!', true );
+	if( $p_search_realname ) {
+		$t_sql .= ' OR ' . $p_query->sql_like( $p_table . '.realname', $t_pattern, '!', true );
+	}
+
+	return $t_sql . ' )';
+}
+
+/**
  * Return an array of info about users who have access to the the given project
  * For each user we have 'id', 'username', and 'access_level' (overall access level)
  * If the second parameter is given, return only users with an access level
@@ -644,9 +668,12 @@ function project_get_local_user_rows( $p_project_id ) {
  * @param integer $p_project_id           A project identifier.
  * @param integer $p_access_level         Access level.
  * @param boolean $p_include_global_users Whether to include global users.
+ * @param string  $p_search               Only return the users whose user name, or real name
+ *                                        if $p_search_realname is true, contains this text.
+ * @param boolean $p_search_realname      Whether to look in the real names too.
  * @return array List of users, array key is user ID
  */
-function project_get_all_user_rows( $p_project_id = ALL_PROJECTS, $p_access_level = ANYBODY, $p_include_global_users = true ) {
+function project_get_all_user_rows( $p_project_id = ALL_PROJECTS, $p_access_level = ANYBODY, $p_include_global_users = true, $p_search = '', $p_search_realname = false ) {
 	$c_project_id = (int)$p_project_id;
 
 	# Optimization when access_level is NOBODY
@@ -704,6 +731,7 @@ function project_get_all_user_rows( $p_project_id = ALL_PROJECTS, $p_access_leve
 			WHERE enabled = ' . $t_query->param( $t_on ) . ' 
 				AND '
 		);
+		$t_search_sql = project_user_search_sql( $t_query, '{user}', $p_search, $p_search_realname );
 		if( is_array( $t_global_access_level ) ) {
 			if( empty( $t_global_access_level ) ) {
 				$t_query->append_sql( 'access_level >= ' . $t_query->param( NOBODY ) );
@@ -713,6 +741,7 @@ function project_get_all_user_rows( $p_project_id = ALL_PROJECTS, $p_access_leve
 		} else {
 			$t_query->append_sql( 'access_level >= ' . $t_query->param( $t_global_access_level ) );
 		}
+		$t_query->append_sql( $t_search_sql );
 		$t_query->execute();
 
 		while( $t_row = $t_query->fetch() ) {
@@ -728,6 +757,7 @@ function project_get_all_user_rows( $p_project_id = ALL_PROJECTS, $p_access_leve
 			WHERE l.user_id = u.id
 			AND u.enabled = ' . $t_query->param( $t_on ) . '
 			AND l.project_id = ' . $t_query->param( $c_project_id )
+			. project_user_search_sql( $t_query, 'u', $p_search, $p_search_realname )
 		);
 		$t_query->execute();
 
