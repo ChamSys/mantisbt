@@ -162,6 +162,8 @@ foreach ( $t_issue_view['links'] as $t_plugin => $t_hooks ) {
 			foreach( $t_hook as $t_label => $t_href ) {
 				if( is_numeric( $t_label ) ) {
 					print_bracket_link_prepared( $t_href );
+				} elseif( is_array( $t_href ) ) {
+					print_small_button( $t_href['url'], $t_label, !empty( $t_href['new_window'] ) );
 				} else {
 					print_small_button( $t_href, $t_label );
 				}

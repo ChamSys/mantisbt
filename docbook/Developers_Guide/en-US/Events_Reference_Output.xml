@@ -228,6 +228,12 @@
 array( plugin_lang_get( 'mypage_label' ) => plugin_page( 'mypage' );
 </programlisting>
 						</para>
+						<para>The value can also be an array with a <literal>url</literal>
+							key and, optionally, <literal>new_window</literal> set to true
+							to open the link in a new tab, e.g. <programlisting>
+array( plugin_lang_get( 'mypage_label' ) => array( 'url' => plugin_page( 'mypage' ), 'new_window' => true ) );
+</programlisting>
+						</para>
 						<para>For compatibility with MantisBT versions before 2.21.0,
 							it is also possible to return an array of cooked links :
 							<programlisting>
