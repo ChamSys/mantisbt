@@ -109,6 +109,15 @@ function layout_page_header_begin( $p_page_title = '' ) {
 }
 
 /**
+ * Print the link that lets keyboard and screen reader users skip the menus and
+ * go to the main content of the page. It is only visible when it has the focus.
+ * @return void
+ */
+function layout_skip_link() {
+	echo '<a class="sr-only sr-only-focusable skip-link" href="#main-content">', lang_get( 'skip_to_content' ), '</a>', "\n";
+}
+
+/**
  * Print the part of the page that comes after meta tags and before the
  *  actual page content, but without login info or menus.  This is used
  *  directly during the login process and other times when the user may
@@ -134,6 +143,8 @@ function layout_page_header_end( $p_page_id = null) {
 
 	$t_attributes = html_attributes_add_from_event( $t_attributes, 'EVENT_LAYOUT_BODY_ATTRIBUTES', array( 'page' ) );
 	echo '<body', html_attributes( $t_attributes ), '>', "\n";
+
+	layout_skip_link();
 
 	event_signal( 'EVENT_LAYOUT_BODY_BEGIN' );
 
@@ -378,6 +389,8 @@ function layout_login_page_begin( $p_page_title = '' ) {
 		'EVENT_LAYOUT_BODY_ATTRIBUTES', array( 'login' ) );
 	echo '<body', html_attributes( $t_attributes ), '>';
 
+	layout_skip_link();
+
 	html_top_banner( true );
 	layout_main_container_begin();
 	layout_main_content_begin();
@@ -409,13 +422,13 @@ function layout_navbar() {
 	$t_logo_url = config_get_global('logo_url');
 	$t_short_path = config_get_global('short_path');
 
-	echo '<div id="navbar" class="navbar navbar-default navbar-collapse navbar-fixed-top noprint">';
+	echo '<div id="navbar" class="navbar navbar-default navbar-collapse navbar-fixed-top noprint" role="banner">';
 	echo '<div id="navbar-container" class="navbar-container">';
 
 	html_top_banner();
 
 	echo '<button id="menu-toggler" type="button" class="navbar-toggle menu-toggler pull-left hidden-lg hidden-md" data-target="#sidebar">';
-	echo '<span class="sr-only">Toggle sidebar</span>';
+	echo '<span class="sr-only">' . lang_get( 'toggle_sidebar' ) . '</span>';
 	echo '<span class="icon-bar"></span>';
 	echo '<span class="icon-bar"></span>';
 	echo '<span class="icon-bar"></span>';
@@ -430,7 +443,7 @@ function layout_navbar() {
 
 	$t_toggle_class = (OFF == config_get('show_avatar') ? 'navbar-toggle' : 'navbar-toggle-img');
 	echo '<button type="button" class="navbar-toggle ' . $t_toggle_class . ' collapsed pull-right hidden-sm hidden-md hidden-lg" data-toggle="collapse" data-target=".navbar-buttons,.navbar-menu">';
-	echo '<span class="sr-only">Toggle user menu</span>';
+	echo '<span class="sr-only">' . lang_get( 'toggle_user_menu' ) . '</span>';
 	if (auth_is_user_authenticated()) {
 		layout_navbar_user_avatar();
 	}
@@ -918,7 +931,7 @@ function layout_sidebar_begin() {
 	$t_collapse_block = is_collapsed( 'sidebar' );
 	$t_block_css = $t_collapse_block ? 'menu-min' : '';
 
-	echo '<div id="sidebar" class="sidebar sidebar-fixed responsive compact ' . $t_block_css . '">';
+	echo '<div id="sidebar" class="sidebar sidebar-fixed responsive compact ' . $t_block_css . '" role="navigation" aria-label="' . lang_get( 'main_menu' ) . '">';
 
 	echo '<ul class="nav nav-list">';
 }
@@ -1000,7 +1013,7 @@ function layout_main_container_end() {
  * @return void
  */
 function layout_main_content_begin() {
-	echo '<div class="main-content">' , "\n";
+	echo '<div class="main-content" id="main-content" tabindex="-1">' , "\n";
 }
 
 /**
@@ -1120,9 +1133,9 @@ function layout_breadcrumbs() {
 	# Bug Jump form
 	# CSRF protection not required here - form does not result in modifications
 	echo '<div id="nav-search" class="nav-search">';
-	echo '<form class="form-search" method="post" action="' . helper_mantis_url( 'jump_to_bug.php' ) . '">';
+	echo '<form class="form-search" method="post" role="search" action="' . helper_mantis_url( 'jump_to_bug.php' ) . '">';
 	echo '<span class="input-icon">';
-	echo '<input type="text" name="bug_id" autocomplete="off" class="nav-search-input" placeholder="' . lang_get( 'issue_id' ) . '">';
+	echo '<input type="text" name="bug_id" autocomplete="off" class="nav-search-input" aria-label="' . lang_get( 'issue_id' ) . '" placeholder="' . lang_get( 'issue_id' ) . '">';
 	print_icon( 'fa-search', 'ace-icon nav-search-icon' );
 	echo '</span>';
 	echo '</form>';
@@ -1276,7 +1289,7 @@ function layout_footer() {
  */
 function layout_footer_begin() {
 	echo '<div class="clearfix"></div>' . "\n";
-	echo '<div class="footer noprint">' . "\n";
+	echo '<div class="footer noprint" role="contentinfo">' . "\n";
 	echo '<div class="footer-inner">' . "\n";
 	echo '<div class="footer-content">' . "\n";
 }

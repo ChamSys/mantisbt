@@ -770,3 +770,20 @@ ul.changelog > li, ul.roadmap > li {
 .skin-3 .navbar.navbar-collapse {
 	background-color: #404040;
 }
+
+/* Skip link: only visible when it has the keyboard focus */
+.skip-link:focus {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10000;
+	padding: 8px 12px;
+	background: #fff;
+	color: #000;
+	outline: 2px solid #000;
+}
+
+/* The main content takes the focus when the skip link is used */
+#main-content:focus {
+	outline: 0;
+}
