@@ -3018,6 +3018,13 @@ class FilterBoxGridLayout extends TableGridLayout {
 		}
 		if( $p_item->content_attr_id ) {
 			echo ' id="' . $p_item->content_attr_id . '"';
+			echo ' data-field="' . string_attribute( preg_replace( '/_filter_target$/', '', $p_item->content_attr_id ) ) . '"';
+		}
+
+		# The name of the field, for layouts where the header is not next to the content
+		$t_label = trim( html_entity_decode( strip_tags( $p_item->header ), ENT_QUOTES, 'UTF-8' ) );
+		if( !is_blank( $t_label ) ) {
+			echo ' data-label="' . string_attribute( $t_label ) . '"';
 		}
 		echo '>';
 		echo $p_item->content;
