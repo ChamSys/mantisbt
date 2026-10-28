@@ -673,7 +673,9 @@ echo '</div></div></div></div></div>';
 # User list sponsoring the bug
 if( $t_flags['sponsorships_show'] ) {
 	define( 'BUG_SPONSORSHIP_LIST_VIEW_INC_ALLOW', true );
+	echo '<div class="col-md-12 col-xs-12" data-panel="details">';
 	include( $t_mantis_dir . 'bug_sponsorship_list_view_inc.php' );
+	echo '</div>';
 }
 
 # Bug Relationships

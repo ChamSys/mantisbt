@@ -32,7 +32,10 @@
 					Tables become stacked cards, forms show the label above each field,
 					form controls are large enough to touch, the first four items of the main menu are shown
 					as a bar at the bottom of the screen (with a Menu button for the rest), and the issue
-					page shows one panel at a time (details, notes, history) chosen with tabs. Nothing changes on wider screens. The default is <literal>OFF</literal>.
+					page shows one panel at a time (details, notes, history) chosen with tabs. Plugins that
+					add something to the issue page should put it in an element with
+					<literal>data-panel="details"</literal>, <literal>"notes"</literal> or
+					<literal>"history"</literal>, otherwise it is shown with every panel. Nothing changes on wider screens. The default is <literal>OFF</literal>.
 					A theme can restyle all of it: the markup and the <literal>data-*</literal>
 					attributes are the same with or without a theme.</para>
 			</listitem>
