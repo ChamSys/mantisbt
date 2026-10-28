@@ -602,6 +602,46 @@ array( 'ocean' => array(
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.output.layout.regions">
+			<title>EVENT_LAYOUT_NAVBAR, EVENT_LAYOUT_SIDEBAR, EVENT_LAYOUT_BREADCRUMBS and EVENT_LAYOUT_FOOTER (First)</title>
+			<blockquote>
+				<para>
+					These events let a plugin draw a region of the page itself instead of MantisBT.  A
+					callback that prints the region and returns <literal>true</literal> stops MantisBT from
+					drawing its own, and no other callback is called; one that returns nothing leaves the region
+					as it is.  They are not triggered on the login pages.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>EVENT_LAYOUT_SIDEBAR only, &lt;Array&gt;: the items of the sidebar, as
+						<function>layout_get_sidebar_items()</function> returns them (arrays with
+						<literal>url</literal>, <literal>title</literal>, <literal>icon</literal> and optionally
+						<literal>access_level</literal>), after the plugins have changed them with
+						<literal>EVENT_MENU_MAIN_FILTER</literal></para></listitem>
+					<listitem><para>EVENT_LAYOUT_SIDEBAR only, &lt;String&gt;: the page that is active in the
+						sidebar, or null</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
+		<blockquote id="dev.eventref.output.layout.usermenu">
+			<title>EVENT_MENU_USER (Default)</title>
+			<blockquote>
+				<para>
+					This event lets plugins add items to the menu of the logged in user in the navigation
+					bar, above "Logout".
+				</para>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;Array&gt;: an item, or a list of items, each an array with
+						<literal>url</literal> (relative to the MantisBT directory), <literal>label</literal> and
+						optionally <literal>icon</literal> (a Font Awesome class).</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.output.layout.bodybegin">
 			<title>EVENT_LAYOUT_BODY_BEGIN (Output)</title>
 			<blockquote>
