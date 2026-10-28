@@ -142,6 +142,43 @@ function token_set( $p_type, $p_value, $p_expiry = TOKEN_EXPIRY, $p_user_id = nu
 }
 
 /**
+ * Count a request of a user against a limit of requests in a period of time.
+ *
+ * The count is kept in a token of the given type, per user, and starts again
+ * when the period has passed. It is meant to put a brake on abuse of endpoints
+ * that are cheap to call and expensive to serve, not to be exact: two requests
+ * at the same moment can both be counted as one. The web server remains the
+ * place for a hard limit.
+ *
+ * @param integer $p_type    The token type to keep the count in.
+ * @param integer $p_max     The number of requests allowed in the period; 0 for no limit.
+ * @param integer $p_period  The period, in seconds.
+ * @param integer $p_user_id The user identifier (null for current user).
+ * @return boolean True if the request is within the limit, false if it is over it.
+ */
+function token_rate_limit_allow( $p_type, $p_max, $p_period = 60, $p_user_id = null ) {
+	if( $p_max <= 0 ) {
+		return true;
+	}
+
+	$t_now = time();
+	$t_start = $t_now;
+	$t_count = 1;
+
+	# The value is "<start of the period>:<requests so far>"
+	$t_value = token_get_value( $p_type, $p_user_id );
+	if( $t_value !== null && preg_match( '/^(\d+):(\d+)$/', $t_value, $t_matches )
+		&& $t_now - (int)$t_matches[1] < $p_period ) {
+		$t_start = (int)$t_matches[1];
+		$t_count = (int)$t_matches[2] + 1;
+	}
+
+	token_set( $p_type, $t_start . ':' . $t_count, $p_period, $p_user_id );
+
+	return $t_count <= $p_max;
+}
+
+/**
  * Touch a token to update its expiration time.
  * @param integer $p_token_id A token identifier.
  * @param integer $p_expiry   Token expiration in seconds.
