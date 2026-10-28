@@ -793,6 +793,37 @@ function user_delete_profiles( $p_user_id ) {
 }
 
 /**
+ * Get the users that can be chosen for a field of a project: the ones of the
+ * project that have at least an access level, or those of all the projects the
+ * current user can access.
+ *
+ * @param int       $p_project_id A project identifier, or ALL_PROJECTS.
+ * @param int|array $p_access     An access level, or a list of them.
+ * @return array The rows of the users (id, username, realname, access_level) by user id.
+ * @access public
+ */
+function user_get_option_rows( $p_project_id, $p_access = ANYBODY ) {
+	if( $p_project_id !== ALL_PROJECTS ) {
+		return project_get_all_user_rows( $p_project_id, $p_access );
+	}
+
+	# Get list of users having access level for all accessible projects
+	$t_users = array();
+	foreach( user_get_accessible_projects( auth_get_current_user_id() ) as $t_project_id ) {
+		$t_project_users_list = project_get_all_user_rows( $t_project_id, $p_access );
+		# Do a 'smart' merge of the project's user list, into an
+		# associative array (to remove duplicates)
+		foreach( $t_project_users_list as $t_id => $t_user ) {
+			$t_users[$t_id] = $t_user;
+		}
+		# Clear the array to release memory
+		unset( $t_project_users_list );
+	}
+
+	return $t_users;
+}
+
+/**
  * Delete a user account.
  *
  * Related information is also deleted (profiles, preferences, project-specific

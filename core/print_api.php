@@ -309,31 +309,11 @@ function print_captcha_input( $p_field_name ) {
  * @return void
  */
 function print_user_option_list( $p_user_id, $p_project_id = null, $p_access = ANYBODY ) {
-	$t_current_user = auth_get_current_user_id();
-
 	if( null === $p_project_id ) {
 		$p_project_id = helper_get_current_project();
 	}
 
-	if( $p_project_id === ALL_PROJECTS ) {
-		$t_projects = user_get_accessible_projects( $t_current_user );
-
-		# Get list of users having access level for all accessible projects
-		$t_users = array();
-		foreach( $t_projects as $t_project_id ) {
-			$t_project_users_list = project_get_all_user_rows( $t_project_id, $p_access );
-			# Do a 'smart' merge of the project's user list, into an
-			# associative array (to remove duplicates)
-			foreach( $t_project_users_list as $t_id => $t_user ) {
-				$t_users[$t_id] = $t_user;
-			}
-			# Clear the array to release memory
-			unset( $t_project_users_list );
-		}
-		unset( $t_projects );
-	} else {
-		$t_users = project_get_all_user_rows( $p_project_id, $p_access );
-	}
+	$t_users = user_get_option_rows( $p_project_id, $p_access );
 
 	# Add the specified user ID to the list
 	# If we have an array of user IDs, then we've been called from a filter
