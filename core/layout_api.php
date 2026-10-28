@@ -399,7 +399,8 @@ function layout_is_rtl() {
  * @return void
  */
 function layout_head_meta() {
-	echo "\t" , '<meta name="viewport" content="width=device-width, initial-scale=1.0">' , "\n";
+	echo "\t" , '<meta name="viewport" content="width=device-width, initial-scale=1.0',
+		theme_uses_viewport_fit() ? ', viewport-fit=cover' : '', '">' , "\n";
 	theme_print_meta();
 }
 

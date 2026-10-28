@@ -55,7 +55,10 @@ define( 'THEME_DEFAULT', 'default' );
  * - 'color_schemes': optionally, the color schemes the theme styles, 'light'
  *   and/or 'dark'. Users of a theme that has them can choose between
  *   them and the automatic one, which follows their system, see
- *   theme_get_color_scheme().
+ *   theme_get_color_scheme(),
+ * - 'viewport_fit': optionally, true if the theme lays the page out under the
+ *   notches and rounded corners of a phone (viewport-fit=cover); it then uses
+ *   env( safe-area-inset-* ) to keep content clear of them.
  *
  * @return array The themes by id, starting with the default one.
  * @access public
@@ -64,7 +67,7 @@ function theme_get_all() {
 	static $s_themes = null;
 
 	if( $s_themes === null ) {
-		$s_themes = array( THEME_DEFAULT => array( 'name' => lang_get( 'theme_default' ), 'css' => array(), 'color_schemes' => array() ) );
+		$s_themes = array( THEME_DEFAULT => array( 'name' => lang_get( 'theme_default' ), 'css' => array(), 'color_schemes' => array(), 'viewport_fit' => false ) );
 
 		foreach( event_signal( 'EVENT_THEMES' ) as $t_plugin_results ) {
 			foreach( $t_plugin_results as $t_result ) {
@@ -82,6 +85,7 @@ function theme_get_all() {
 						'color_schemes' => isset( $t_theme['color_schemes'] )
 							? array_values( array_intersect( (array)$t_theme['color_schemes'], array( 'light', 'dark' ) ) )
 							: array(),
+						'viewport_fit' => !empty( $t_theme['viewport_fit'] ),
 					);
 				}
 			}
@@ -119,6 +123,19 @@ function theme_print_css() {
 			html_css_link( $t_stylesheet );
 		}
 	}
+}
+
+/**
+ * Check if the theme in use asks for the page to extend under the notches and
+ * rounded corners of a phone.
+ *
+ * @return bool
+ * @access public
+ */
+function theme_uses_viewport_fit() {
+	$t_themes = theme_get_all();
+
+	return $t_themes[theme_get_current()]['viewport_fit'];
 }
 
 /**
