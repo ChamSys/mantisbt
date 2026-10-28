@@ -308,9 +308,14 @@ function layout_page_header_end( $p_page_id = null) {
  * @return void
  */
 function layout_page_begin( $p_active_sidebar_page = null ) {
+	global $g_layout_active_sidebar_page;
+
 	if( !db_is_connected() ) {
 		return;
 	}
+
+	# For the other views of the menu, the bar of phones
+	$g_layout_active_sidebar_page = $p_active_sidebar_page;
 	current_user_modify_single_project_default();
 
 	layout_navbar();
@@ -359,8 +364,8 @@ function layout_page_end() {
 	layout_main_content_end();
 
 	layout_footer();
-	layout_scroll_up_button();
 	layout_mobile_bar();
+	layout_scroll_up_button();
 
 	layout_main_container_end();
 	layout_body_javascript();
@@ -1590,11 +1595,13 @@ function layout_scroll_up_button() {
 /**
  * Print the first items of the main menu as a bar at the bottom of the screen,
  * and a button for the rest of the menu: the sidebar. It is only displayed on
- * phones, see $g_mobile_layout. It comes last in the page so that it does not
- * come in the way of the keyboard.
+ * phones, see $g_mobile_layout. It comes after the content of the page, so that
+ * it does not come in the way of the keyboard.
  * @return void
  */
 function layout_mobile_bar() {
+	global $g_layout_active_sidebar_page;
+
 	if( !layout_mobile_is_enabled() || !auth_is_user_authenticated() ) {
 		return;
 	}
@@ -1604,12 +1611,14 @@ function layout_mobile_bar() {
 		return;
 	}
 
+	# Room for the bar at the end of the page, only where there is a bar
+	echo '<div class="mobile-tabbar-spacer noprint" aria-hidden="true"></div>', "\n";
 	echo '<nav class="mobile-tabbar noprint" aria-label="', lang_get( 'quick_links' ), '" data-mobile-tabbar>', "\n";
 
 	foreach( $t_items as $t_item ) {
 		$t_icon = isset( $t_item['icon'] ) ? $t_item['icon'] : 'fa-plug';
 		$t_url = is_null( parse_url( $t_item['url'], PHP_URL_SCHEME ) ) ? helper_mantis_url( $t_item['url'] ) : $t_item['url'];
-		$t_active = layout_url_is_current_page( $t_item['url'] );
+		$t_active = $t_item['url'] == $g_layout_active_sidebar_page || layout_url_is_current_page( $t_item['url'] );
 
 		echo '<a href="', $t_url, '" data-menu-id="', string_attribute( layout_get_menu_id( $t_item['url'] ) ), '"',
 			$t_active ? ' class="active" aria-current="page"' : '', '>';

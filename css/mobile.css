@@ -11,6 +11,7 @@
 
 /* The bottom bar and the tabs of the issue page are only for phones */
 .mobile-tabbar,
+.mobile-tabbar-spacer,
 .mobile-panel-tabs {
 	display: none;
 }
@@ -51,10 +52,6 @@
 	.page-content .col-md-12 {
 		padding-left: 8px;
 		padding-right: 8px;
-	}
-
-	.main-content {
-		padding-bottom: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
 	}
 
 	/* Controls: at least 16px, so that iOS does not zoom in on focus, and 44px to touch */
@@ -622,7 +619,13 @@
 		bottom: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
 	}
 
-	.btn-scroll-up.display {
+	.mobile-tabbar-spacer {
+		display: block;
+		height: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
+	}
+
+	/* The button to scroll up is after the bar, where there is one */
+	.mobile-tabbar ~ .btn-scroll-up.display {
 		bottom: calc(var(--mobile-bar-height) + 12px + env(safe-area-inset-bottom, 0px));
 	}
 }
