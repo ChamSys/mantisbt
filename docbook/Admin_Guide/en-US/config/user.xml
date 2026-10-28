@@ -7,6 +7,40 @@
 
 	<variablelist>
 		<varlistentry>
+			<term>$g_show_user_list_threshold</term>
+			<listitem>
+				<para>
+					The access level needed to see the other users in the lists of users of filters
+					and fields, and in searches for users. Below it, a user is only offered
+					themselves. The default is ANYBODY, which lists every user that can have the role the
+					field is for (for example every user that can report issues, in the list of
+					reporters of the filter), so on a tracker that is open to customers they can see each
+					other: raise it to prevent that.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_user_typeahead_min_users</term>
+			<listitem>
+				<para>
+					When more users than this can be chosen in the Reporter, Monitored By and Note By
+					fields of the filter, they are searched for as the user types instead of being
+					listed in a drop-down, which is slow to load and hard to use with thousands of users.
+					0, the default, always lists them. Without JavaScript such a field only has the
+					users that are selected, so a filter can be kept or cleared but not changed.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_user_typeahead_rate_limit</term>
+			<listitem>
+				<para>
+					The number of searches for users that a user may make per minute.
+					It defaults to 120, 0 means no limit.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_impersonate_user_threshold</term>
 			<listitem>
 				<para>

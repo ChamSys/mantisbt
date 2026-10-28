@@ -1,0 +1,44 @@
+/* The search for users that replaces a long drop-down, see js/user_typeahead.js */
+.user-typeahead {
+	display: inline-block;
+	min-width: 160px;
+	vertical-align: top;
+}
+
+.user-typeahead-magic {
+	margin-bottom: 2px;
+}
+
+.user-typeahead-magic-button {
+	margin-right: 2px;
+}
+
+.user-typeahead-chips {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.user-typeahead-chip {
+	display: inline-block;
+	margin: 0 2px 2px 0;
+	padding: 1px 4px 1px 6px;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	background: #f2f2f2;
+}
+
+.user-typeahead-chip-remove {
+	margin-left: 4px;
+	padding: 0 2px;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.user-typeahead-input {
+	width: 100%;
+	box-sizing: border-box;
+}

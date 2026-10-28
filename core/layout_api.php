@@ -214,6 +214,14 @@ function layout_page_header_begin( $p_page_title = '' ) {
 		require_js( 'search_live.js' );
 	}
 
+	# The lists of users that are searched instead of listed
+	if( db_is_connected() && auth_is_user_authenticated() && config_get( 'user_typeahead_min_users' ) > 0 ) {
+		require_css( 'combobox.css' );
+		require_css( 'user_typeahead.css' );
+		require_js( 'combobox.js' );
+		require_js( 'user_typeahead.js' );
+	}
+
 	html_begin();
 	html_head_begin();
 	html_content_type();
