@@ -122,6 +122,12 @@ function columns_filter_disabled( array $p_columns ) {
 				}
 				break;
 
+			case 'like_count':
+				if( config_get( 'enable_likes' ) == OFF ) {
+					continue 2;
+				}
+				break;
+
 				default:
 				# don't filter
 				break;
@@ -437,6 +443,8 @@ function column_get_title( $p_column ) {
 			return lang_get( 'assigned_to' );
 		case 'last_updated':
 			return lang_get( 'updated' );
+		case 'like_count':
+			return lang_get( 'likes' );
 		case 'os_build':
 			return lang_get( 'os_build' );
 		case 'project_id':
@@ -894,6 +902,22 @@ function print_column_title_category( $p_sort, $p_dir, $p_columns_target = COLUM
 }
 
 /**
+ * Print table header for column like count
+ *
+ * @param string  $p_sort           The field that is sorted by.
+ * @param string  $p_dir            The direction of the sort.
+ * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
+ * @return void
+ * @access public
+ */
+function print_column_title_like_count( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
+	echo "\t<th class=\"column-likes\">";
+	print_view_bug_sort_link( lang_get( 'likes' ), 'like_count', $p_sort, $p_dir, $p_columns_target );
+	print_sort_icon( $p_dir, $p_sort, 'like_count' );
+	echo "</th>\n";
+}
+
+/**
  * Print table header for column sponsorship total
  *
  * @param string  $p_sort           Sort.
@@ -1213,6 +1237,24 @@ function print_column_id( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIE
 	echo '<td class="column-id">';
 	print_bug_link( $p_bug->id, false );
 	echo '</td>';
+}
+
+/**
+ * Print column content for column like count
+ *
+ * @param BugData $p_bug            BugData object.
+ * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
+ * @return void
+ * @access public
+ */
+function print_column_like_count( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
+	echo "\t<td class=\"right column-likes\">";
+
+	if( $p_bug->like_count > 0 ) {
+		echo (int)$p_bug->like_count;
+	}
+
+	echo "</td>\n";
 }
 
 /**
