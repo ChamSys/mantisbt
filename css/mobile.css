@@ -501,9 +501,35 @@
 		width: 100%;
 	}
 
+	/*
+	 * The label cells hold the links that open a field for editing: they are kept for the keyboard and
+	 * screen readers, shown when one has the focus, and a tap on the value does the same (js/mobile.js).
+	 */
 	.filter-box td.category,
 	.filter-box td.small-caption.category {
-		display: none;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	.filter-box td.category:focus-within,
+	.filter-box td.small-caption.category:focus-within {
+		position: static;
+		display: block;
+		width: auto;
+		height: auto;
+		padding: 6px 10px;
+		overflow: visible;
+		clip: auto;
+	}
+
+	.filter-box td[data-field] {
+		cursor: pointer;
+		min-height: var(--mobile-target);
 	}
 
 	.filter-box td[data-label] {

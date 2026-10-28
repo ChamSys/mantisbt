@@ -258,8 +258,42 @@
 		update();
 	}
 
+	/**
+	 * The filter is a list of fields, each with its value. A tap on a value opens the field for
+	 * editing, as the link of its label does (the labels are not displayed as such on a phone, the
+	 * name of the field is shown above the value instead).
+	 */
+	function initFilter() {
+		var box = document.querySelector('.filter-box');
+		var query = typeof window.matchMedia === 'function' ? window.matchMedia('(max-width: 767px)') : null;
+
+		if (!box || !query) {
+			return;
+		}
+
+		box.addEventListener('click', function (event) {
+			var cell = event.target.closest ? event.target.closest('td[data-field]') : null;
+
+			if (!query.matches || !cell || !box.contains(cell)) {
+				return;
+			}
+
+			// A control, or a field that is already open, is used as it is
+			if (event.target.closest('a, button, label, select, input, textarea') ||
+				cell.querySelector('select, textarea, input:not([type="hidden"])')) {
+				return;
+			}
+
+			var expander = document.getElementById(cell.getAttribute('data-field') + '_filter');
+			if (expander) {
+				expander.click();
+			}
+		});
+	}
+
 	onReady(function () {
 		initMenuButton();
 		initPanels();
+		initFilter();
 	});
 })(window, document);
