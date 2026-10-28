@@ -82,7 +82,21 @@ for( $i=0; $i < $t_row_count; $i++ ) {
 	$t_project_id = $t_rows[$i]->project_id;
 	$t_unique_project_ids[$t_project_id] = $t_project_id;
 }
-gpc_set_cookie( config_get_global( 'bug_list_cookie' ), implode( ',', $t_bugslist ) );
+
+# Browsers drop cookies larger than about 4 KB, and a bigger Set-Cookie header
+# can also exceed the web server's header buffers, so keep as many of the
+# leading issue ids as fit. The prev/next links on the issue page are simply
+# not shown for issues beyond that point.
+$t_bug_list_cookie_max_length = 3000;
+$t_bug_list_cookie = '';
+foreach( $t_bugslist as $t_bug_list_id ) {
+	$t_bug_list_next = ( $t_bug_list_cookie === '' ) ? $t_bug_list_id : $t_bug_list_cookie . ',' . $t_bug_list_id;
+	if( strlen( $t_bug_list_next ) > $t_bug_list_cookie_max_length ) {
+		break;
+	}
+	$t_bug_list_cookie = $t_bug_list_next;
+}
+gpc_set_cookie( config_get_global( 'bug_list_cookie' ), $t_bug_list_cookie );
 
 compress_enable();
 
