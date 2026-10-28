@@ -95,6 +95,20 @@ $g_database_name = 'bugtracker';
 $g_db_type = 'mysqli';
 
 /**
+ * Character set of the database connection (MySQL / MariaDB only).
+ *
+ * The default 'UTF8' is MySQL's 3-byte utf8 (utf8mb3), which cannot store
+ * characters outside the Basic Multilingual Plane such as emoji; MantisBT
+ * replaces those with U+FFFD before saving them. To keep them, convert the
+ * database and its tables to utf8mb4 and set this to 'utf8mb4'.
+ *
+ * Only letters, digits and underscores are allowed.
+ *
+ * @global string $g_db_charset
+ */
+$g_db_charset = 'UTF8';
+
+/**
  * Adodb Data Source Name.
  *
  * This is an EXPERIMENTAL field.
@@ -5264,6 +5278,7 @@ $g_global_settings = array(
 	'css_rtl_include_file',
 	'custom_headers',
 	'database_name',
+	'db_charset',
 	'db_password',
 	'db_table_prefix',
 	'db_table_suffix',

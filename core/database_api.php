@@ -161,9 +161,8 @@ function db_connect( $p_dsn, $p_hostname = null, $p_username = null, $p_password
 	if( $t_result ) {
 		# For MySQL, the charset for the connection needs to be specified.
 		if( db_is_mysql() ) {
-			# @todo Is there a way to translate any charset name to MySQL format? e.g. remote the dashes?
 			# @todo Is this needed for other databases?
-			db_query( 'SET NAMES UTF8' );
+			db_query( 'SET NAMES ' . db_mysql_charset() );
 		}
 	} else {
 		db_error();
@@ -1145,16 +1144,31 @@ function db_oracle_adapt_query_syntax( $p_query, array &$p_params = [] ) {
 }
 
 /**
+ * Get the character set to use for MySQL connections, see {@see $g_db_charset}.
+ *
+ * @return string Character set name, safe to use in a SET NAMES statement.
+ */
+function db_mysql_charset() {
+	$t_charset = config_get_global( 'db_charset' );
+	if( !preg_match( '/^\w+$/', $t_charset ) ) {
+		error_parameters( 'db_charset', $t_charset );
+		trigger_error( ERROR_CONFIG_OPT_INVALID, ERROR );
+	}
+	return $t_charset;
+}
+
+/**
  * Replace 4-byte UTF-8 chars.
  *
  * This is a workaround to avoid data getting truncated on MySQL databases
  * using native utf8 encoding, which only supports 3 bytes chars (see #20431).
+ * It does nothing when the connection uses utf8mb4, see {@see $g_db_charset}.
  *
  * @param string $p_string
  * @return string
  */
 function db_mysql_fix_utf8( $p_string ) {
-	if( !db_is_mysql() ) {
+	if( !db_is_mysql() || strtolower( db_mysql_charset() ) == 'utf8mb4' ) {
 		return $p_string;
 	}
 	return preg_replace(
