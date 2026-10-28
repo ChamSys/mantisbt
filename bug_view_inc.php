@@ -211,7 +211,7 @@ echo '</div>';
 
 echo '<div class="widget-main no-padding">';
 echo '<div class="table-responsive">';
-echo '<table class="table table-bordered table-condensed">';
+echo '<table class="table table-bordered table-condensed bug-detail-table" data-bug-id="', (int)$f_issue_id, '">';
 
 if( $t_top_buttons_enabled ) {
 	echo '<thead>';
@@ -229,7 +229,7 @@ if( $t_flags['id_show'] || $t_flags['project_show'] || $t_flags['category_show']
 ) {
 
 	# Labels
-	echo '<tr class="bug-header">';
+	echo '<tr class="bug-header" data-section="header">';
 	echo '<th class="bug-id category width-15">', $t_flags['id_show'] ? lang_get( 'id' ) : '', '</th>';
 	echo '<th class="bug-project category width-20">', $t_flags['project_show'] ? lang_get( 'email_project' ) : '', '</th>';
 	echo '<th class="bug-category category width-15">', $t_flags['category_show'] ? lang_get( 'category' ) : '', '</th>';
@@ -238,7 +238,7 @@ if( $t_flags['id_show'] || $t_flags['project_show'] || $t_flags['category_show']
 	echo '<th class="bug-last-modified category width-20">', $t_flags['updated_at_show'] ? lang_get( 'last_update' ) : '','</th>';
 	echo '</tr>';
 
-	echo '<tr class="bug-header-data">';
+	echo '<tr class="bug-header-data" data-section="header">';
 
 	# Bug ID
 	echo '<td class="bug-id">', $t_flags['id_show'] ? $t_issue_view['id_formatted'] : '', '</td>';
@@ -279,7 +279,7 @@ if( $t_flags['id_show'] || $t_flags['project_show'] || $t_flags['category_show']
 #
 
 if( $t_flags['reporter_show'] || $t_flags['handler_show'] || $t_flags['due_date_show'] ) {
-	echo '<tr>';
+	echo '<tr data-section="people">';
 
 	$t_spacer = 0;
 
@@ -330,14 +330,14 @@ if( $t_flags['reporter_show'] || $t_flags['handler_show'] || $t_flags['due_date_
 #
 
 if( $t_flags['priority_show'] || $t_flags['severity_show'] || $t_flags['reproducibility_show'] ) {
-	echo '<tr>';
+	echo '<tr data-section="classification">';
 
 	$t_spacer = 0;
 
 	# Priority
 	if( $t_flags['priority_show'] ) {
 		echo '<th class="bug-priority category">', lang_get( 'priority' ), '</th>';
-		echo '<td class="bug-priority">', string_display_line( $t_issue['priority']['label'] ), '</td>';
+		echo '<td class="bug-priority" data-priority="', (int)$t_issue['priority']['id'], '">', string_display_line( $t_issue['priority']['label'] ), '</td>';
 	} else {
 		$t_spacer += 2;
 	}
@@ -345,7 +345,7 @@ if( $t_flags['priority_show'] || $t_flags['severity_show'] || $t_flags['reproduc
 	# Severity
 	if( $t_flags['severity_show'] ) {
 		echo '<th class="bug-severity category">', lang_get( 'severity' ), '</th>';
-		echo '<td class="bug-severity">', string_display_line( $t_issue['severity']['label'] ), '</td>';
+		echo '<td class="bug-severity" data-severity="', (int)$t_issue['severity']['id'], '">', string_display_line( $t_issue['severity']['label'] ), '</td>';
 	} else {
 		$t_spacer += 2;
 	}
@@ -371,7 +371,7 @@ if( $t_flags['priority_show'] || $t_flags['severity_show'] || $t_flags['reproduc
 #
 
 if( $t_flags['status_show'] || $t_flags['resolution_show'] ) {
-	echo '<tr>';
+	echo '<tr data-section="status">';
 
 	$t_spacer = 2;
 
@@ -392,7 +392,7 @@ if( $t_flags['status_show'] || $t_flags['resolution_show'] ) {
 	# Resolution
 	if( $t_flags['resolution_show'] ) {
 		echo '<th class="bug-resolution category">', lang_get( 'resolution' ), '</th>';
-		echo '<td class="bug-resolution">', string_display_line( $t_issue['resolution']['label'] ), '</td>';
+		echo '<td class="bug-resolution" data-resolution="', (int)$t_issue['resolution']['id'], '">', string_display_line( $t_issue['resolution']['label'] ), '</td>';
 	} else {
 		$t_spacer += 2;
 	}
@@ -410,7 +410,7 @@ if( $t_flags['status_show'] || $t_flags['resolution_show'] ) {
 #
 
 if( $t_flags['projection_show'] || $t_flags['eta_show'] ) {
-	echo '<tr>';
+	echo '<tr data-section="estimate">';
 
 	$t_spacer = 2;
 
@@ -443,7 +443,7 @@ if( ( $t_flags['profiles_platform_show'] && isset( $t_issue['platform'] ) && !is
     ( $t_flags['profiles_os_build_show'] && isset( $t_issue['os_build'] ) && !is_blank( $t_issue['os_build'] ) ) ) {
 	$t_spacer = 0;
 
-	echo '<tr>';
+	echo '<tr data-section="environment">';
 
 	# Platform
 	if( $t_flags['profiles_platform_show'] && isset( $t_issue['platform'] ) && !is_blank( $t_issue['platform'] ) ) {
@@ -484,7 +484,7 @@ if( ( $t_flags['versions_product_version_show'] && isset( $t_issue['version'] ) 
     ( $t_flags['versions_product_build_show'] && isset( $t_issue['build'] ) ) ) {
 	$t_spacer = 2;
 
-	echo '<tr>';
+	echo '<tr data-section="versions">';
 
 	# Product Version
 	if( $t_flags['versions_product_version_show'] && isset( $t_issue['version'] ) ) {
@@ -516,7 +516,7 @@ if( ( $t_flags['versions_target_version_show'] && isset( $t_issue['target_versio
     ( $t_flags['versions_fixed_in_version_show'] && isset( $t_issue['fixed_in_version'] ) ) ) {
 	$t_spacer = 2;
 
-	echo '<tr>';
+	echo '<tr data-section="versions">';
 
 	# target version
 	if( $t_flags['versions_target_version_show'] && isset( $t_issue['target_version'] ) ) {
@@ -555,7 +555,7 @@ print_table_spacer( 6 );
 
 # Summary
 if( $t_flags['summary_show'] && isset( $t_issue['summary'] ) ) {
-	echo '<tr>';
+	echo '<tr data-section="text">';
 	echo '<th class="bug-summary category">', lang_get( 'summary' ), '</th>';
 	echo '<td class="bug-summary" colspan="5">', bug_format_summary( $f_issue_id, SUMMARY_FIELD ), '</td>';
 	echo '</tr>';
@@ -563,7 +563,7 @@ if( $t_flags['summary_show'] && isset( $t_issue['summary'] ) ) {
 
 # Description
 if( $t_flags['description_show'] && isset( $t_issue['description'] ) ) {
-	echo '<tr>';
+	echo '<tr data-section="text">';
 	echo '<th class="bug-description category">', lang_get( 'description' ), '</th>';
 	echo '<td class="bug-description" colspan="5">', string_display_links( $t_issue['description'] ), '</td>';
 	echo '</tr>';
@@ -571,7 +571,7 @@ if( $t_flags['description_show'] && isset( $t_issue['description'] ) ) {
 
 # Steps to Reproduce
 if( $t_flags['steps_to_reproduce_show'] && isset( $t_issue['steps_to_reproduce'] ) ) {
-	echo '<tr>';
+	echo '<tr data-section="text">';
 	echo '<th class="bug-steps-to-reproduce category">', lang_get( 'steps_to_reproduce' ), '</th>';
 	echo '<td class="bug-steps-to-reproduce" colspan="5">', string_display_links( $t_issue['steps_to_reproduce'] ), '</td>';
 	echo '</tr>';
@@ -579,7 +579,7 @@ if( $t_flags['steps_to_reproduce_show'] && isset( $t_issue['steps_to_reproduce']
 
 # Additional Information
 if( $t_flags['additional_information_show'] && isset( $t_issue['additional_information'] ) ) {
-	echo '<tr>';
+	echo '<tr data-section="text">';
 	echo '<th class="bug-additional-information category">', lang_get( 'additional_information' ), '</th>';
 	echo '<td class="bug-additional-information" colspan="5">', string_display_links( $t_issue['additional_information'] ), '</td>';
 	echo '</tr>';
@@ -587,7 +587,7 @@ if( $t_flags['additional_information_show'] && isset( $t_issue['additional_infor
 
 # Tagging
 if( $t_flags['tags_show'] ) {
-	echo '<tr>';
+	echo '<tr data-section="tags">';
 	echo '<th class="bug-tags category">', lang_get( 'tags' ), '</th>';
 	echo '<td class="bug-tags" colspan="5">';
 	tag_display_attached( $f_issue_id );
@@ -596,7 +596,7 @@ if( $t_flags['tags_show'] ) {
 
 # Attach Tags
 if( $t_flags['tags_can_attach'] ) {
-	echo '<tr class="noprint">';
+	echo '<tr class="noprint" data-section="tags">';
 	echo '<th class="bug-attach-tags category">', lang_get( 'tag_attach_long' ), '</th>';
 	echo '<td class="bug-attach-tags" colspan="5">';
 	print_tag_attach_form( $f_issue_id );
@@ -605,7 +605,7 @@ if( $t_flags['tags_can_attach'] ) {
 
 # Attachments
 if( !empty( $t_result['issue']['attachments'] ) ) {
-	echo '<tr class="noprint">';
+	echo '<tr class="noprint" data-section="attachments">';
 	echo '<th class="bug-attach-tags category">', lang_get( 'attached_files' ), '</th>';
 	echo '<td class="bug-attach-tags" colspan="5">';
 
@@ -634,7 +634,7 @@ if( isset( $t_issue['custom_fields'] ) ) {
 		$t_def = custom_field_get_definition( $t_custom_field['field']['id'] );
 		$t_class = $t_def['type'] == CUSTOM_FIELD_TYPE_TEXTAREA ? ' cfdef-textarea' : '';
 
-		echo '<tr>';
+		echo '<tr data-section="custom">';
 		echo '<th class="bug-custom-field category">', string_attribute( lang_get_defaulted( $t_def['name'] ) ), '</th>';
 		echo '<td class="bug-custom-field' . $t_class . '" colspan="5">';
 		print_custom_field_value( $t_def, $t_custom_field['field']['id'], $f_issue_id );
