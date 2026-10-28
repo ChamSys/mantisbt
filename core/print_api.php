@@ -2173,10 +2173,14 @@ function print_bug_attachment_preview_audio_video( array $p_attachment, $p_file_
 
 	$t_type = $p_attachment['type'];
 
+	# Browsers skip a <source> declared as video/quicktime, but play the usual
+	# H.264 .mov files when they are declared as MP4.
+	$t_source_type = ( $p_file_type == 'video/quicktime' ) ? 'video/mp4' : $p_file_type;
+
 	echo "\n<div class=\"bug-attachment-preview-" . $t_type . "\">";
 	echo '<a href="' . string_attribute( $p_attachment['download_url'] ) . '"' . print_attachment_link_target() . '>';
 	echo '<' . $t_type . ' controls="controls"' . $t_preload . '>';
-	echo '<source src="' . string_attribute( $t_file_url ) . '" type="' . string_attribute( $p_file_type ) . '">';
+	echo '<source src="' . string_attribute( $t_file_url ) . '" type="' . string_attribute( $t_source_type ) . '">';
   	echo lang_get( 'browser_does_not_support_' . $t_type );
 	echo '</' . $t_type . '>';
 	echo "</a></div>";
