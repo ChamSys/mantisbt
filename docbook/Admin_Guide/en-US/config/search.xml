@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+ <!ENTITY % BOOK_ENTITIES SYSTEM "Admin_Guide.ent">
+]>
+<section id="admin.config.search">
+	<title>Search</title>
+
+	<para>The text search of the issue filter (the search box of the filter,
+		the search box of the menu bar) is answered by a search backend.
+		The default one searches the database with SQL. The Meilisearch backend
+		keeps its own index of the issues instead: it finds words and word
+		prefixes, tolerates typos and ranks results by relevance, and is much
+		faster on large databases.
+	</para>
+	<para>Whatever the backend, the issues it finds are run through the issue
+		filter like any other, so users never see issues they do not have access
+		to. Text in private notes is only searched for users who can read
+		private notes in the project.
+	</para>
+
+	<section id="admin.config.search.meilisearch">
+		<title>Using Meilisearch</title>
+		<orderedlist>
+			<listitem>
+				<para>Run a Meilisearch server (version 1.11 or newer) that MantisBT
+					can reach, and set its master key.</para>
+			</listitem>
+			<listitem>
+				<para>In <filename>config/config_inc.php</filename>, set
+					<literal>$g_search_backend = 'meilisearch';</literal>
+					and the <literal>$g_search_meilisearch_*</literal> settings below.
+					Run the database upgrade to create the table used by the search queue.</para>
+			</listitem>
+			<listitem>
+				<para>Create the index and fill it with the existing issues:
+					<literal>php scripts/search_index.php --reindex</literal></para>
+			</listitem>
+			<listitem>
+				<para>Run <literal>php scripts/search_index.php</literal> regularly,
+					for example every minute from cron, to add the issues that changed
+					since. <literal>--status</literal> shows whether the server can be
+					reached and how many issues are waiting.</para>
+			</listitem>
+		</orderedlist>
+		<para>If Meilisearch cannot be reached, searches use the SQL search
+			until it is available again, and changes are kept in the queue.
+			Search results from Meilisearch are limited to
+			<literal>$g_search_candidate_limit</literal> issues before the rest
+			of the filter is applied.
+		</para>
+	</section>
+
+	<variablelist>
+		<varlistentry>
+			<term>$g_search_backend</term>
+			<listitem>
+				<para>The search backend: <literal>database</literal> (the default)
+					or <literal>meilisearch</literal>. Other backends are classes named
+					<filename>core/classes/Search&lt;Name&gt;Backend.class.php</filename>.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_search_candidate_limit</term>
+			<listitem>
+				<para>The maximum number of issues an indexed backend returns for
+					a search. The default is 500 (Meilisearch returns at most 1000).
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_search_meilisearch_url</term>
+			<listitem>
+				<para>The address of the Meilisearch server. The default is
+					<literal>http://localhost:7700</literal>.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_search_meilisearch_key</term>
+			<listitem>
+				<para>The API key for Meilisearch: its master key, or a key that
+					may manage and search the index. Empty by default.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_search_meilisearch_index</term>
+			<listitem>
+				<para>The name of the index that holds the issues. The default is
+					<literal>mantis_issues</literal>.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_search_meilisearch_timeout</term>
+			<listitem>
+				<para>The time in seconds to wait for Meilisearch to answer, or to
+					finish indexing a batch of issues. The default is 10.
+				</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</section>

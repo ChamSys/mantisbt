@@ -83,6 +83,7 @@
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/auth.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/status.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/filters.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/search.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/misc.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/cookies.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/speed.xml" />
