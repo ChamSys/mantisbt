@@ -56,6 +56,8 @@ define( 'THEME_DEFAULT', 'default' );
  *   and/or 'dark'. Users of a theme that has them can choose between
  *   them and the automatic one, which follows their system, see
  *   theme_get_color_scheme(),
+ * - 'js': optionally, the scripts to load at the end of the page, after those of
+ *   MantisBT, as plugin file URLs (plugin_file( 'x.js', true )) or full URLs,
  * - 'viewport_fit': optionally, true if the theme lays the page out under the
  *   notches and rounded corners of a phone (viewport-fit=cover); it then uses
  *   env( safe-area-inset-* ) to keep content clear of them.
@@ -67,7 +69,7 @@ function theme_get_all() {
 	static $s_themes = null;
 
 	if( $s_themes === null ) {
-		$s_themes = array( THEME_DEFAULT => array( 'name' => lang_get( 'theme_default' ), 'css' => array(), 'color_schemes' => array(), 'viewport_fit' => false ) );
+		$s_themes = array( THEME_DEFAULT => array( 'name' => lang_get( 'theme_default' ), 'css' => array(), 'color_schemes' => array(), 'viewport_fit' => false, 'js' => array() ) );
 
 		foreach( event_signal( 'EVENT_THEMES' ) as $t_plugin_results ) {
 			foreach( $t_plugin_results as $t_result ) {
@@ -86,6 +88,7 @@ function theme_get_all() {
 							? array_values( array_intersect( (array)$t_theme['color_schemes'], array( 'light', 'dark' ) ) )
 							: array(),
 						'viewport_fit' => !empty( $t_theme['viewport_fit'] ),
+						'js' => isset( $t_theme['js'] ) ? array_values( (array)$t_theme['js'] ) : array(),
 					);
 				}
 			}
@@ -191,6 +194,24 @@ function theme_print_meta() {
 	$t_content = ( $t_scheme === 'auto' ) ? implode( ' ', $t_supported ) : $t_scheme;
 
 	echo "\t", '<meta name="color-scheme" content="', $t_content, '">', "\n";
+}
+
+/**
+ * Print the script tags of the theme in use.
+ *
+ * @return void
+ * @access public
+ */
+function theme_print_js() {
+	$t_themes = theme_get_all();
+
+	foreach( $t_themes[theme_get_current()]['js'] as $t_script ) {
+		if( preg_match( '#^https?://#i', $t_script ) ) {
+			echo "\t", '<script src="', string_attribute( $t_script ), '"></script>', "\n";
+		} else {
+			html_javascript_link( $t_script );
+		}
+	}
 }
 
 /**

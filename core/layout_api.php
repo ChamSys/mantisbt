@@ -495,6 +495,9 @@ function layout_body_javascript() {
 
 	# ace theme scripts
 	html_javascript_link( 'ace.min.js' );
+
+	# scripts of the theme
+	theme_print_js();
 }
 
 

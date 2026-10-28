@@ -503,6 +503,12 @@ array( 'ocean' => array(
 ) );
 </programlisting>
 					</para></listitem>
+					<listitem><para>A theme can also have <literal>viewport_fit</literal>, true if it lays the
+						page out under the notches and rounded corners of a phone (the page then gets
+						<literal>viewport-fit=cover</literal> in its viewport meta tag, and the theme keeps
+						content clear with <literal>env( safe-area-inset-* )</literal>), and
+						<literal>js</literal>, an array of scripts, as plugin file URLs or full URLs, that are
+						loaded at the end of the page, after the scripts of MantisBT.</para></listitem>
 				</itemizedlist>
 			</blockquote>
 		</blockquote>
