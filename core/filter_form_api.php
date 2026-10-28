@@ -208,7 +208,7 @@ function print_filter_reporter_id( ?array $p_filter = null ) {
 		$p_filter = $g_filter;
 	}
 	?>
-		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_REPORTER_ID;?>[]"<?php $t_typeahead = print_user_typeahead_attributes( 'reporter', helper_get_current_project() ); ?>>
+		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_REPORTER_ID;?>[]"<?php $t_typeahead = !access_has_limited_view() && print_user_typeahead_attributes( 'reporter', helper_get_current_project() ); ?>>
 		<?php
 	# if current user is a reporter, and limited_reporters is set to ON, only display that name
 	if( access_has_limited_view() ) {

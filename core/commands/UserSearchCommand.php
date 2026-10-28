@@ -127,6 +127,12 @@ class UserSearchCommand extends Command {
 		$t_access = config_get( $this->scope['access'], null, null, $this->projectId );
 		$t_rows = user_get_option_rows( $this->projectId, $t_access, $this->text );
 
+		# Users with a limited view only see themselves as reporters, as in the filter
+		if( $this->scope['access'] == 'report_bug_threshold' && access_has_limited_view( $this->projectId ) ) {
+			$t_user_id = auth_get_current_user_id();
+			$t_rows = isset( $t_rows[$t_user_id] ) ? array( $t_user_id => $t_rows[$t_user_id] ) : array();
+		}
+
 		# Best match first: the user name that is the text, then one that starts with it, then the rest
 		$t_text = mb_strtolower( $this->text );
 		$t_ranked = array();
