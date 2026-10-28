@@ -126,6 +126,22 @@ class AuthFlags {
 	private $reauthentication_expiry = null;
 
 	/**
+	 * Indicates whether the email address is managed by an external system, such
+	 * as an identity provider, so that users and administrators cannot change it.
+	 * @see $realname_managed_externally
+	 * @var bool|null
+	 */
+	private $email_managed_externally = null;
+
+	/**
+	 * Indicates whether the real name is managed by an external system, such
+	 * as an identity provider, so that users and administrators cannot change it.
+	 * @see $email_managed_externally
+	 * @var bool|null
+	 */
+	private $realname_managed_externally = null;
+
+	/**
 	 * AuthFlags constructor.
 	 */
 	function __construct() {
@@ -396,6 +412,56 @@ class AuthFlags {
 		}
 
 		return $this->reauthentication_expiry;
+	}
+	/**
+	 * Indicates which parts of the user profile are managed by an external system,
+	 * such as an identity provider, and so cannot be changed in MantisBT.
+	 *
+	 * The user's own account page and the user management pages show these as
+	 * plain text, and changes to them are ignored. The plugin is responsible for
+	 * keeping the values up to date, for example when the user logs in.
+	 *
+	 * @param bool $p_email    true if the email address is managed externally.
+	 * @param bool $p_realname true if the real name is managed externally.
+	 * @return void
+	 * @see getEmailManagedExternally()
+	 * @see getRealnameManagedExternally()
+	 */
+	function setProfileManagedExternally( $p_email, $p_realname ) {
+		$this->email_managed_externally = $p_email;
+		$this->realname_managed_externally = $p_realname;
+	}
+
+	/**
+	 * Gets whether the email address is managed by an external system.
+	 *
+	 * Unless a plugin says otherwise, it is when the email address comes from LDAP.
+	 *
+	 * @return bool true: managed externally, false: can be changed in MantisBT.
+	 * @see setProfileManagedExternally()
+	 */
+	function getEmailManagedExternally() {
+		if( is_null( $this->email_managed_externally ) ) {
+			return LDAP == config_get_global( 'login_method' ) && ON == config_get_global( 'use_ldap_email' );
+		}
+
+		return $this->email_managed_externally;
+	}
+
+	/**
+	 * Gets whether the real name is managed by an external system.
+	 *
+	 * Unless a plugin says otherwise, it is when the real name comes from LDAP.
+	 *
+	 * @return bool true: managed externally, false: can be changed in MantisBT.
+	 * @see setProfileManagedExternally()
+	 */
+	function getRealnameManagedExternally() {
+		if( is_null( $this->realname_managed_externally ) ) {
+			return LDAP == config_get_global( 'login_method' ) && ON == config_get_global( 'use_ldap_realname' );
+		}
+
+		return $this->realname_managed_externally;
 	}
 }
 

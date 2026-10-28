@@ -164,6 +164,32 @@ function auth_flags( $p_user_id = null, $p_username = '' ) {
 }
 
 /**
+ * Check if the email address of a user is managed by an external system, such as
+ * an identity provider or LDAP, and so cannot be changed in MantisBT.
+ *
+ * @param int|null $p_user_id The user id, or null for the logged in user.
+ *
+ * @return bool true if managed externally, false if it can be changed.
+ * @throws ClientException
+ */
+function auth_email_managed_externally( $p_user_id = null ) {
+	return auth_flags( $p_user_id )->getEmailManagedExternally();
+}
+
+/**
+ * Check if the real name of a user is managed by an external system, such as
+ * an identity provider or LDAP, and so cannot be changed in MantisBT.
+ *
+ * @param int|null $p_user_id The user id, or null for the logged in user.
+ *
+ * @return bool true if managed externally, false if it can be changed.
+ * @throws ClientException
+ */
+function auth_realname_managed_externally( $p_user_id = null ) {
+	return auth_flags( $p_user_id )->getRealnameManagedExternally();
+}
+
+/**
  * The message to show to indicate to user that password is managed elsewhere.
  *
  * @return string The message.
