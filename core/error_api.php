@@ -169,6 +169,15 @@ function error_handler( $p_type, $p_error, $p_file, $p_line ) {
 		return;
 	}
 
+	# PHP 8.4 deprecates trigger_error() with E_USER_ERROR, which is how we
+	# raise application errors. PHP reports the deprecation first, and
+	# handling it would clear $g_error_parameters before the actual
+	# E_USER_ERROR gets to use them, so ignore that specific notice.
+	if( $p_type == E_DEPRECATED
+		&& strpos( $p_error, 'Passing E_USER_ERROR to trigger_error()' ) === 0 ) {
+		return;
+	}
+
 	$t_lang_pushed = false;
 
 	$t_db_connected = false;
