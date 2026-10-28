@@ -4098,6 +4098,37 @@ $g_search_backend = 'database';
 $g_search_candidate_limit = 500;
 
 /**
+ * The address of the Meilisearch server used by the 'meilisearch' search backend.
+ *
+ * @global string $g_search_meilisearch_url
+ */
+$g_search_meilisearch_url = 'http://localhost:7700';
+
+/**
+ * The API key for Meilisearch (its master key, or a key allowed to manage and
+ * search the index). Leave empty if the server does not require one.
+ *
+ * @global string $g_search_meilisearch_key
+ */
+$g_search_meilisearch_key = '';
+
+/**
+ * The name of the Meilisearch index that holds the issues. Letters, digits,
+ * hyphens and underscores only.
+ *
+ * @global string $g_search_meilisearch_index
+ */
+$g_search_meilisearch_index = 'mantis_issues';
+
+/**
+ * The time in seconds to wait for Meilisearch to answer, or to finish
+ * indexing a batch of issues.
+ *
+ * @global int $g_search_meilisearch_timeout
+ */
+$g_search_meilisearch_timeout = 10;
+
+/**
  * Allow use of dynamic filter controls.
  *
  * This switch enables the use of AJAX to dynamically load and create filter
@@ -5372,6 +5403,10 @@ $g_global_settings = array(
 	'public_config_names',
 	'search_backend',
 	'search_candidate_limit',
+	'search_meilisearch_index',
+	'search_meilisearch_key',
+	'search_meilisearch_timeout',
+	'search_meilisearch_url',
 	'session_save_path',
 	'session_validation',
 	'short_path',
