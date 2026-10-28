@@ -360,6 +360,7 @@ function layout_page_end() {
 
 	layout_footer();
 	layout_scroll_up_button();
+	layout_mobile_bar();
 
 	layout_main_container_end();
 	layout_body_javascript();
@@ -533,6 +534,10 @@ function layout_body_javascript() {
 
 	# ace theme scripts
 	html_javascript_link( 'ace.min.js' );
+
+	if( layout_mobile_is_enabled() ) {
+		html_javascript_link( 'mobile.js' );
+	}
 
 	# scripts of the theme
 	theme_print_js();
@@ -1580,6 +1585,44 @@ function layout_scroll_up_button() {
 	echo '<a class="btn-scroll-up btn btn-sm btn-inverse display" id="btn-scroll-up" href="#">' . "\n";
 	print_icon( 'fa-angle-double-up', 'ace-icon icon-only bigger-110');
 	echo "\n" . '</a>' . "\n";
+}
+
+/**
+ * Print the first items of the main menu as a bar at the bottom of the screen,
+ * and a button for the rest of the menu: the sidebar. It is only displayed on
+ * phones, see $g_mobile_layout. It comes last in the page so that it does not
+ * come in the way of the keyboard.
+ * @return void
+ */
+function layout_mobile_bar() {
+	if( !layout_mobile_is_enabled() || !auth_is_user_authenticated() ) {
+		return;
+	}
+
+	$t_items = array_slice( layout_get_visible_sidebar_items( layout_get_sidebar_items() ), 0, 4 );
+	if( count( $t_items ) == 0 ) {
+		return;
+	}
+
+	echo '<nav class="mobile-tabbar noprint" aria-label="', lang_get( 'quick_links' ), '" data-mobile-tabbar>', "\n";
+
+	foreach( $t_items as $t_item ) {
+		$t_icon = isset( $t_item['icon'] ) ? $t_item['icon'] : 'fa-plug';
+		$t_url = is_null( parse_url( $t_item['url'], PHP_URL_SCHEME ) ) ? helper_mantis_url( $t_item['url'] ) : $t_item['url'];
+		$t_active = layout_url_is_current_page( $t_item['url'] );
+
+		echo '<a href="', $t_url, '" data-menu-id="', string_attribute( layout_get_menu_id( $t_item['url'] ) ), '"',
+			$t_active ? ' class="active" aria-current="page"' : '', '>';
+		print_icon( $t_icon, 'mobile-tabbar-icon' );
+		echo '<span>', lang_get_defaulted( $t_item['title'] ), '</span></a>', "\n";
+	}
+
+	# The rest of the menu is the sidebar, which the script opens and closes
+	echo '<button type="button" class="mobile-tabbar-menu" aria-controls="sidebar" aria-expanded="false" hidden>';
+	print_icon( 'fa-bars', 'mobile-tabbar-icon' );
+	echo '<span>', lang_get( 'menu_button' ), '</span></button>', "\n";
+
+	echo '</nav>', "\n";
 }
 
 /**

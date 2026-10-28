@@ -9,6 +9,11 @@
  * file can restyle it with its own variables.
  */
 
+/* The bottom bar is only for phones */
+.mobile-tabbar {
+	display: none;
+}
+
 @media (max-width: 767px) {
 
 	:root {
@@ -313,6 +318,7 @@
 	}
 
 	#buglist > tbody > tr[data-bug-id] {
+		position: relative;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -355,13 +361,23 @@
 		overflow-wrap: anywhere;
 	}
 
+	/* The checkbox and the edit link sit in the corner, out of the way of the summary */
 	#buglist > tbody > tr[data-bug-id] > td.column-selection,
 	#buglist > tbody > tr[data-bug-id] > td.column-edit {
-		order: -2;
+		position: absolute;
+		top: 8px;
 	}
 
 	#buglist > tbody > tr[data-bug-id] > td.column-selection {
-		margin-right: auto;
+		right: 10px;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td.column-edit {
+		right: 40px;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td.column-summary {
+		padding-right: 64px;
 	}
 
 	#buglist > tbody > tr[data-bug-id] > td.column-id {
@@ -429,10 +445,73 @@
 		width: 100%;
 	}
 
-	/* Bottom bar and its spacing */
+	/* Bottom bar: the first items of the main menu, and a button for the sidebar */
 
-	#scroll-btn,
-	.btn-scroll-up {
+	.mobile-tabbar {
+		display: flex;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1030;
+		height: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
+		padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+		background: var(--mobile-surface);
+		border-top: 1px solid var(--mobile-border);
+	}
+
+	.mobile-tabbar > a,
+	.mobile-tabbar > button {
+		flex: 1 1 0;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 2px;
+		padding: 4px 2px;
+		border: 0;
+		background: transparent;
+		color: var(--mobile-muted);
+		font-size: 11px;
+		line-height: 1.1;
+		text-decoration: none;
+	}
+
+	.mobile-tabbar > button[hidden] {
+		display: none;
+	}
+
+	.mobile-tabbar > a > span,
+	.mobile-tabbar > button > span {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.mobile-tabbar .mobile-tabbar-icon {
+		font-size: 20px;
+	}
+
+	.mobile-tabbar > a.active,
+	.mobile-tabbar > button[aria-expanded="true"] {
+		color: var(--mobile-accent);
+		font-weight: 600;
+	}
+
+	.mobile-tabbar > a:focus-visible,
+	.mobile-tabbar > button:focus-visible {
+		outline: 2px solid var(--mobile-accent);
+		outline-offset: -3px;
+	}
+
+	/* The sidebar stops above the bar */
+	.sidebar.sidebar-fixed {
+		bottom: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
+	}
+
+	.btn-scroll-up.display {
 		bottom: calc(var(--mobile-bar-height) + 12px + env(safe-area-inset-bottom, 0px));
 	}
 }
