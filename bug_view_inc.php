@@ -144,6 +144,11 @@ if( layout_mobile_is_enabled() ) {
 }
 
 echo '<div class="col-md-12 col-xs-12" data-panel="details">';
+if( layout_mobile_is_enabled() && ( $t_top_buttons_enabled || $t_bottom_buttons_enabled ) ) {
+	echo '<button type="button" class="mobile-sheet-open noprint" data-sheet-open aria-controls="bug-actions" aria-haspopup="dialog" aria-expanded="false" hidden>';
+	print_icon( 'fa-bolt', '' );
+	echo ' ', lang_get( 'bug_actions_title' ), '</button>';
+}
 echo '<div class="widget-box widget-color-blue2">';
 echo '<div class="widget-header widget-header-small">';
 echo '<h4 class="widget-title lighter">';
@@ -224,11 +229,14 @@ echo '<div class="widget-main no-padding">';
 echo '<div class="table-responsive">';
 echo '<table class="table table-bordered table-condensed bug-detail-table" data-bug-id="', (int)$f_issue_id, '">';
 
+# The buttons are in a sheet on phones: the bottom ones, or the top ones when there are no bottom ones
+$t_actions_sheet = layout_mobile_is_enabled();
+
 if( $t_top_buttons_enabled ) {
 	echo '<thead>';
 	echo '<tr class="top-buttons noprint"><td colspan="6">';
 	/** @noinspection PhpUnhandledExceptionInspection */
-	bug_view_action_buttons( $f_issue_id, $t_flags );
+	bug_view_action_buttons( $f_issue_id, $t_flags, $t_actions_sheet && !$t_bottom_buttons_enabled );
 	echo '</td></tr>';
 	echo '</thead>';
 }
@@ -661,7 +669,7 @@ if( $t_bottom_buttons_enabled ) {
 	echo '<tfoot>';
 	echo '<tr class="noprint"><td colspan="6">';
 	/** @noinspection PhpUnhandledExceptionInspection */
-	bug_view_action_buttons( $f_issue_id, $t_flags );
+	bug_view_action_buttons( $f_issue_id, $t_flags, $t_actions_sheet );
 	echo '</td></tr>';
 	echo '</tfoot>';
 }
@@ -1263,8 +1271,17 @@ function bug_view_button_bug_assign_to( BugData $p_bug ) {
  *
  * @throws ClientException
  */
-function bug_view_action_buttons( $p_bug_id, $p_flags ) {
+function bug_view_action_buttons( $p_bug_id, $p_flags, $p_sheet = false ) {
 	$t_bug = bug_get( $p_bug_id );
+
+	# On phones the buttons are in a sheet that is opened from a button, see $g_mobile_layout
+	if( $p_sheet ) {
+		echo '<div id="bug-actions" class="bug-actions" data-sheet>';
+		echo '<div class="mobile-sheet-header"><span id="bug-actions-title" class="mobile-sheet-title">', lang_get( 'bug_actions_title' ), '</span>';
+		echo '<button type="button" class="mobile-sheet-close" aria-label="', lang_get( 'close' ), '">';
+		print_icon( 'fa-times', '' );
+		echo '</button></div>';
+	}
 
 	echo '<div class="btn-group">';
 	# UPDATE button
@@ -1376,5 +1393,9 @@ function bug_view_action_buttons( $p_bug_id, $p_flags ) {
 	helper_call_custom_function( 'print_bug_view_page_custom_buttons', array( $p_bug_id ) );
 
 	echo '</div>';
+
+	if( $p_sheet ) {
+		echo '</div>';
+	}
 }
 

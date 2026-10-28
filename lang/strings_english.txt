@@ -419,6 +419,7 @@ $s_main_menu = 'Main menu';
 $s_quick_links = 'Quick links';
 $s_menu_button = 'Menu';
 $s_issue_sections = 'Sections of the issue';
+$s_bug_actions_title = 'Actions';
 $s_tab_details = 'Details';
 $s_tab_notes = 'Notes';
 $s_tab_history = 'History';

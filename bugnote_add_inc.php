@@ -32,6 +32,7 @@
  * @uses helper_api.php
  * @uses html_api.php
  * @uses lang_api.php
+ * @uses layout_api.php
  */
 
 if( !defined( 'BUGNOTE_ADD_INC_ALLOW' ) ) {
@@ -48,6 +49,7 @@ require_api( 'form_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
+require_api( 'layout_api.php' );
 
 ?>
 <?php if( ( !bug_is_readonly( $f_bug_id ) ) &&
@@ -55,6 +57,14 @@ require_api( 'lang_api.php' );
 <?php # Bugnote Add Form BEGIN ?>
 
 <div class="col-md-12 col-xs-12 noprint" data-panel="notes">
+<?php
+	# On phones the form is in a sheet that is opened from a button, see $g_mobile_layout
+	if( layout_mobile_is_enabled() ) {
+		echo '<button type="button" class="mobile-sheet-open" data-sheet-open aria-controls="bugnote_add" aria-haspopup="dialog" aria-expanded="false" hidden>';
+		print_icon( 'fa-comment', '' );
+		echo ' ', lang_get( 'add_bugnote_title' ), '</button>';
+	}
+?>
 <a id="addbugnote"></a>
 <div class="space-10"></div>
 
@@ -71,13 +81,16 @@ require_api( 'lang_api.php' );
 	>
 	<?php echo form_security_field( 'bugnote_add' ) ?>
 	<input type="hidden" name="bug_id" value="<?php echo $f_bug_id ?>" />
-	<div id="bugnote_add" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>">
+	<div id="bugnote_add" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>" data-sheet>
 		<div class="widget-header widget-header-small">
-			<h4 class="widget-title lighter">
+			<h4 id="bugnote_add_title" class="widget-title lighter">
 				<?php print_icon( 'fa-comment', 'ace-icon' ); ?>
 				<?php echo lang_get( 'add_bugnote_title' ) ?>
 			</h4>
 			<div class="widget-toolbar">
+<?php if( layout_mobile_is_enabled() ) { ?>
+				<button type="button" class="mobile-sheet-close" aria-label="<?php echo lang_get( 'close' ) ?>"><?php print_icon( 'fa-times', '' ); ?></button>
+<?php } ?>
 				<a data-action="collapse" href="#">
 					<?php print_icon( $t_block_icon, '1 ace-icon bigger-125' ); ?>
 				</a>
