@@ -487,6 +487,36 @@ return array( 'url' => plugin_page( 'config', true ), 'label' => plugin_lang_get
 
 	</section>
 
+	<section id="dev.eventref.output.summary">
+		<title>Summary Page</title>
+
+		<blockquote id="dev.eventref.output.summary.panels">
+			<title>EVENT_SUMMARY_PANELS (Output)</title>
+			<blockquote>
+				<para>
+					This event gives plugins the opportunity to add panels (tables of figures) to the
+					summary page.  The output is printed at the end of the right hand column, where the
+					panels of the summary page are, so a callback returns the markup of a panel in the same
+					form as the other panels:
+					<programlisting>
+return '&lt;div class="space-10"&gt;&lt;/div&gt;&lt;div class="widget-box table-responsive"&gt;&lt;table class="table table-hover table-bordered table-condensed table-striped"&gt;...&lt;/table&gt;&lt;/div&gt;';
+</programlisting>
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Array&gt;: the filter that the summary page is computed with (the project and the issues that the
+						user can see), as the <literal>summary_print_*</literal> functions take it</para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;String&gt;: the markup of the panels</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+	</section>
+
 	<section id="dev.eventref.output.layout">
 		<title>Page Layout</title>
 

@@ -28,6 +28,7 @@
  * @uses config_api.php
  * @uses constant_inc.php
  * @uses database_api.php
+ * @uses event_api.php
  * @uses gpc_api.php
  * @uses helper_api.php
  * @uses html_api.php
@@ -44,6 +45,7 @@ require_api( 'authentication_api.php' );
 require_api( 'config_api.php' );
 require_api( 'constant_inc.php' );
 require_api( 'database_api.php' );
+require_api( 'event_api.php' );
 require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
@@ -322,6 +324,11 @@ print_summary_submenu();
 		<?php summary_print_reporter_effectiveness( config_get( 'severity_enum_string' ), config_get( 'resolution_enum_string' ), $t_filter ) ?>
 	</table>
 	</div>
+
+	<?php
+	# Panels of plugins, in the same column as the likes
+	event_signal( 'EVENT_SUMMARY_PANELS', array( $t_filter ) );
+	?>
 
 </div>
 
