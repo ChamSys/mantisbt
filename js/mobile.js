@@ -60,7 +60,206 @@
 		sync();
 	}
 
+	/**
+	 * The issue page shows one of its panels (details, notes, history) at a
+	 * time, chosen with tabs. A link to something inside a panel that is not
+	 * shown (#c123, #history, #attachments) shows that panel first.
+	 */
+	function initPanels() {
+		var tablist = document.querySelector('.mobile-panel-tabs');
+		var query = typeof window.matchMedia === 'function' ? window.matchMedia('(max-width: 767px)') : null;
+
+		if (!tablist || !query) {
+			return;
+		}
+
+		var tabs = [];
+		var panels = {};
+		var current = null;
+
+		// What an address with a hash is for each panel, when it is chosen with a tab
+		var hashes = { details: '', notes: '#bugnotes', history: '#history' };
+
+		[].slice.call(tablist.querySelectorAll('[data-panel-tab]')).forEach(function (tab) {
+			var name = tab.getAttribute('data-panel-tab');
+			var elements = [].slice.call(document.querySelectorAll('[data-panel="' + name + '"]'));
+
+			// There is no history panel for those who cannot see it
+			if (elements.length === 0) {
+				tab.parentNode.removeChild(tab);
+				return;
+			}
+
+			elements.forEach(function (element, index) {
+				if (!element.id) {
+					element.id = 'panel-' + name + '-' + index;
+				}
+			});
+			tab.setAttribute('aria-controls', elements.map(function (element) {
+				return element.id;
+			}).join(' '));
+
+			panels[name] = elements;
+			tabs.push(tab);
+		});
+
+		if (tabs.length < 2) {
+			return;
+		}
+
+		function select(name) {
+			current = name;
+
+			tabs.forEach(function (tab) {
+				var selected = tab.getAttribute('data-panel-tab') === name;
+				tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+				tab.tabIndex = selected ? 0 : -1;
+			});
+
+			Object.keys(panels).forEach(function (panel) {
+				panels[panel].forEach(function (element) {
+					element.hidden = panel !== name;
+				});
+			});
+		}
+
+		// After a change of tab the top of the panel must not be under the tabs
+		function revealTop() {
+			var limit = tablist.getBoundingClientRect().bottom;
+			var top = panels[current][0].getBoundingClientRect().top;
+
+			if (top < limit) {
+				window.scrollBy(0, top - limit - 4);
+			}
+		}
+
+		function choose(name) {
+			select(name);
+			revealTop();
+
+			if (window.history && typeof window.history.replaceState === 'function') {
+				window.history.replaceState(null, '', window.location.pathname + window.location.search + hashes[name]);
+			}
+		}
+
+		// The panel and the element that the hash of the address is about
+		function fromHash() {
+			var id = '';
+			try {
+				id = decodeURIComponent(window.location.hash.slice(1));
+			} catch (error) {
+				return null;
+			}
+
+			var target = id ? document.getElementById(id) : null;
+			var panel = target ? target.closest('[data-panel]') : null;
+
+			return panel && panels[panel.getAttribute('data-panel')] ? { name: panel.getAttribute('data-panel'), target: target } : null;
+		}
+
+		function followHash() {
+			var found = fromHash();
+
+			if (found) {
+				select(found.name);
+				// scroll-margin-top in css/mobile.css keeps it clear of the navbar and the tabs
+				found.target.scrollIntoView();
+			}
+		}
+
+		function onKeydown(event) {
+			var index = tabs.indexOf(event.target);
+			var rtl = window.getComputedStyle(tablist).direction === 'rtl';
+			var next = -1;
+
+			if (index < 0 || event.altKey || event.ctrlKey || event.metaKey) {
+				return;
+			}
+
+			switch (event.key) {
+				case 'ArrowRight':
+					next = rtl ? index - 1 : index + 1;
+					break;
+				case 'ArrowLeft':
+					next = rtl ? index + 1 : index - 1;
+					break;
+				case 'Home':
+					next = 0;
+					break;
+				case 'End':
+					next = tabs.length - 1;
+					break;
+				default:
+					return;
+			}
+
+			event.preventDefault();
+			next = (next + tabs.length) % tabs.length;
+			tabs[next].focus();
+			choose(tabs[next].getAttribute('data-panel-tab'));
+		}
+
+		function enable() {
+			tablist.hidden = false;
+
+			tabs.forEach(function (tab) {
+				var name = tab.getAttribute('data-panel-tab');
+				panels[name].forEach(function (element) {
+					element.setAttribute('role', 'tabpanel');
+					element.setAttribute('aria-labelledby', tab.id);
+				});
+			});
+
+			var found = fromHash();
+			select(found ? found.name : tabs[0].getAttribute('data-panel-tab'));
+			if (found) {
+				followHash();
+			}
+		}
+
+		function disable() {
+			tablist.hidden = true;
+
+			Object.keys(panels).forEach(function (name) {
+				panels[name].forEach(function (element) {
+					element.hidden = false;
+					element.removeAttribute('role');
+					element.removeAttribute('aria-labelledby');
+				});
+			});
+		}
+
+		function update() {
+			if (query.matches) {
+				enable();
+			} else {
+				disable();
+			}
+		}
+
+		tabs.forEach(function (tab) {
+			tab.addEventListener('click', function () {
+				choose(tab.getAttribute('data-panel-tab'));
+			});
+		});
+		tablist.addEventListener('keydown', onKeydown);
+		window.addEventListener('hashchange', function () {
+			if (query.matches) {
+				followHash();
+			}
+		});
+
+		if (typeof query.addEventListener === 'function') {
+			query.addEventListener('change', update);
+		} else if (typeof query.addListener === 'function') {
+			query.addListener(update);
+		}
+
+		update();
+	}
+
 	onReady(function () {
 		initMenuButton();
+		initPanels();
 	});
 })(window, document);

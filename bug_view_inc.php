@@ -39,6 +39,7 @@
  * @uses helper_api.php
  * @uses html_api.php
  * @uses lang_api.php
+ * @uses layout_api.php
  * @uses prepare_api.php
  * @uses print_api.php
  * @uses project_api.php
@@ -79,6 +80,7 @@ require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
+require_api( 'layout_api.php' );
 require_api( 'prepare_api.php' );
 require_api( 'print_api.php' );
 require_api( 'project_api.php' );
@@ -131,6 +133,15 @@ $t_bottom_buttons_enabled = !$t_force_readonly && ( $t_action_button_position ==
 #
 # Start of Template
 #
+
+# The sections of the issue as tabs, on phones. The script of $g_mobile_layout shows them.
+if( layout_mobile_is_enabled() ) {
+	echo '<div class="col-md-12 col-xs-12 mobile-panel-tabs noprint" role="tablist" aria-label="', lang_get( 'issue_sections' ), '" hidden>';
+	foreach( array( 'details', 'notes', 'history' ) as $t_panel ) {
+		echo '<button type="button" role="tab" id="panel-tab-', $t_panel, '" data-panel-tab="', $t_panel, '" aria-selected="false" tabindex="-1">', lang_get( 'tab_' . $t_panel ), '</button>';
+	}
+	echo '</div>';
+}
 
 echo '<div class="col-md-12 col-xs-12" data-panel="details">';
 echo '<div class="widget-box widget-color-blue2">';
