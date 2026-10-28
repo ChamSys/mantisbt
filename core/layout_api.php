@@ -72,6 +72,81 @@ function layout_page_header( $p_page_title = '', $p_redirect_url = null, $p_page
 }
 
 /**
+ * Print the start of a widget: the box with a title bar that most pages use.
+ *
+ * The content goes after it, usually in a <div class="widget-main">, and
+ * layout_widget_end() closes the widget.
+ *
+ * @param string $p_title   The title, already escaped if it has markup.
+ * @param string $p_icon    The Font Awesome icon of the title, or an empty string.
+ * @param array  $p_options Options, all optional:
+ *                          'id'          => the id of the widget; required for it to be collapsible,
+ *                          'class'       => the color class of the widget, default widget-color-blue2,
+ *                          'toolbar'     => HTML for the toolbar on the right of the title bar,
+ *                          'collapsible' => whether it can be collapsed, remembering its state,
+ *                          'columns'     => whether to put it in a full width column, default true.
+ * @return void
+ * @access public
+ */
+function layout_widget_begin( $p_title, $p_icon = '', array $p_options = array() ) {
+	$t_id = isset( $p_options['id'] ) ? $p_options['id'] : '';
+	$t_class = isset( $p_options['class'] ) ? $p_options['class'] : 'widget-color-blue2';
+	$t_collapsible = !empty( $p_options['collapsible'] ) && !is_blank( $t_id );
+	$t_columns = !isset( $p_options['columns'] ) || $p_options['columns'];
+
+	$t_collapsed = $t_collapsible && is_collapsed( $t_id );
+	if( $t_collapsed ) {
+		$t_class .= ' collapsed';
+	}
+
+	if( $t_columns ) {
+		echo '<div class="col-md-12 col-xs-12">', "\n";
+		echo '<div class="space-10"></div>', "\n";
+	}
+
+	echo '<div', is_blank( $t_id ) ? '' : ' id="' . string_attribute( $t_id ) . '"', ' class="widget-box ', string_attribute( $t_class ), '">', "\n";
+	echo '<div class="widget-header widget-header-small">', "\n";
+	echo '<h4 class="widget-title lighter">';
+	if( !is_blank( $p_icon ) ) {
+		print_icon( $p_icon, 'ace-icon' );
+		echo '&nbsp;';
+	}
+	echo $p_title, '</h4>', "\n";
+
+	if( !empty( $p_options['toolbar'] ) || $t_collapsible ) {
+		echo '<div class="widget-toolbar">', "\n";
+		if( !empty( $p_options['toolbar'] ) ) {
+			echo $p_options['toolbar'];
+		}
+		if( $t_collapsible ) {
+			echo '<a data-action="collapse" href="#">';
+			print_icon( $t_collapsed ? 'fa-chevron-down' : 'fa-chevron-up', '1 ace-icon bigger-125' );
+			echo '</a>';
+		}
+		echo '</div>', "\n";
+	}
+
+	echo '</div>', "\n";
+	echo '<div class="widget-body">', "\n";
+}
+
+/**
+ * Print the end of a widget started with layout_widget_begin().
+ *
+ * @param array $p_options The options given to layout_widget_begin(); only 'columns' is used.
+ * @return void
+ * @access public
+ */
+function layout_widget_end( array $p_options = array() ) {
+	echo '</div>', "\n";
+	echo '</div>', "\n";
+
+	if( !isset( $p_options['columns'] ) || $p_options['columns'] ) {
+		echo '</div>', "\n";
+	}
+}
+
+/**
  * Check if a menu link points to the page being shown.
  *
  * For a link to a plugin page (plugin.php?page=Plugin/page) the plugin and the
