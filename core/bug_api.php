@@ -43,6 +43,7 @@
  * @uses lang_api.php
  * @uses mention_api.php
  * @uses relationship_api.php
+ * @uses search_api.php
  * @uses sponsorship_api.php
  * @uses tag_api.php
  * @uses user_api.php
@@ -71,6 +72,7 @@ require_api( 'history_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'mention_api.php' );
 require_api( 'relationship_api.php' );
+require_api( 'search_api.php' );
 require_api( 'sponsorship_api.php' );
 require_api( 'tag_api.php' );
 require_api( 'user_api.php' );
@@ -598,6 +600,8 @@ class BugData {
 		db_query( $t_query, array( $this->project_id, $this->reporter_id, $this->handler_id, $this->duplicate_id, $this->priority, $this->severity, $this->reproducibility, $t_status, $this->resolution, $this->projection, $this->category_id, $this->date_submitted, $this->last_updated, $this->eta, $t_text_id, $this->os, $this->os_build, $this->platform, $this->version, $this->build, $this->profile_id, $this->summary, $this->view_state, $this->sponsorship_total, $this->sticky, $this->fixed_in_version, $this->target_version, $this->due_date ) );
 
 		$this->id = db_insert_id( db_get_table( 'bug' ) );
+
+		search_queue_add( $this->id );
 
 		# log new bug
 		history_log_event_special( $this->id, NEW_BUG );
@@ -1577,6 +1581,9 @@ function bug_delete( $p_bug_id ) {
 	db_query( $t_query, array( $c_bug_id ) );
 
 	bug_clear_cache_all( $p_bug_id );
+
+	# The search index has to drop the issue.
+	search_queue_add( $c_bug_id );
 }
 
 /**
@@ -2252,6 +2259,9 @@ function bug_update_date( $p_bug_id ) {
 	db_query( $t_query, array( db_now(), $p_bug_id ) );
 
 	bug_clear_cache( $p_bug_id );
+
+	# Every change that matters to the search index goes through here.
+	search_queue_add( $p_bug_id );
 
 	return true;
 }

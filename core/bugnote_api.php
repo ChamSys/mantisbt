@@ -39,6 +39,7 @@
  * @uses history_api.php
  * @uses lang_api.php
  * @uses mention_api.php
+ * @uses search_api.php
  * @uses user_api.php
  * @uses utility_api.php
  */
@@ -59,6 +60,7 @@ require_api( 'helper_api.php' );
 require_api( 'history_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'mention_api.php' );
+require_api( 'search_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 
@@ -792,6 +794,9 @@ function bugnote_set_view_state( $p_bugnote_id, $p_private ) {
 	db_param_push();
 	$t_query = 'UPDATE {bugnote} SET view_state=' . db_param() . ' WHERE id=' . db_param();
 	db_query( $t_query, array( $t_view_state, $p_bugnote_id ) );
+
+	# A note that became private or public moves between two fields of the search index.
+	search_queue_add( $t_bug_id );
 
 	history_log_event_special( $t_bug_id, BUGNOTE_STATE_CHANGED, $t_view_state, bugnote_format_id( $p_bugnote_id ) );
 
