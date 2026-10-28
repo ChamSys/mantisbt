@@ -451,6 +451,27 @@ return array(
 			Events listed below are in order of runtime execution.
 		</para>
 
+		<blockquote id="dev.eventref.output.layout.htmlattributes">
+			<title>EVENT_LAYOUT_HTML_ATTRIBUTES (Default)</title>
+			<blockquote>
+				<para>
+					This event allows plugins to add attributes to the <literal>&lt;html&gt;</literal>
+					tag of every page, for example <literal>data-*</literal> attributes that a theme
+					uses in its CSS selectors.
+				</para>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;Array&gt;: attribute values by attribute name, for example
+						<literal>array( 'data-theme' => 'dark' )</literal>.  They are added to the
+						attributes of the tag, replacing any attribute with the same name, except for
+						<literal>class</literal>, which is added to the classes already there.  The values
+						are escaped.  A value of <literal>true</literal> prints the attribute without a
+						value, and <literal>false</literal> or <literal>null</literal> leaves it out.</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.output.layout.resources">
 			<title>EVENT_LAYOUT_RESOURCES (Output)</title>
 			<blockquote>
@@ -464,6 +485,29 @@ return array(
 				<itemizedlist>
 					<title>Return Value</title>
 					<listitem><para>&lt;String&gt;: HTML code to output.</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
+		<blockquote id="dev.eventref.output.layout.bodyattributes">
+			<title>EVENT_LAYOUT_BODY_ATTRIBUTES (Default)</title>
+			<blockquote>
+				<para>
+					This event allows plugins to add attributes to the <literal>&lt;body&gt;</literal>
+					tag of every page, including the login pages.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;String&gt;: the kind of page, <literal>page</literal> for the
+						pages of the application or <literal>login</literal> for the login, signup and
+						similar pages</para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;Array&gt;: attribute values by attribute name, handled like those
+						of <link linkend="dev.eventref.output.layout.htmlattributes">EVENT_LAYOUT_HTML_ATTRIBUTES</link>.</para></listitem>
 				</itemizedlist>
 			</blockquote>
 		</blockquote>

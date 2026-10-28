@@ -122,18 +122,16 @@ function layout_page_header_end( $p_page_id = null) {
 	event_signal( 'EVENT_LAYOUT_RESOURCES' );
 	html_head_end();
 
-	if ( $p_page_id === null ) {
-		$t_body_id = '';
-	} else {
-		$t_body_id = 'id="' . $p_page_id . '" ';
+	$t_attributes = array();
+	if( $p_page_id !== null ) {
+		$t_attributes['id'] = $p_page_id;
 	}
 
 	# Add right-to-left css if needed
-	if( layout_is_rtl() ) {
-		echo '<body ' . $t_body_id . 'class="skin-3 rtl">', "\n";
-	} else {
-		echo '<body ' . $t_body_id . 'class="skin-3">', "\n";
-	}
+	$t_attributes['class'] = layout_is_rtl() ? 'skin-3 rtl' : 'skin-3';
+
+	$t_attributes = html_attributes_add_from_event( $t_attributes, 'EVENT_LAYOUT_BODY_ATTRIBUTES', array( 'page' ) );
+	echo '<body', html_attributes( $t_attributes ), '>', "\n";
 
 	event_signal( 'EVENT_LAYOUT_BODY_BEGIN' );
 
@@ -373,7 +371,9 @@ function layout_login_page_begin( $p_page_title = '' ) {
 	event_signal( 'EVENT_LAYOUT_RESOURCES' );
 	html_head_end();
 
-	echo '<body class="login-layout light-login">';
+	$t_attributes = html_attributes_add_from_event( array( 'class' => 'login-layout light-login' ),
+		'EVENT_LAYOUT_BODY_ATTRIBUTES', array( 'login' ) );
+	echo '<body', html_attributes( $t_attributes ), '>';
 
 	html_top_banner( true );
 	layout_main_container_begin();

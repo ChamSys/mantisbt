@@ -152,8 +152,69 @@ function html_javascript_cdn_link( $p_url, $p_hash = '' ) {
  * @return void
  */
 function html_begin() {
+	$t_attributes = html_attributes_add_from_event(
+		array( 'lang' => lang_get_current_lang() ),
+		'EVENT_LAYOUT_HTML_ATTRIBUTES' );
+
 	echo '<!DOCTYPE html>', "\n";
-	echo '<html lang="', lang_get_current_lang(), '">', "\n";
+	echo '<html', html_attributes( $t_attributes ), '>', "\n";
+}
+
+/**
+ * Add the attributes that plugins provide for a tag to the ones it has.
+ *
+ * Each plugin callback of the event returns an array of attribute values by
+ * attribute name. They are added to the attributes of the tag, replacing
+ * those with the same name, except for the class attribute, where they are
+ * added to the ones already there.
+ *
+ * @param array  $p_attributes Attribute values by attribute name.
+ * @param string $p_event      The name of the event to ask the plugins.
+ * @param array  $p_params     The parameters of the event.
+ * @return array The attributes.
+ */
+function html_attributes_add_from_event( array $p_attributes, $p_event, array $p_params = array() ) {
+	$t_results = event_signal( $p_event, $p_params );
+
+	foreach( $t_results as $t_plugin_results ) {
+		foreach( $t_plugin_results as $t_result ) {
+			if( !is_array( $t_result ) ) {
+				continue;
+			}
+			foreach( $t_result as $t_name => $t_value ) {
+				if( $t_name === 'class' && !is_blank( $p_attributes['class'] ?? '' ) ) {
+					$t_value = $p_attributes['class'] . ' ' . $t_value;
+				}
+				$p_attributes[$t_name] = $t_value;
+			}
+		}
+	}
+
+	return $p_attributes;
+}
+
+/**
+ * Get the HTML for the attributes of a tag.
+ *
+ * The values are escaped. An attribute whose value is true is printed
+ * without a value, and one whose value is false or null is left out, as is
+ * one whose name is not valid.
+ *
+ * @param array $p_attributes Attribute values by attribute name.
+ * @return string The attributes, each one preceded by a space.
+ */
+function html_attributes( array $p_attributes ) {
+	$t_html = '';
+	foreach( $p_attributes as $t_name => $t_value ) {
+		if( $t_value === false || $t_value === null || !preg_match( '/^[a-zA-Z_:][-a-zA-Z0-9_:.]*$/', $t_name ) ) {
+			continue;
+		}
+		$t_html .= ' ' . $t_name;
+		if( $t_value !== true ) {
+			$t_html .= '="' . string_attribute( $t_value ) . '"';
+		}
+	}
+	return $t_html;
 }
 
 /**
