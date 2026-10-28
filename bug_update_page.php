@@ -209,7 +209,7 @@ if( $t_show_id || $t_show_project || $t_show_category || $t_show_view_state || $
 	# Titles for Bug Id, Project Name, Category, View State, Date Submitted, Last Updated
 	#
 
-	echo '<tr>';
+	echo '<tr class="bug-header">';
 	echo '<td class="category">', $t_show_id ? lang_get( 'id' ) : '', '</td>';
 	echo '<td class="category">', $t_show_project ? lang_get( 'email_project' ) : '', '</td>';
 	echo '<td class="category">';
@@ -228,16 +228,16 @@ if( $t_show_id || $t_show_project || $t_show_category || $t_show_view_state || $
 	# Values for Bug Id, Project Name, Category, View State, Date Submitted, Last Updated
 	#
 
-	echo '<tr>';
+	echo '<tr class="bug-header-data">';
 
 	# Bug ID
-	echo '<td>', $t_formatted_bug_id, '</td>';
+	echo '<td data-label="', string_attribute( lang_get( 'id' ) ), '">', $t_formatted_bug_id, '</td>';
 
 	# Project Name
-	echo '<td>', $t_project_name, '</td>';
+	echo '<td data-label="', string_attribute( lang_get( 'email_project' ) ), '">', $t_project_name, '</td>';
 
 	# Category
-	echo '<td>';
+	echo '<td data-label="', string_attribute( lang_get( 'category' ) ), '">';
 
 	if( $t_show_category ) {
         if( !category_is_enabled( $t_bug->category_id ) ) {
@@ -257,7 +257,7 @@ if( $t_show_id || $t_show_project || $t_show_category || $t_show_view_state || $
 	echo '</td>';
 
 	# View State
-	echo '<td>';
+	echo '<td data-label="', string_attribute( lang_get( 'view_status' ) ), '">';
 
 	if( $t_can_change_view_state ) {
 		echo '<select ' . helper_get_tab_index() . ' id="view_state" name="view_state" class="input-sm">';
@@ -270,10 +270,10 @@ if( $t_show_id || $t_show_project || $t_show_category || $t_show_view_state || $
 	echo '</td>';
 
 	# Date Submitted
-	echo '<td>', $t_show_date_submitted ? date( config_get( 'normal_date_format' ), $t_bug->date_submitted ) : '', '</td>';
+	echo '<td data-label="', string_attribute( lang_get( 'date_submitted' ) ), '">', $t_show_date_submitted ? date( config_get( 'normal_date_format' ), $t_bug->date_submitted ) : '', '</td>';
 
 	# Date Updated
-	echo '<td>', $t_show_last_updated ? date( config_get( 'normal_date_format' ), $t_bug->last_updated ) : '', '</td>';
+	echo '<td data-label="', string_attribute( lang_get( 'last_update' ) ), '">', $t_show_last_updated ? date( config_get( 'normal_date_format' ), $t_bug->last_updated ) : '', '</td>';
 
 	echo '</tr>';
 
