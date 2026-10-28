@@ -4075,6 +4075,29 @@ $g_filter_custom_fields_per_row = 8;
 $g_view_filters = SIMPLE_DEFAULT;
 
 /**
+ * The backend used for the text search of the issue filter.
+ *
+ * Possible values are:
+ * - 'database' - search with SQL (LIKE) in the summary, description, steps to
+ *   reproduce, additional information and notes of the issues. No setup needed.
+ * - other names are provided by the classes in core/classes/Search*Backend.class.php;
+ *   they keep an index of the issues, see scripts/search_index.php.
+ *
+ * @global string $g_search_backend
+ */
+$g_search_backend = 'database';
+
+/**
+ * The maximum number of issues an indexed search backend returns for a search.
+ *
+ * Its results are then narrowed down by the rest of the filter and by what the
+ * user may see, so searches that match more issues than this are incomplete.
+ *
+ * @global int $g_search_candidate_limit
+ */
+$g_search_candidate_limit = 500;
+
+/**
  * Allow use of dynamic filter controls.
  *
  * This switch enables the use of AJAX to dynamically load and create filter
@@ -5347,6 +5370,8 @@ $g_global_settings = array(
 	'plugins_enabled',
 	'project_cookie',
 	'public_config_names',
+	'search_backend',
+	'search_candidate_limit',
 	'session_save_path',
 	'session_validation',
 	'short_path',
