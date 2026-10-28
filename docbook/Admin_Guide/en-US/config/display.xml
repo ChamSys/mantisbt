@@ -26,6 +26,16 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_mobile_layout</term>
+			<listitem>
+				<para>Lay the pages out for phones, on screens narrower than 768 pixels.
+					Tables become stacked cards, forms show the label above each field,
+					and form controls are large enough to touch. Nothing changes on wider screens. The default is <literal>OFF</literal>.
+					A theme can restyle all of it: the markup and the <literal>data-*</literal>
+					attributes are the same with or without a theme.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_font_family</term>
 			<listitem>
 				<para>Name of the google font family to use.</para>

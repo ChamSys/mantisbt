@@ -1260,6 +1260,18 @@ $g_theme = 'default';
 $g_color_scheme = 'auto';
 
 /**
+ * Lay the pages out for phones: a stylesheet and a script that apply to
+ * screens narrower than 768 pixels. Tables become stacked cards, the issue page
+ * shows one section at a time (details, notes, history), the main menu moves to
+ * a bar at the bottom of the screen, and forms get larger controls. Nothing
+ * changes on wider screens. A theme can restyle all of it, the elements and
+ * their data-* attributes are the same with or without a theme.
+ *
+ * @global integer $g_mobile_layout
+ */
+$g_mobile_layout = OFF;
+
+/**
  * List the Google fonts that the users are allowed to choose from.
  *
  * Google offers over 800 fonts. The list below is limited to the ones tested

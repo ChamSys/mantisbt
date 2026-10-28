@@ -1,0 +1,438 @@
+/*
+ * Layout for phones, linked when $g_mobile_layout is ON.
+ *
+ * Everything is inside the media query, so nothing changes on wider screens.
+ * It keys on the data-* attributes and the classes of the page that are
+ * documented as stable (data-section, data-panel, data-label, data-menu-id,
+ * data-status, data-pager), not on the structure of the Ace markup. Colors come
+ * from the status variables and from inheritance, so a theme loaded after this
+ * file can restyle it with its own variables.
+ */
+
+@media (max-width: 767px) {
+
+	:root {
+		--mobile-target: 44px;
+		--mobile-bar-height: 56px;
+		--mobile-gap: 12px;
+		--mobile-radius: 6px;
+		--mobile-border: #d5d5d5;
+		--mobile-muted: #6f6f6f;
+		--mobile-surface: #fff;
+		--mobile-accent: #438eb9;
+	}
+
+	body {
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+		overflow-x: hidden;
+	}
+
+	/* Page */
+
+	.page-content {
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+
+	.page-content .row {
+		margin-left: -8px;
+		margin-right: -8px;
+	}
+
+	.page-content .col-xs-12,
+	.page-content .col-md-12 {
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+
+	.main-content {
+		padding-bottom: calc(var(--mobile-bar-height) + env(safe-area-inset-bottom, 0px));
+	}
+
+	/* Controls: at least 16px, so that iOS does not zoom in on focus, and 44px to touch */
+
+	input[type="text"],
+	input[type="search"],
+	input[type="email"],
+	input[type="password"],
+	input[type="number"],
+	input[type="date"],
+	input[type="url"],
+	input[type="tel"],
+	select,
+	textarea,
+	.form-control,
+	.input-sm,
+	.input-xs {
+		font-size: 16px;
+		min-height: var(--mobile-target);
+		max-width: 100%;
+	}
+
+	.btn,
+	.btn-sm,
+	.btn-xs,
+	.btn-white {
+		min-height: var(--mobile-target);
+		min-width: var(--mobile-target);
+		padding-top: 8px;
+		padding-bottom: 8px;
+		font-size: 14px;
+		line-height: 1.4;
+	}
+
+	.btn-xs,
+	.btn-sm {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	/* Checkboxes and radios keep their size but get a bigger hit area through their label */
+
+	label {
+		min-height: 24px;
+	}
+
+	/* Inline forms (attach tags, assign to, change status): the controls wrap instead of running off the screen */
+
+	form.form-inline {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+	}
+
+	form.form-inline > label {
+		flex: 1 0 100%;
+		margin: 0;
+	}
+
+	form.form-inline :is(input[type="text"], select) {
+		flex: 1 1 140px;
+		width: auto;
+		min-width: 0;
+	}
+
+	/* Tables that are forms or key-value lists: one column of label above value */
+
+	.widget-main .table-responsive {
+		overflow-x: visible;
+		border: 0;
+	}
+
+	/* Issue page */
+
+	.bug-detail-table,
+	.bug-detail-table > tbody {
+		display: block;
+		width: 100%;
+	}
+
+	.bug-detail-table tr[data-section] {
+		display: grid;
+		grid-template-columns: 112px minmax(0, 1fr);
+		border-bottom: 1px solid var(--mobile-border);
+	}
+
+	.bug-detail-table tr[data-section] > th,
+	.bug-detail-table tr[data-section] > td {
+		display: block;
+		width: auto;
+		min-width: 0;
+		border: 0;
+		padding: 8px 10px;
+		overflow-wrap: anywhere;
+	}
+
+	.bug-detail-table tr[data-section] > th {
+		font-weight: 600;
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	/* Cells that fill a row up to the width of the table are not part of the pairs */
+	.bug-detail-table tr[data-section] > td[colspan] {
+		grid-column: auto;
+	}
+
+	.bug-detail-table tr[data-section] > td:empty,
+	.bug-detail-table tr[data-section] > th:empty {
+		display: none;
+	}
+
+	/* The header is a row of labels and a row of values: show each value with its label */
+	.bug-detail-table tr.bug-header {
+		display: none;
+	}
+
+	.bug-detail-table tr.bug-header-data {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.bug-detail-table tr.bug-header-data > td {
+		display: block;
+		padding: 8px 10px;
+	}
+
+	.bug-detail-table tr.bug-header-data > td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 12px;
+		color: var(--mobile-muted);
+	}
+
+	.bug-detail-table tr.bug-header-data > td:empty {
+		display: none;
+	}
+
+	.bug-detail-table tr.spacer {
+		display: none;
+	}
+
+	/* Notes: the author and the date above the text, not in a column beside it */
+
+	#bugnotes table,
+	#bugnotes tbody {
+		display: block;
+		width: 100%;
+	}
+
+	#bugnotes tr.bugnote {
+		display: block;
+		border-bottom: 1px solid var(--mobile-border);
+	}
+
+	#bugnotes tr.bugnote > td {
+		display: block;
+		width: auto;
+		border: 0;
+		padding: 8px 10px;
+		overflow-wrap: anywhere;
+	}
+
+	#bugnotes tr.bugnote > td.bugnote-meta {
+		padding-bottom: 0;
+	}
+
+	#bugnotes tr.bugnote > td.bugnote-note img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	/* History: one entry per card */
+
+	table.bug-history,
+	table.bug-history > tbody {
+		display: block;
+		width: 100%;
+	}
+
+	table.bug-history > thead {
+		display: none;
+	}
+
+	table.bug-history > tbody > tr {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		border-bottom: 1px solid var(--mobile-border);
+	}
+
+	table.bug-history > tbody > tr > td {
+		display: block;
+		border: 0;
+		padding: 4px 10px;
+		overflow-wrap: anywhere;
+	}
+
+	table.bug-history > tbody > tr > td:last-child {
+		grid-column: 1 / -1;
+	}
+
+	/* Forms (report, update, add a note): the label above its control, one field per line */
+
+	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table,
+	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody,
+	table.bug-update-table,
+	table.bug-update-table > tbody {
+		display: block;
+		width: 100%;
+	}
+
+	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr,
+	table.bug-update-table > tbody > tr {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		border-bottom: 1px solid var(--mobile-border);
+	}
+
+	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr > :is(th, td),
+	table.bug-update-table > tbody > tr > :is(th, td) {
+		display: block;
+		width: auto;
+		min-width: 0;
+		border: 0;
+		padding: 6px 10px;
+		white-space: normal;
+	}
+
+	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr > th,
+	table.bug-update-table > tbody > tr > th {
+		padding-bottom: 0;
+		font-weight: 600;
+	}
+
+	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr > :is(th, td):empty,
+	table.bug-update-table > tbody > tr > :is(th, td):empty {
+		display: none;
+	}
+
+	:is(#report_bug_form, #bugnote_add, #update_bug_form) :is(textarea, select, input[type="text"]) {
+		width: 100%;
+	}
+
+	/* Issue list: one card per issue */
+
+	#buglist {
+		display: block;
+		border: 0;
+	}
+
+	#buglist > thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	#buglist > tbody {
+		display: block;
+	}
+
+	#buglist > tbody > tr[data-bug-id] {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 2px 10px;
+		margin-bottom: var(--mobile-gap);
+		padding: 10px 12px;
+		border: 1px solid var(--mobile-border);
+		border-left: 4px solid var(--mobile-border);
+		border-radius: var(--mobile-radius);
+		background: var(--mobile-surface);
+	}
+
+	#buglist > tbody > tr.sticky-separator {
+		display: none;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td {
+		display: block;
+		width: auto;
+		min-width: 0;
+		padding: 0;
+		border: 0;
+		font-size: 13px;
+		color: var(--mobile-muted);
+		background: transparent;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td:empty {
+		display: none;
+	}
+
+	/* The summary takes the whole width, on a line of its own, first */
+	#buglist > tbody > tr[data-bug-id] > td.column-summary {
+		order: -1;
+		flex: 1 0 100%;
+		margin-bottom: 4px;
+		font-size: 16px;
+		line-height: 1.35;
+		color: inherit;
+		overflow-wrap: anywhere;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td.column-selection,
+	#buglist > tbody > tr[data-bug-id] > td.column-edit {
+		order: -2;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td.column-selection {
+		margin-right: auto;
+	}
+
+	#buglist > tbody > tr[data-bug-id] > td.column-id {
+		font-weight: 600;
+	}
+
+	/* The color of the status, as the issue page and the bars of the summary use it */
+	#buglist > tbody > tr[data-status="10"] { border-left-color: var(--status-10, var(--mobile-border)); }
+	#buglist > tbody > tr[data-status="20"] { border-left-color: var(--status-20, var(--mobile-border)); }
+	#buglist > tbody > tr[data-status="30"] { border-left-color: var(--status-30, var(--mobile-border)); }
+	#buglist > tbody > tr[data-status="40"] { border-left-color: var(--status-40, var(--mobile-border)); }
+	#buglist > tbody > tr[data-status="50"] { border-left-color: var(--status-50, var(--mobile-border)); }
+	#buglist > tbody > tr[data-status="80"] { border-left-color: var(--status-80, var(--mobile-border)); }
+	#buglist > tbody > tr[data-status="90"] { border-left-color: var(--status-90, var(--mobile-border)); }
+
+	/* Pager: the current page and the links to move, the range of pages does not fit */
+
+	li[data-pager="page"]:not(.active),
+	li[data-pager="gap"] {
+		display: none;
+	}
+
+	li[data-pager] > a {
+		min-width: var(--mobile-target);
+		min-height: var(--mobile-target);
+		line-height: calc(var(--mobile-target) - 14px);
+		text-align: center;
+	}
+
+	/* Filter: one field per line, the label above the control */
+
+	.filter-box table,
+	.filter-box tbody,
+	.filter-box tr {
+		display: block;
+		width: 100%;
+	}
+
+	.filter-box td.category,
+	.filter-box td.small-caption.category {
+		display: none;
+	}
+
+	.filter-box td[data-label] {
+		display: block;
+		width: auto;
+		padding: 6px 10px;
+	}
+
+	.filter-box td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--mobile-muted);
+		margin-bottom: 2px;
+	}
+
+	.filter-box td[data-label]:empty {
+		display: none;
+	}
+
+	.filter-box select,
+	.filter-box input[type="text"] {
+		width: 100%;
+	}
+
+	/* Bottom bar and its spacing */
+
+	#scroll-btn,
+	.btn-scroll-up {
+		bottom: calc(var(--mobile-bar-height) + 12px + env(safe-area-inset-bottom, 0px));
+	}
+}

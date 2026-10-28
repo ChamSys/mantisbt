@@ -420,12 +420,20 @@ function layout_is_rtl() {
 }
 
 /**
+ * Check if the pages are laid out for phones, see $g_mobile_layout.
+ * @return boolean
+ */
+function layout_mobile_is_enabled() {
+	return ON == config_get( 'mobile_layout', null, null, ALL_PROJECTS );
+}
+
+/**
  * Print meta tags for the page head
  * @return void
  */
 function layout_head_meta() {
 	echo "\t" , '<meta name="viewport" content="width=device-width, initial-scale=1.0',
-		theme_uses_viewport_fit() ? ', viewport-fit=cover' : '', '">' , "\n";
+		( theme_uses_viewport_fit() || layout_mobile_is_enabled() ) ? ', viewport-fit=cover' : '', '">' , "\n";
 	theme_print_meta();
 }
 
@@ -467,6 +475,9 @@ function layout_head_css() {
 		html_css_link( 'ace-rtl.min.css', $t_cache_key );
 	}
 	html_css_link( 'ace-mantis.css', $t_cache_key );
+	if( layout_mobile_is_enabled() ) {
+		html_css_link( 'mobile.css', $t_cache_key );
+	}
 
 	# Set font preference
 	layout_user_font_preference();
