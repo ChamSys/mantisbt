@@ -138,13 +138,16 @@ function form_security_param( $p_form_name, $p_security_token = null ) {
 }
 
 /**
- * Validate the security token for the given form name based on tokens
- * stored in the user's session.  While checking stored tokens, any that
- * are more than 3 days old will be purged.
+ * Check the security token for the given form name against the tokens stored
+ * in the user's session, without raising an error when it does not match.
+ *
+ * Use this instead of form_security_validate() when the caller handles an
+ * invalid token itself, for example by answering with an HTTP error to an
+ * AJAX request.
  * @param string $p_form_name Form name.
  * @return boolean Form is valid
  */
-function form_security_validate( $p_form_name ) {
+function form_security_check( $p_form_name ) {
 	if( PHP_CLI == php_mode() || OFF == config_get_global( 'form_security_validation' ) ) {
 		return true;
 	}
@@ -153,8 +156,6 @@ function form_security_validate( $p_form_name ) {
 
 	# Short-circuit if we don't have any tokens for the given form name
 	if( !isset( $t_tokens[$p_form_name] ) || !is_array( $t_tokens[$p_form_name] ) || count( $t_tokens[$p_form_name] ) < 1 ) {
-
-		trigger_error( ERROR_FORM_TOKEN_INVALID, ERROR );
 		return false;
 	}
 
@@ -164,7 +165,6 @@ function form_security_validate( $p_form_name ) {
 
 	# No form input
 	if( '' == $t_input ) {
-		trigger_error( ERROR_FORM_TOKEN_INVALID, ERROR );
 		return false;
 	}
 
@@ -172,13 +172,23 @@ function form_security_validate( $p_form_name ) {
 	$t_date = mb_substr( $t_input, 0, 8 );
 
 	# Check if the token exists
-	if( isset( $t_tokens[$p_form_name][$t_date][$t_input] ) ) {
-		return true;
+	return isset( $t_tokens[$p_form_name][$t_date][$t_input] );
+}
+
+/**
+ * Validate the security token for the given form name based on tokens
+ * stored in the user's session.  While checking stored tokens, any that
+ * are more than 3 days old will be purged.
+ * @param string $p_form_name Form name.
+ * @return boolean Form is valid
+ */
+function form_security_validate( $p_form_name ) {
+	if( !form_security_check( $p_form_name ) ) {
+		trigger_error( ERROR_FORM_TOKEN_INVALID, ERROR );
+		return false;
 	}
 
-	# Token does not exist
-	trigger_error( ERROR_FORM_TOKEN_INVALID, ERROR );
-	return false;
+	return true;
 }
 
 /**
