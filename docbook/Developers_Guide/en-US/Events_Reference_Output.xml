@@ -38,6 +38,32 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.output.display.username">
+			<title>EVENT_DISPLAY_USER_NAME (Chained)</title>
+
+			<blockquote>
+				<para>
+					This is an event to change how the name of a user is displayed on the pages (issue
+					list, issue page, notes, timeline), for example to add a badge.  It is not used in
+					emails.  The HTML of the name is a link, or a <literal>span</literal> or
+					<literal>del</literal> if the user is disabled or no link is wanted, always with the
+					class <literal>user-name</literal> and the attribute <literal>data-user-id</literal>.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;String&gt;: the HTML of the name</para></listitem>
+					<listitem><para>&lt;Integer&gt;: the user id</para></listitem>
+					<listitem><para>&lt;Boolean&gt;: whether the name is a link</para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;String&gt;: the modified HTML of the name</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.output.display.email">
 			<title>EVENT_DISPLAY_EMAIL (Chained)</title>
 

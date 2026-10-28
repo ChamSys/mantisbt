@@ -134,16 +134,20 @@ function prepare_user_name( $p_user_id, $p_link = true ) {
 	}
 
 	$t_name = string_display_line( $t_name );
+	$t_attributes = ' class="user-name" data-user-id="' . (int)$p_user_id . '"';
 
 	if( user_exists( $p_user_id ) && user_get_field( $p_user_id, 'enabled' ) ) {
 		if( $p_link ) {
-			return '<a' . $t_tooltip . ' href="' . string_sanitize_url( 'view_user_page.php?id=' . $p_user_id, true ) . '">' . $t_name . '</a>';
+			$t_html = '<a' . $t_tooltip . $t_attributes . ' href="' . string_sanitize_url( 'view_user_page.php?id=' . $p_user_id, true ) . '">' . $t_name . '</a>';
 		} else {
-			return '<span ' . $t_tooltip . '>' . $t_name . '</span>';
+			$t_html = '<span ' . $t_tooltip . $t_attributes . '>' . $t_name . '</span>';
 		}
+	} else {
+		$t_html = '<del ' . $t_tooltip . $t_attributes . '>' . $t_name . '</del>';
 	}
 
-	return '<del ' . $t_tooltip . '>' . $t_name . '</del>';
+	# Plugins can add to the name, for example a badge
+	return event_signal( 'EVENT_DISPLAY_USER_NAME', $t_html, array( (int)$p_user_id, (bool)$p_link ) );
 }
 
 /**

@@ -166,6 +166,9 @@ event_declare_many( array(
 	# Pages of an issue
 	'EVENT_BUG_PAGE' => EVENT_TYPE_FIRST,
 
+	# Names of users
+	'EVENT_DISPLAY_USER_NAME' => EVENT_TYPE_CHAIN,
+
 	# Authentication Events
 	'EVENT_AUTH_USER_FLAGS' => EVENT_TYPE_FIRST,
 	'EVENT_AUTH_LOGIN_FORM_BEFORE' => EVENT_TYPE_OUTPUT,
