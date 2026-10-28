@@ -306,6 +306,31 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.manage.user.merge">
+			<title>EVENT_MANAGE_USER_MERGE (Execute)</title>
+
+			<blockquote>
+				<para>
+					This event allows plugins to give the rows they keep for a user to the user that
+					replaces them, when a user is merged into another one (<literal>user_merge()</literal>).
+					It is triggered after MantisBT has given the issues, notes and the rest to the other
+					user, and before the first user is deleted (which triggers
+					<literal>EVENT_MANAGE_USER_DELETE</literal>).  It is triggered inside the transaction of the
+					merge: an error in a callback cancels the whole merge.  A table that can only hold one row
+					for each user and issue (votes, subscriptions) needs a decision for the rows both users
+					have: MantisBT keeps the ones of the user that remains.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Integer&gt;: the ID of the user that is merged, and deleted</para></listitem>
+					<listitem><para>&lt;Integer&gt;: the ID of the user that gets everything</para></listitem>
+					<listitem><para>&lt;Array&gt;: the row of the user that is merged (without the password
+						and the cookie string)</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.manage.user.view">
 			<title>EVENT_MANAGE_USER_PAGE (Execute)</title>
 
