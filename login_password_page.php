@@ -212,6 +212,7 @@ if( config_get_global( 'admin_checks' ) == ON && file_exists( __DIR__ .'/admin/.
 					<?php echo $t_form_title ?>
 				</h4>
 				<div class="space-10"></div>
+<?php event_signal( 'EVENT_AUTH_LOGIN_FORM_BEFORE', array( 'login_password_page.php', $f_return, $t_username ) ); ?>
 	<form id="login-form" method="post" action="login.php">
 		<fieldset>
 
@@ -278,6 +279,7 @@ if( config_get_global( 'admin_checks' ) == ON && file_exists( __DIR__ .'/admin/.
 			?>
 		</fieldset>
 	</form>
+<?php event_signal( 'EVENT_AUTH_LOGIN_FORM_AFTER', array( 'login_password_page.php', $f_return, $t_username ) ); ?>
 </div>
 </div>
 </div>

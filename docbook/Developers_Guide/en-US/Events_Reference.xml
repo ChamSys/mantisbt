@@ -177,6 +177,34 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.auth.loginform">
+			<title>EVENT_AUTH_LOGIN_FORM_BEFORE and EVENT_AUTH_LOGIN_FORM_AFTER (Output)</title>
+
+			<blockquote>
+				<para>
+					Events that let authentication plugins add content to the login pages, just
+					before and just after the login form, inside the login box.  An example is a
+					"Sign in with ..." button for an external identity provider.  Both are triggered
+					by the page that asks for the user name (<filename>login_page.php</filename>) and
+					by the one that asks for the password (<filename>login_password_page.php</filename>).
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;String&gt;: the page, <literal>login_page.php</literal> or
+						<literal>login_password_page.php</literal></para></listitem>
+					<listitem><para>&lt;String&gt;: the URL to go to after logging in, already sanitized, or an empty string</para></listitem>
+					<listitem><para>&lt;String&gt;: the user name typed so far, already sanitized, or an empty string</para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;String&gt;: HTML to output.  Output echoed directly by the
+						callback is also displayed.</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.cronjob">
 			<title>EVENT_CRONJOB (Execute)</title>
 

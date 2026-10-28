@@ -214,6 +214,7 @@ if( config_get_global( 'admin_checks' ) == ON ) {
 					<?php echo $t_form_title ?>
 				</h4>
 				<div class="space-10"></div>
+<?php event_signal( 'EVENT_AUTH_LOGIN_FORM_BEFORE', array( 'login_page.php', $f_return, $t_username ) ); ?>
 	<form id="login-form" method="post" action="<?php echo AUTH_PAGE_CREDENTIAL ?>">
 		<fieldset>
 
@@ -244,6 +245,7 @@ if( config_get_global( 'admin_checks' ) == ON ) {
 			<input type="submit" class="width-40 pull-right btn btn-success btn-inverse bigger-110" value="<?php echo lang_get( 'login' ) ?>" />
 		</fieldset>
 	</form>
+<?php event_signal( 'EVENT_AUTH_LOGIN_FORM_AFTER', array( 'login_page.php', $f_return, $t_username ) ); ?>
 
 <?php
 #
