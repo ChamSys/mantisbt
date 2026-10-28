@@ -232,6 +232,28 @@ function plugin_file_path( $p_filename = '', $p_base_name = '' ) {
 }
 
 /**
+ * Enforce the rules of a plugin page, see MantisPlugin::pages().
+ *
+ * @param array $p_rule The rules of the page.
+ * @return void
+ * @access public
+ */
+function plugin_page_enforce( array $p_rule ) {
+	if( $p_rule['auth'] ?? true ) {
+		auth_ensure_user_authenticated();
+	}
+
+	if( isset( $p_rule['access'] ) ) {
+		$t_access = is_int( $p_rule['access'] ) ? $p_rule['access'] : config_get( $p_rule['access'] );
+		access_ensure_global_level( $t_access );
+	}
+
+	if( isset( $p_rule['csrf'] ) && $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+		form_security_validate( $p_rule['csrf'] );
+	}
+}
+
+/**
  * Get the plugin page that is being shown.
  *
  * @return string|null The plugin and page, as in "Plugin/page", or null when

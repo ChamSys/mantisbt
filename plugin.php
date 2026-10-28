@@ -74,4 +74,11 @@ if( gpc_isset( 'cache_key' ) ) {
 }
 
 plugin_push_current( $t_basename );
+
+# The rules the plugin declared for the page
+$t_page_rules = $t_plugin->pages();
+if( isset( $t_page_rules[$t_action] ) ) {
+	plugin_page_enforce( $t_page_rules[$t_action] );
+}
+
 include( $t_page );

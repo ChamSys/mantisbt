@@ -215,6 +215,30 @@ abstract class MantisPlugin {
 	}
 
 	/**
+	 * This function declares the rules for the pages of the plugin, which plugin.php
+	 * enforces before the page runs, so that a page cannot forget them. It returns an
+	 * associative array with page names as the key, and for each page an array with:
+	 * - 'auth': whether the user must be logged in, true by default,
+	 * - 'access': the access level the user needs, as a number or the name of a
+	 *   configuration option, checked on all projects,
+	 * - 'csrf': the name of the form, whose security token is validated when the
+	 *   request is a POST.
+	 * Pages that are not listed are not checked.
+	 * <code>
+	 * public function pages() {
+	 * 	return array(
+	 * 		'config' => array( 'access' => 'manage_plugin_threshold' ),
+	 * 		'config_update' => array( 'access' => 'manage_plugin_threshold', 'csrf' => 'plugin_Example_config_update' ),
+	 * 	);
+	 * }
+	 * </code>
+	 * @return array
+	 */
+	public function pages() {
+		return array();
+	}
+
+	/**
 	 * Array of Database Schema changes for the plugin
 	 *
 	 * For example, the following code example would try and perform 4 schema updates:
