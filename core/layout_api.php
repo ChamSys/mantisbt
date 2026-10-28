@@ -1099,8 +1099,24 @@ function layout_config_menu_options_for_sidebar( ) {
  * @return void
  */
 function layout_options_for_sidebar( $p_menu_options, $p_active_sidebar_page ) {
-	foreach( $p_menu_options as $t_menu_option ) {
+	foreach( layout_get_visible_sidebar_items( $p_menu_options ) as $t_menu_option ) {
 		$t_icon = isset( $t_menu_option['icon'] ) ? $t_menu_option['icon'] : 'fa-plug';
+
+		layout_sidebar_menu( $t_menu_option['url'], $t_menu_option['title'], $t_icon, $p_active_sidebar_page );
+	}
+}
+
+/**
+ * Keep the sidebar items that can be displayed to the current user: the ones
+ * that have an url and a title, and whose access level is held in the current
+ * project.
+ * @param array $p_menu_options Sidebar items, see layout_get_sidebar_items().
+ * @return array The items to display, in the same order.
+ */
+function layout_get_visible_sidebar_items( array $p_menu_options ) {
+	$t_items = array();
+
+	foreach( $p_menu_options as $t_menu_option ) {
 		if( !isset( $t_menu_option['url'] ) || !isset( $t_menu_option['title'] ) ) {
 			continue;
 		}
@@ -1111,8 +1127,10 @@ function layout_options_for_sidebar( $p_menu_options, $p_active_sidebar_page ) {
 			}
 		}
 
-		layout_sidebar_menu( $t_menu_option['url'], $t_menu_option['title'], $t_icon, $p_active_sidebar_page );
+		$t_items[] = $t_menu_option;
 	}
+
+	return $t_items;
 }
 
 /**
@@ -1130,6 +1148,25 @@ function layout_sidebar_begin() {
 
 
 /**
+ * Get a stable id for a menu item, for stylesheets and scripts: the name of the
+ * page (without .php), or plugin-<plugin>-<page> for the pages of plugins.
+ * @param string $p_page page name or url of the menu item
+ * @return string
+ */
+function layout_get_menu_id( $p_page ) {
+	$t_path = (string)parse_url( $p_page, PHP_URL_PATH );
+	$t_menu_id = basename( $t_path, '.php' );
+	if( basename( $t_path ) == 'plugin.php' ) {
+		parse_str( (string)parse_url( $p_page, PHP_URL_QUERY ), $t_query );
+		if( isset( $t_query['page'] ) ) {
+			$t_menu_id = 'plugin-' . str_replace( '/', '-', $t_query['page'] );
+		}
+	}
+
+	return $t_menu_id;
+}
+
+/**
  * Print sidebar menu item
  * @param string $p_page page name
  * @param string $p_title menu title in english
@@ -1140,18 +1177,7 @@ function layout_sidebar_begin() {
 function layout_sidebar_menu( $p_page, $p_title, $p_icon, $p_active_sidebar_page = null ) {
 	$t_active = ( $p_page == $p_active_sidebar_page || layout_url_is_current_page( $p_page ) );
 
-	# A stable id for the item, for stylesheets and scripts: the name of the page
-	# (without .php), or plugin-<plugin>-<page> for the pages of plugins
-	$t_path = (string)parse_url( $p_page, PHP_URL_PATH );
-	$t_menu_id = basename( $t_path, '.php' );
-	if( basename( $t_path ) == 'plugin.php' ) {
-		parse_str( (string)parse_url( $p_page, PHP_URL_QUERY ), $t_query );
-		if( isset( $t_query['page'] ) ) {
-			$t_menu_id = 'plugin-' . str_replace( '/', '-', $t_query['page'] );
-		}
-	}
-
-	echo '<li', $t_active ? ' class="active"' : '', ' data-menu-id="', string_attribute( $t_menu_id ), '">', "\n";
+	echo '<li', $t_active ? ' class="active"' : '', ' data-menu-id="', string_attribute( layout_get_menu_id( $p_page ) ), '">', "\n";
 
 	# Handle relative / absolute urls
 	if( !is_null( parse_url( $p_page, PHP_URL_SCHEME ) ) ) {
