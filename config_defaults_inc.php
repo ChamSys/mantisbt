@@ -1392,6 +1392,16 @@ $g_admin_dir_check = ON;
 $g_favicon_image = 'images/favicon.ico';
 
 /**
+ * Image for the brand in the navigation bar, shown instead of the name of the
+ * site ($g_window_title, which then is its text alternative). The path is
+ * relative to the MantisBT directory, or a full url. Empty for the name.
+ * It is shown at the height of the bar, 30 pixels.
+ *
+ * @global string $g_navbar_logo_image
+ */
+$g_navbar_logo_image = '';
+
+/**
  * Logo.
  *
  * @global string $g_logo_image
@@ -5562,6 +5572,7 @@ $g_global_settings = array(
 	'manage_config_cookie',
 	'manual_url',
 	'max_textarea_length',
+	'navbar_logo_image',
 	'path',
 	'plugin_path',
 	'plugins_enabled',

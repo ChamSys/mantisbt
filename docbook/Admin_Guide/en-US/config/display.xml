@@ -141,6 +141,14 @@ $g_favicon_image = array(
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_navbar_logo_image</term>
+			<listitem>
+				<para>Path to an image (relative to MantisBT root folder, or a full URL) to show as the brand in
+					the navigation bar, instead of the name of the site, which then is its text alternative.
+					It is shown 30 pixels high. Empty by default: the name of the site is shown.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_logo_image</term>
 			<listitem>
 				<para>Path to the logo image relative to MantisBT root folder (default 'images/mantis_logo.gif').</para>

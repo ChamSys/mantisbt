@@ -689,9 +689,16 @@ function layout_navbar() {
 
 	echo '<div class="navbar-header">';
 	echo '<a href="' . $t_short_path . $t_logo_url . '" class="navbar-brand">';
-	echo '<span class="smaller-75"> ';
-	echo string_display_line( config_get('window_title') );
-	echo ' </span>';
+	$t_navbar_logo = config_get_global( 'navbar_logo_image' );
+	if( !is_blank( $t_navbar_logo ) ) {
+		# An image instead of the name of the site, which is its text alternative
+		echo '<img class="navbar-brand-logo" src="', string_attribute( helper_mantis_url( $t_navbar_logo ) ), '" alt="',
+			string_attribute( config_get( 'window_title' ) ), '">';
+	} else {
+		echo '<span class="smaller-75"> ';
+		echo string_display_line( config_get('window_title') );
+		echo ' </span>';
+	}
 	echo '</a>';
 
 	$t_toggle_class = (OFF == config_get('show_avatar') ? 'navbar-toggle' : 'navbar-toggle-img');

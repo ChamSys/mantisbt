@@ -787,3 +787,11 @@ ul.changelog > li, ul.roadmap > li {
 #main-content:focus {
 	outline: 0;
 }
+
+/* Image for the brand in the navbar, $g_navbar_logo_image */
+.navbar-brand-logo {
+	height: 30px;
+	width: auto;
+	max-width: 200px;
+	margin-top: -4px;
+}
