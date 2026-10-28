@@ -1,0 +1,83 @@
+# Development stack for the ChamSys MantisBT fork: nginx + php-fpm + MariaDB + Meilisearch.
+#
+# The repository root is bind-mounted as the web root, so edits show up immediately (opcache
+# revalidates on every request). Not for production: fixed dev credentials, detailed errors.
+#
+#   chamsys/stack/stack.sh up         build and start everything
+#   chamsys/stack/stack.sh install    composer install + create/upgrade the database schema
+#
+# Then browse to http://localhost:8088/ and log in as administrator / root.
+name: mantis-fork
+
+services:
+  php:
+    build:
+      context: php
+    restart: unless-stopped
+    # Same uid as the host user, so files written to the bind mount stay yours.
+    user: "${CONTAINER_UID:-1000}:${CONTAINER_GID:-1000}"
+    environment:
+      MANTIS_DB_HOST: db
+      MANTIS_DB_NAME: mantis
+      MANTIS_DB_USER: mantis
+      MANTIS_DB_PASSWORD: mantis
+      MANTIS_URL: http://localhost:${MANTIS_HTTP_PORT:-8088}/
+      # The uid above has no home directory in the image.
+      COMPOSER_HOME: /tmp/composer
+      HOME: /tmp
+      MEILI_URL: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-dev-master-key-change-me}
+    volumes:
+      - ../..:/var/www/html
+      - ./config_inc.php:/var/www/html/config/config_inc.php:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/9000'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MANTIS_HTTP_PORT:-8088}:80"
+    volumes:
+      - ../..:/var/www/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+
+  db:
+    image: mariadb:12
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: mantis
+      MARIADB_USER: mantis
+      MARIADB_PASSWORD: mantis
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-dev-master-key-change-me}
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_ENV: development
+    ports:
+      - "127.0.0.1:${MEILI_HTTP_PORT:-7701}:7700"
+    volumes:
+      - meili_data:/meili_data
+
+volumes:
+  db_data:
+  meili_data:
