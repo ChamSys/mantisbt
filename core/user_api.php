@@ -823,6 +823,26 @@ function user_limit_user_list( array $p_users, $p_project_id ) {
  * @access public
  */
 function user_get_option_rows( $p_project_id, $p_access = ANYBODY, $p_search = '' ) {
+	# Several fields of a page ask for the same list
+	static $s_cache = array();
+	$t_key = serialize( array( auth_get_current_user_id(), $p_project_id, $p_access, $p_search ) );
+	if( !isset( $s_cache[$t_key] ) ) {
+		$s_cache[$t_key] = user_get_option_rows_uncached( $p_project_id, $p_access, $p_search );
+	}
+
+	return $s_cache[$t_key];
+}
+
+/**
+ * Get the users that can be chosen for a field, without remembering them, see user_get_option_rows().
+ *
+ * @param int       $p_project_id A project identifier, or ALL_PROJECTS.
+ * @param int|array $p_access     An access level, or a list of them.
+ * @param string    $p_search     Only the users whose user name or real name contains this text.
+ * @return array The rows of the users by user id.
+ * @access private
+ */
+function user_get_option_rows_uncached( $p_project_id, $p_access, $p_search ) {
 	if( $p_project_id !== ALL_PROJECTS ) {
 		return user_limit_user_list( project_get_all_user_rows( $p_project_id, $p_access, true, $p_search, user_show_realname() ), $p_project_id );
 	}
