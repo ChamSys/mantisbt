@@ -1326,7 +1326,11 @@ function plugin_menu_items( $p_event ) {
 
 		foreach( $t_event_items as $t_plugin_items ) {
 			foreach( $t_plugin_items as $t_callback_items ) {
-				if( is_array( $t_callback_items ) ) {
+				if( is_array( $t_callback_items ) && isset( $t_callback_items['url'] ) ) {
+					# A single item, given as an array
+					$t_items[] = $t_callback_items;
+				}
+				else if( is_array( $t_callback_items ) ) {
 					$t_items = array_merge( $t_items, $t_callback_items );
 				}
 				else {

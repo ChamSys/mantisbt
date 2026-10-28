@@ -408,6 +408,25 @@ return array(
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.output.menu.items">
+			<title>Menu items as arrays</title>
+			<blockquote>
+				<para>
+					The events that add links to a tab or button menu (<literal>EVENT_MENU_ACCOUNT</literal>,
+					<literal>EVENT_MENU_DOCS</literal>, <literal>EVENT_MENU_MANAGE</literal>,
+					<literal>EVENT_MENU_MANAGE_CONFIG</literal> and <literal>EVENT_MENU_SUMMARY</literal>)
+					accept, besides HTML links, items given as arrays with the keys
+					<literal>url</literal>, <literal>label</literal>, optionally <literal>icon</literal>
+					and <literal>absolute</literal> (true if the url is not relative to the MantisBT directory).
+					A callback can return one item or a list of items, for example
+					<programlisting>
+return array( 'url' => plugin_page( 'config', true ), 'label' => plugin_lang_get( 'config' ) );
+</programlisting>
+					The item is marked as the active one when it is the page the menu is printed for.
+				</para>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.output.menu.manageconfig">
 			<title>EVENT_MENU_MANAGE_CONFIG (Default)</title>
 			<blockquote>

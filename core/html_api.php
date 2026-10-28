@@ -725,6 +725,21 @@ function print_subproject_menu_bar( $p_current_project_id, $p_parent_project_id,
 }
 
 /**
+ * Check if a menu link, or the HTML of one, is the link to the current page.
+ *
+ * The page name must not be followed by more of a page name, so that the link
+ * to "plugin.php?page=Plugin/config_update" is not the one to "Plugin/config".
+ *
+ * @param string $p_url          The link, or the HTML of the menu item.
+ * @param string $p_current_page The page name or link that is being shown.
+ * @return boolean
+ */
+function html_menu_url_is_page( $p_url, $p_current_page ) {
+	return $p_current_page
+		&& preg_match( '/' . preg_quote( $p_current_page, '/' ) . '(?![A-Za-z0-9_\/-])/', $p_url ) === 1;
+}
+
+/**
  * Print a generic menu (tabs).
  *
  * A menu item is an associative array with the following structure:
@@ -761,14 +776,29 @@ function print_menu( array $p_menu_items, $p_current_page = '', $p_event = null 
 		echo '</a></li>' . "\n";
 	}
 
-	# Plugins menu items - these are html hyperlinks (<a> tags)
+	# Plugins menu items - these are html hyperlinks (<a> tags), or arrays
+	# like the ones above
 	foreach( plugin_menu_items( $p_event ) as $t_item ) {
-		# The current page must not be followed by more of a page name: the
-		# link to "plugin.php?page=Plugin/config_update" is not the one to "Plugin/config"
-		$t_active = $p_current_page
-				&& preg_match( '/' . preg_quote( $p_current_page, '/' ) . '(?![A-Za-z0-9_\/-])/', $t_item )
-			? 'active'
-			: '';
+		if( is_array( $t_item ) ) {
+			$t_url = $t_item['url'];
+			if( !( $t_item['absolute'] ?? false ) ) {
+				$t_url = helper_mantis_url( $t_url );
+			}
+			$t_active = html_menu_url_is_page( $t_item['url'], $p_current_page )
+					|| html_menu_url_is_page( $t_url, $p_current_page )
+				? 'active' : '';
+
+			echo '<li class="' . $t_active . '"><a href="' . string_attribute( $t_url ) . '">';
+			if( ( $t_item['label'] ?? '' ) == '' ) {
+				print_icon( 'fa-info-circle', 'blue ace-icon' );
+			} else {
+				echo lang_get_defaulted( $t_item['label'] );
+			}
+			echo '</a></li>' . "\n";
+			continue;
+		}
+
+		$t_active = html_menu_url_is_page( $t_item, $p_current_page ) ? 'active' : '';
 		echo '<li class="' . $t_active . '">', $t_item, '</li>', "\n";
 	}
 
@@ -814,10 +844,26 @@ function print_submenu( array $p_menu_items, $p_current_page = '', $p_event = nu
 			}
 		}
 
-		# Plugins menu items - these are html hyperlinks (<a> tags)
-		# The plugin is responsible for setting the 'active' class as appropriate
+		# Plugins menu items - these are html hyperlinks (<a> tags), in which case
+		# the plugin is responsible for setting the 'active' class as appropriate,
+		# or arrays like the ones above
 		foreach( plugin_menu_items( $p_event ) as $t_item ) {
-			echo $t_item;
+			if( is_array( $t_item ) ) {
+				$t_icon = array_key_exists( 'icon', $t_item )
+					? icon_get( $t_item['icon'] ) . '&nbsp;'
+					: '';
+				$t_url = ( $t_item['absolute'] ?? false ) ? $t_item['url'] : helper_mantis_url( $t_item['url'] );
+
+				printf( $t_btn_template,
+					html_menu_url_is_page( $t_item['url'], $p_current_page ) || html_menu_url_is_page( $t_url, $p_current_page )
+						? 'active' : '',
+					string_attribute( $t_url ),
+					$t_icon,
+					lang_get_defaulted( $t_item['label'] )
+				);
+			} else {
+				echo $t_item;
+			}
 		}
 
 		echo '</div></div>', "\n";
