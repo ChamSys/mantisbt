@@ -96,6 +96,28 @@ function user_merge_get_unique_references() {
 }
 
 /**
+ * Count what a merge of a user would give to the other user, to show it before.
+ *
+ * @param int $p_user_id A user identifier.
+ *
+ * @return array The number of issues reported, issues assigned and notes.
+ * @access public
+ */
+function user_merge_count_references( $p_user_id ) {
+	$t_counts = array();
+
+	foreach( array( 'reported' => array( '{bug}', 'reporter_id' ),
+			'assigned' => array( '{bug}', 'handler_id' ),
+			'notes' => array( '{bugnote}', 'reporter_id' ) ) as $t_name => $t_reference ) {
+		db_param_push();
+		$t_query = 'SELECT COUNT(*) FROM ' . $t_reference[0] . ' WHERE ' . $t_reference[1] . '=' . db_param();
+		$t_counts[$t_name] = (int)db_result( db_query( $t_query, array( (int)$p_user_id ) ) );
+	}
+
+	return $t_counts;
+}
+
+/**
  * Give what a user did and owns to another user, and delete the first user.
  *
  * The issues they reported or handle, their notes, files, history entries,

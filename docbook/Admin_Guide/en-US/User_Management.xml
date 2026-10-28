@@ -130,6 +130,28 @@
 	its history.  However, manually creating a record in the users table
 	with the same id, can possibly do that.  However, this approach is not
 	recommended or supported.</para>
+
+	<para>When the same person has two accounts (they signed up twice, or
+	got a new account when the way they sign in changed), delete is not
+	what is wanted, since the issues and notes of the account would be left
+	to a user that does not exist.  Open the details page of the account to
+	remove, click on the "Merge Into Another User" button and give the user
+	name or the email address of the account that keeps everything.  The
+	issues they reported or handle, their notes, files, history entries,
+	revisions, tags, categories, news, sponsorships, filters and profiles
+	are given to the other account, and so are their monitoring of issues,
+	likes, project access and configuration where the other account has
+	none of its own.  Then the account is deleted, which cannot be undone.
+	It needs the same access as deleting a user, for both accounts, and
+	the own account and the last administrator cannot be merged.  Plugins
+	that keep data for users move it on the
+	<literal>EVENT_MANAGE_USER_MERGE</literal> event.  The old and the new
+	value of a change of the handler or of the reporter in the history of
+	an issue are not changed, and the access level of the account that
+	keeps everything is not changed or checked: issues that were assigned
+	to the merged account are assigned to it.  The merge is logged with
+	the <literal>LOG_USER_MANAGEMENT</literal> level of
+	<literal>$g_log_level</literal>.</para>
     </section>
 
     <section id="admin.user.signup">

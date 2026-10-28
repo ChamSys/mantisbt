@@ -991,6 +991,16 @@ $s_account_delete_protected_msg = 'Account protected. Cannot delete this account
 $s_account_deleted_msg = 'Account deleted...';
 
 # manage_user_delete_page.php
+$s_merge_user_button = 'Merge Into Another User';
+$s_merge_user_title = 'Merge a User Into Another User';
+$s_merge_user_choose = 'Everything %s did and owns is given to another user, and the account of %s is deleted. This is for duplicate accounts of a person. Who gets everything?';
+$s_merge_user_target = 'Username or email address of the user that gets everything';
+$s_merge_user_continue = 'Continue';
+$s_merge_user_not_found = 'No user has this username or email address.';
+$s_merge_user_confirm = 'Merge %s into %s? The account of %s is deleted. This cannot be undone.';
+$s_merge_user_details = 'To be given: %d issues reported, %d issues assigned, %d notes. In the history of the issues, their changes will say %s.';
+$s_merge_user_submit = 'Merge Users';
+$s_merge_user_done = 'The users were merged.';
 $s_delete_account_sure_msg = 'Are you sure you wish to delete user account "%1$s"?';
 
 # manage_user_edit_page.php

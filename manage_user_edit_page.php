@@ -101,6 +101,9 @@ $t_unlock = !user_is_login_request_allowed( $t_user['id'] );
 $t_delete = !( user_is_administrator( $t_user_id )
 	&& user_count_level( config_get_global( 'admin_site_threshold' ) ) <= 1
 );
+$t_merge = $t_delete
+	&& $t_user['id'] != auth_get_current_user_id()
+	&& !user_is_protected( $t_user['id'] );
 $t_impersonate = auth_can_impersonate( $t_user['id'] );
 $t_email_notification_enabled = ON == config_get( 'enable_email_notification' );
 $t_reset_password_msg = lang_get(
@@ -330,6 +333,16 @@ print_manage_menu( 'manage_user_page.php' );
 						class="btn btn-primary btn-white btn-round">
 					<?php echo lang_get( 'delete_user_button' ) ?>
 				</button>
+<?php } ?>
+<?php
+	# Merge Button
+	if( $t_merge ) {
+?>
+
+				<a href="manage_user_merge_page.php?user_id=<?php echo (int)$t_user['id'] ?>"
+						class="btn btn-primary btn-white btn-round">
+					<?php echo lang_get( 'merge_user_button' ) ?>
+				</a>
 <?php } ?>
 
 			</div>
