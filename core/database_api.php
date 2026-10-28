@@ -120,6 +120,10 @@ class MantisDbParam {
 # @global object $g_db_param
 $g_db_param = new MantisDbParam();
 
+# Whether the function that rolls back transactions left open is registered
+# @global bool $g_db_transaction_shutdown_registered
+$g_db_transaction_shutdown_registered = false;
+
 /**
  * Open a connection to the database.
  * @param string  $p_dsn           Database connection string ( specified instead of other params).
@@ -612,6 +616,72 @@ function db_error( $p_query = null ) {
 		error_parameters( db_error_num(), db_error_msg(), $p_query );
 	} else {
 		error_parameters( db_error_num(), db_error_msg() );
+	}
+}
+
+/**
+ * Start a database transaction.
+ *
+ * Transactions can be nested: only the outermost db_commit() commits, and a
+ * db_rollback() at any level rolls back the whole transaction. A transaction
+ * that is still open when the request ends, for example because an error halted
+ * it, is rolled back.
+ *
+ * Tables that do not support transactions (such as MyISAM) are not rolled back.
+ *
+ * @return void
+ */
+function db_begin() {
+	global $g_db, $g_db_transaction_shutdown_registered;
+
+	$g_db->StartTrans();
+
+	# Also needed for persistent connections, which would keep the open transaction.
+	if( !$g_db_transaction_shutdown_registered ) {
+		register_shutdown_function( 'db_transaction_shutdown' );
+		$g_db_transaction_shutdown_registered = true;
+	}
+}
+
+/**
+ * Commit the database transaction started with db_begin().
+ *
+ * @return bool true if the changes were committed, false if they were rolled
+ *              back because of a database error or a call to db_rollback().
+ */
+function db_commit() {
+	global $g_db;
+
+	return $g_db->CompleteTrans();
+}
+
+/**
+ * Roll back the database transaction started with db_begin(), including the
+ * ones it is nested in.
+ *
+ * @return void
+ */
+function db_rollback() {
+	global $g_db;
+
+	$g_db->FailTrans();
+	$g_db->CompleteTrans();
+}
+
+/**
+ * Roll back a database transaction that was left open, at the end of the request.
+ *
+ * @return void
+ * @access private
+ */
+function db_transaction_shutdown() {
+	global $g_db;
+
+	if( db_is_connected() ) {
+		while( $g_db->transOff > 0 ) {
+			$g_db->FailTrans();
+			$g_db->CompleteTrans();
+		}
 	}
 }
 

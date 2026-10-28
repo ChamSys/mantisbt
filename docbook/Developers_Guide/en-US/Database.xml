@@ -42,4 +42,24 @@
 			TODO: Discuss how MantisBT handles a database installation / upgrade, including the use of the config system and schema definitions.
 		</para>
 	</section>
+
+	<section id="dev.database.transactions">
+		<title>Transactions</title>
+
+		<para>
+			Code that changes several tables, and must not leave them half changed, can group the
+			queries in a transaction: <function>db_begin()</function> starts it,
+			<function>db_commit()</function> saves the changes and returns false if they were rolled
+			back instead, and <function>db_rollback()</function> undoes them.  Transactions can be
+			nested: only the outermost <function>db_commit()</function> saves anything, and a
+			<function>db_rollback()</function> at any level undoes the whole transaction.
+		</para>
+		<para>
+			MantisBT halts the request when a query fails, so there is no point in catching errors to
+			roll back: a transaction that is still open at the end of the request is rolled back
+			automatically.  Work that cannot be rolled back, such as deleting files, should be done
+			after <function>db_commit()</function>.  Tables that do not support transactions (for
+			example MyISAM ones) are not rolled back.
+		</para>
+	</section>
 </chapter>
