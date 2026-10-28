@@ -33,6 +33,7 @@
  * @uses html_api.php
  * @uses lang_api.php
  * @uses print_api.php
+ * @uses like_api.php
  * @uses summary_api.php
  * @uses user_api.php
  */
@@ -48,6 +49,7 @@ require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
+require_api( 'like_api.php' );
 require_api( 'summary_api.php' );
 require_api( 'user_api.php' );
 
@@ -246,6 +248,22 @@ print_summary_submenu();
 		<?php summary_print_by_age( $t_filter ) ?>
 	</table>
 	</div>
+
+	<?php if( like_is_enabled() ) { ?>
+	<!-- MOST LIKED -->
+	<div class="space-10"></div>
+	<div class="widget-box table-responsive">
+		<table class="table table-hover table-bordered table-condensed table-striped">
+		<thead>
+			<tr>
+				<th class="width-85"><?php echo lang_get( 'most_liked' ) ?></th>
+				<th class="align-right"><?php echo lang_get( 'likes' ); ?></th>
+			</tr>
+		</thead>
+		<?php summary_print_most_liked( $t_filter ) ?>
+	</table>
+	</div>
+	<?php } ?>
 
 	<!-- BY RESOLUTION -->
 	<div class="space-10"></div>

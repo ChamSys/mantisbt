@@ -366,6 +366,52 @@ function summary_print_by_activity( array $p_filter = [] ) {
 }
 
 /**
+ * Print the 10 issues that most users like, among those the user can see.
+ *
+ * @param array $p_filter Filter array to limit the visibility.
+ *
+ * @return void
+ */
+function summary_print_most_liked( array $p_filter = [] ) {
+	$t_specific_where = helper_project_specific_where( helper_get_current_project() );
+	if( ' 1<>1' == $t_specific_where ) {
+		return;
+	}
+
+	$t_query = new DBQuery();
+	$t_sql = 'SELECT * FROM {bug} WHERE like_count > 0 AND ' . $t_specific_where;
+	if( !empty( $p_filter ) ) {
+		$t_subquery = filter_cache_subquery( $p_filter );
+		$t_sql .= ' AND {bug}.id IN :filter';
+		$t_query->bind( 'filter', $t_subquery );
+	}
+	$t_sql .= ' ORDER BY like_count DESC, last_updated DESC';
+	$t_query->sql( $t_sql );
+
+	$t_count = 0;
+	$t_private_bug_threshold = config_get( 'private_bug_threshold' );
+
+	while( $t_row = $t_query->fetch() ) {
+		# as we select all from bug_table, inject into the cache.
+		bug_cache_database_result( $t_row );
+
+		# Skip private bugs unless user has proper permissions
+		if( ( VS_PRIVATE == bug_get_field( $t_row['id'], 'view_state' ) ) && ( false == access_has_bug_level( $t_private_bug_threshold, $t_row['id'] ) ) ) {
+			continue;
+		}
+
+		if( $t_count++ == 10 ) {
+			break;
+		}
+
+		echo '<tr>' . "\n";
+		echo '<td class="small">' . string_get_bug_view_link( $t_row['id'], false ) . ' - ' . string_display_line( $t_row['summary'] ) . '</td>';
+		echo '<td class="align-right">' . (int)$t_row['like_count'] . '</td>' . "\n";
+		echo '</tr>' . "\n";
+	}
+}
+
+/**
  * Print list of bugs opened from the longest time.
  *
  * @param array $p_filter Filter array to limit the visibility.
