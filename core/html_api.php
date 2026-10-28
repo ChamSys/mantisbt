@@ -740,7 +740,10 @@ function print_menu( array $p_menu_items, $p_current_page = '', $p_event = null 
 
 	# Plugins menu items - these are html hyperlinks (<a> tags)
 	foreach( plugin_menu_items( $p_event ) as $t_item ) {
-		$t_active = $p_current_page && strpos( $t_item, $p_current_page ) !== false
+		# The current page must not be followed by more of a page name: the
+		# link to "plugin.php?page=Plugin/config_update" is not the one to "Plugin/config"
+		$t_active = $p_current_page
+				&& preg_match( '/' . preg_quote( $p_current_page, '/' ) . '(?![A-Za-z0-9_\/-])/', $t_item )
 			? 'active'
 			: '';
 		echo '<li class="' . $t_active . '">', $t_item, '</li>', "\n";
