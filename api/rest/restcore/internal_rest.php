@@ -30,6 +30,7 @@ require_api( 'helper_api.php' );
 $g_app->group('/internal', function() use ( $g_app ) {
 	$g_app->any( '/autocomplete', 'rest_internal_autocomplete' );
 	$g_app->any( '/config_display', 'rest_internal_config_display' );
+	$g_app->get( '/issue_search', 'rest_internal_issue_search' );
 });
 
 /**
@@ -95,4 +96,27 @@ function rest_internal_config_display( \Slim\Http\Request $p_request, \Slim\Http
 	$t_output = config_get_value_as_string( $t_row['type'], $t_row['value'], true );
 
 	return $p_response->withStatus( HTTP_STATUS_SUCCESS )->write( $t_output );
+}
+/**
+ * Find the issues that best match some text, for the quick search.
+ *
+ * @param \Slim\Http\Request $p_request   The request.
+ * @param \Slim\Http\Response $p_response The response.
+ * @param array $p_args Arguments
+ * @return \Slim\Http\Response The augmented response.
+ */
+function rest_internal_issue_search( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+	$t_query = array( 'q' => $p_request->getParam( 'q' ) );
+	foreach( array( 'project_id', 'include_closed', 'limit' ) as $t_param ) {
+		if( $p_request->getParam( $t_param ) !== null ) {
+			$t_query[$t_param] = $p_request->getParam( $t_param );
+		}
+	}
+
+	$t_command = new IssueQuickSearchCommand( array( 'query' => $t_query ) );
+	$t_result = $t_command->execute();
+
+	return $p_response->withStatus( HTTP_STATUS_SUCCESS )
+		->withHeader( 'Cache-Control', 'private, no-store' )
+		->withJson( $t_result );
 }

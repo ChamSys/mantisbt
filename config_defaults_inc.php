@@ -4202,6 +4202,25 @@ $g_search_meilisearch_index = 'mantis_issues';
 $g_search_meilisearch_timeout = 10;
 
 /**
+ * Whether to search as the user types in the box of the menu bar, and to
+ * suggest similar issues when reporting one: a list of the best matches
+ * appears below the text. It only works with a search backend that has an index
+ * (see {@see $g_search_backend}), as searching with SQL on every key press would
+ * be too slow, and is ignored with the 'database' backend.
+ *
+ * @global int $g_search_live_enabled
+ */
+$g_search_live_enabled = OFF;
+
+/**
+ * The number of searches as the user types that a user may make per minute,
+ * 0 for no limit.
+ *
+ * @global int $g_search_live_rate_limit
+ */
+$g_search_live_rate_limit = 120;
+
+/**
  * Allow use of dynamic filter controls.
  *
  * This switch enables the use of AJAX to dynamically load and create filter
@@ -5477,6 +5496,7 @@ $g_global_settings = array(
 	'public_config_names',
 	'search_backend',
 	'search_candidate_limit',
+	'search_live_rate_limit',
 	'search_meilisearch_index',
 	'search_meilisearch_key',
 	'search_meilisearch_timeout',
@@ -5792,6 +5812,7 @@ $g_public_config_names = array(
 	'severity_multipliers',
 	'severity_significant_threshold',
 	'short_date_format',
+	'search_live_enabled',
 	'show_assigned_names',
 	'show_avatar_threshold',
 	'show_avatar',

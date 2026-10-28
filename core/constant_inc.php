@@ -544,6 +544,8 @@ define( 'TOKEN_COLLAPSE', 5 );
 define( 'TOKEN_ACCOUNT_VERIFY', 6 );
 define( 'TOKEN_ACCOUNT_ACTIVATION', 7 );
 define( 'TOKEN_ACCOUNT_CHANGE_EMAIL', 8 );
+define( 'TOKEN_RATE_ISSUE_SEARCH', 9 );
+define( 'TOKEN_RATE_USER_SEARCH', 10 );
 define( 'TOKEN_USER', 1000 );
 
 # Token expiry durations (in seconds)
