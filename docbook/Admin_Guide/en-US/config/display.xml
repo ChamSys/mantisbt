@@ -125,6 +125,19 @@
 					OpenSearch Browser search entries.
 					(default 'images/favicon.ico').
 				</para>
+				<para>To offer several icons (an SVG icon, PNG icons of several sizes, the icon of Apple
+					devices) give a list instead of a path. Each item is a path, or an array with
+					<literal>href</literal> and optionally <literal>rel</literal> (<literal>icon</literal> by
+					default, <literal>apple-touch-icon</literal> for the Apple icon), <literal>type</literal> (the
+					MIME type, by default from the extension of the file) and <literal>sizes</literal>.
+					<programlisting>
+$g_favicon_image = array(
+	array( 'href' => 'images/icon.svg' ),
+	array( 'href' => 'images/icon-32.png', 'sizes' => '32x32' ),
+	array( 'href' => 'images/apple-touch-icon.png', 'rel' => 'apple-touch-icon' ),
+);
+</programlisting>
+				</para>
 			</listitem>
 		</varlistentry>
 		<varlistentry>

@@ -1374,7 +1374,20 @@ $g_admin_dir_check = ON;
  * This icon should be of 'image/x-icon' MIME type, and its size 16x16 pixels.
  * It is also used to decorate OpenSearch Browser search entries.
  *
- * @global string $g_favicon_image
+ * To offer more than one icon (an SVG icon, PNG icons of several sizes, the
+ * icon of Apple devices) give a list instead of a string. Each item is the
+ * path of an icon, or an array with its 'href', and optionally its 'rel'
+ * ('icon' by default, 'apple-touch-icon' for the Apple one), its 'type' (the
+ * MIME type, by default from the extension of the file) and its 'sizes':
+ * <code>
+ * $g_favicon_image = array(
+ *     array( 'href' => 'images/icon.svg' ),
+ *     array( 'href' => 'images/icon-32.png', 'sizes' => '32x32' ),
+ *     array( 'href' => 'images/apple-touch-icon.png', 'rel' => 'apple-touch-icon' ),
+ * );
+ * </code>
+ *
+ * @global string|array $g_favicon_image
  */
 $g_favicon_image = 'images/favicon.ico';
 

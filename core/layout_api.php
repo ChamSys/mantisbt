@@ -239,10 +239,7 @@ function layout_page_header_begin( $p_page_title = '' ) {
 	html_css_late();
 	html_rss_link();
 
-	$t_favicon_image = config_get_global( 'favicon_image' );
-	if( !is_blank( $t_favicon_image ) ) {
-		echo "\t", '<link rel="shortcut icon" href="', helper_mantis_url( $t_favicon_image ), '" type="image/x-icon" />', "\n";
-	}
+	layout_print_favicons();
 
 	# Advertise the availability of the browser search plug-ins.
 	$t_title = htmlspecialchars( config_get( 'search_title' ) );
@@ -431,6 +428,79 @@ function layout_is_rtl() {
  */
 function layout_mobile_is_enabled() {
 	return ON == config_get( 'mobile_layout', null, null, ALL_PROJECTS );
+}
+
+/**
+ * Get the links to the icons of the site, see $g_favicon_image.
+ *
+ * @return array A list of arrays with the attributes of the link elements, in
+ *               the order they are printed: 'rel', 'href', and 'type' and
+ *               'sizes' when they are known.
+ */
+function layout_get_favicon_links() {
+	$t_icons = config_get_global( 'favicon_image' );
+	$t_links = array();
+
+	# A single icon is a string: the original way to configure it
+	if( !is_array( $t_icons ) ) {
+		if( is_blank( $t_icons ) ) {
+			return $t_links;
+		}
+		return array( array( 'rel' => 'shortcut icon', 'href' => helper_mantis_url( $t_icons ), 'type' => 'image/x-icon' ) );
+	}
+
+	$t_types = array(
+		'ico' => 'image/x-icon',
+		'png' => 'image/png',
+		'svg' => 'image/svg+xml',
+		'gif' => 'image/gif',
+		'jpg' => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'webp' => 'image/webp',
+	);
+
+	foreach( $t_icons as $t_icon ) {
+		if( !is_array( $t_icon ) ) {
+			$t_icon = array( 'href' => $t_icon );
+		}
+		if( !isset( $t_icon['href'] ) || is_blank( $t_icon['href'] ) ) {
+			continue;
+		}
+
+		$t_link = array(
+			'rel' => isset( $t_icon['rel'] ) ? $t_icon['rel'] : 'icon',
+			'href' => is_null( parse_url( $t_icon['href'], PHP_URL_SCHEME ) ) ? helper_mantis_url( $t_icon['href'] ) : $t_icon['href'],
+		);
+
+		# The type is the one given, or the one of the file extension
+		$t_extension = strtolower( pathinfo( (string)parse_url( $t_icon['href'], PHP_URL_PATH ), PATHINFO_EXTENSION ) );
+		if( isset( $t_icon['type'] ) ) {
+			$t_link['type'] = $t_icon['type'];
+		} elseif( isset( $t_types[$t_extension] ) ) {
+			$t_link['type'] = $t_types[$t_extension];
+		}
+		if( isset( $t_icon['sizes'] ) ) {
+			$t_link['sizes'] = $t_icon['sizes'];
+		}
+
+		$t_links[] = $t_link;
+	}
+
+	return $t_links;
+}
+
+/**
+ * Print the links to the icons of the site.
+ * @return void
+ */
+function layout_print_favicons() {
+	foreach( layout_get_favicon_links() as $t_link ) {
+		echo "\t", '<link';
+		foreach( $t_link as $t_attribute => $t_value ) {
+			echo ' ', $t_attribute, '="', string_attribute( $t_value ), '"';
+		}
+		echo ' />', "\n";
+	}
 }
 
 /**
