@@ -37,6 +37,12 @@ require_api( 'error_api.php' );
 require_once( __DIR__ . '/classes/SearchBackend.class.php' );
 
 /**
+ * The issues added to the search queue by this request.
+ * @global array $g_search_queued_ids
+ */
+$g_search_queued_ids = array();
+
+/**
  * Get the search backend selected with $g_search_backend.
  *
  * @return SearchBackend The backend instance; the same one on every call.
@@ -134,4 +140,87 @@ function search_issue_documents( array $p_bug_ids ) {
 	}
 
 	return $t_documents;
+}
+
+/**
+ * Note that an issue has changed, or was deleted, so that its entry in the
+ * index of the search backend is updated by search_process_queue(). Does
+ * nothing when the backend has no index.
+ *
+ * @param int $p_bug_id The issue identifier.
+ *
+ * @return void
+ * @access public
+ */
+function search_queue_add( $p_bug_id ) {
+	global $g_search_queued_ids;
+
+	# One entry per issue is enough for as long as the queue is not processed.
+	$c_bug_id = (int)$p_bug_id;
+	if( isset( $g_search_queued_ids[$c_bug_id] ) || !search_backend_get()->has_index() ) {
+		return;
+	}
+	$g_search_queued_ids[$c_bug_id] = true;
+
+	db_param_push();
+	$t_query = 'INSERT INTO {search_queue} ( bug_id, date_queued ) VALUES ( ' . db_param() . ', ' . db_param() . ' )';
+	db_query( $t_query, array( $c_bug_id, db_now() ) );
+}
+
+/**
+ * Update the index of the search backend with the issues in the queue.
+ *
+ * Issues that exist are added to the index, or replaced, and the ones that
+ * no longer exist are removed from it. Entries are only taken off the queue
+ * once the backend has accepted the change, so it is tried again later if the
+ * backend is not available.
+ *
+ * @param int $p_max_issues The maximum number of issues to process.
+ *
+ * @return int|false The number of issues processed, or false if the backend
+ *                   could not be updated.
+ * @access public
+ */
+function search_process_queue( $p_max_issues = 100 ) {
+	global $g_search_queued_ids;
+
+	$t_backend = search_backend_get();
+	if( !$t_backend->has_index() ) {
+		return 0;
+	}
+
+	# Issues that change from now on need to be queued again.
+	$g_search_queued_ids = array();
+
+	# Take the oldest entries, up to the maximum number of different issues.
+	$t_query = new DbQuery( 'SELECT id, bug_id FROM {search_queue} ORDER BY id' );
+	$t_queue_ids = array();
+	$t_bug_ids = array();
+	$t_query->execute();
+	while( $t_row = $t_query->fetch() ) {
+		if( !isset( $t_bug_ids[(int)$t_row['bug_id']] ) && count( $t_bug_ids ) >= $p_max_issues ) {
+			break;
+		}
+		$t_bug_ids[(int)$t_row['bug_id']] = true;
+		$t_queue_ids[] = (int)$t_row['id'];
+	}
+	if( empty( $t_queue_ids ) ) {
+		return 0;
+	}
+
+	$t_documents = search_issue_documents( array_keys( $t_bug_ids ) );
+	$t_removed_ids = array_diff( array_keys( $t_bug_ids ), array_keys( $t_documents ) );
+	if( !$t_backend->index_issues( $t_documents ) || !$t_backend->remove_issues( $t_removed_ids ) ) {
+		return false;
+	}
+
+	# Entries added after the ones taken above are kept: the issue may have
+	# changed since its document was built.
+	foreach( array_chunk( $t_queue_ids, 500 ) as $t_chunk ) {
+		$t_query = new DbQuery();
+		$t_query->sql( 'DELETE FROM {search_queue} WHERE id IN ' . $t_query->param( $t_chunk ) );
+		$t_query->execute();
+	}
+
+	return count( $t_bug_ids );
 }

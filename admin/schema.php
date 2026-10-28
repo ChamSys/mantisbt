@@ -904,6 +904,16 @@ $g_upgrade[213] = array( 'UpdateFunction', 'category_status_default' );
 
 # Release marker: 2.27.0
 
+# Issues whose entry in the index of the search backend has to be updated,
+# see search_api.php.
+$g_upgrade[214] = array( 'CreateTableSQL', array( db_get_table( 'search_queue' ), "
+	id						I		UNSIGNED NOTNULL PRIMARY AUTOINCREMENT,
+	bug_id					I		UNSIGNED NOTNULL DEFAULT '0',
+	date_queued				I		UNSIGNED NOTNULL DEFAULT '1'",
+	$t_table_options
+	) );
+$g_upgrade[215] = array( 'CreateIndexSQL', array( 'idx_search_queue_bug_id', db_get_table( 'search_queue' ), 'bug_id' ) );
+
 # ----------------------------------------------------------------------------
 # End of schema definition, clear local variables
 #
