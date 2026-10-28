@@ -27,11 +27,13 @@
  * @link http://www.mantisbt.org
  *
  * @uses config_api.php
+ * @uses helper_api.php
  * @uses string_api.php
  * @uses user_api.php
  */
 
 require_api( 'config_api.php' );
+require_api( 'helper_api.php' );
 require_api( 'string_api.php' );
 require_api( 'user_api.php' );
 

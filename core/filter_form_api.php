@@ -38,6 +38,7 @@
  * @uses relationship_api.php
  * @uses string_api.php
  * @uses user_api.php
+ * @uses user_picker_api.php
  *
  * @noinspection HtmlFormInputWithoutLabel, PhpUnused
  */
@@ -61,6 +62,7 @@ require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'string_api.php' );
 require_api( 'user_api.php' );
+require_api( 'user_picker_api.php' );
 
 
 /**
@@ -206,7 +208,7 @@ function print_filter_reporter_id( ?array $p_filter = null ) {
 		$p_filter = $g_filter;
 	}
 	?>
-		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_REPORTER_ID;?>[]">
+		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_REPORTER_ID;?>[]"<?php $t_typeahead = print_user_typeahead_attributes( 'reporter', helper_get_current_project() ); ?>>
 		<?php
 	# if current user is a reporter, and limited_reporters is set to ON, only display that name
 	if( access_has_limited_view() ) {
@@ -223,7 +225,7 @@ function print_filter_reporter_id( ?array $p_filter = null ) {
 				check_selected( $p_filter[FILTER_PROPERTY_REPORTER_ID], META_FILTER_MYSELF );
 				echo '>[' . lang_get( 'myself' ) . ']</option>';
 			}
-		print_reporter_option_list( $p_filter[FILTER_PROPERTY_REPORTER_ID] );
+		print_reporter_option_list( $p_filter[FILTER_PROPERTY_REPORTER_ID], null, $t_typeahead );
 	}?>
 		</select>
 		<?php
@@ -293,7 +295,7 @@ function print_filter_user_monitor( ?array $p_filter = null ) {
 	}
 	?>
 	<!-- Monitored by -->
-		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_MONITOR_USER_ID;?>[]">
+		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_MONITOR_USER_ID;?>[]"<?php $t_typeahead = print_user_typeahead_attributes( 'monitor', helper_get_current_project() ); ?>>
 			<option value="<?php echo META_FILTER_ANY?>"<?php check_selected( $p_filter[FILTER_PROPERTY_MONITOR_USER_ID], META_FILTER_ANY );?>>[<?php echo lang_get( 'any' )?>]</option>
 			<option value="<?php echo META_FILTER_NONE?>"<?php check_selected( $p_filter[FILTER_PROPERTY_MONITOR_USER_ID], META_FILTER_NONE );?>>[<?php echo lang_get( 'none' )?>]</option>
 			<?php
@@ -305,7 +307,7 @@ function print_filter_user_monitor( ?array $p_filter = null ) {
 	$t_threshold = config_get( 'show_monitor_list_threshold' );
 
 	if( access_has_project_level( $t_threshold ) ) {
-		print_user_option_list( $p_filter[FILTER_PROPERTY_MONITOR_USER_ID], null, config_get( 'monitor_bug_threshold' ) );
+		print_user_option_list( $p_filter[FILTER_PROPERTY_MONITOR_USER_ID], null, config_get( 'monitor_bug_threshold' ), $t_typeahead );
 	}
 	?>
 		</select>
@@ -1819,7 +1821,7 @@ function print_filter_note_user_id( ?array $p_filter = null ) {
 	}
 	?>
 	<!-- BUGNOTE REPORTER -->
-	<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_NOTE_USER_ID;?>[]">
+	<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_NOTE_USER_ID;?>[]"<?php $t_typeahead = print_user_typeahead_attributes( 'note', helper_get_current_project() ); ?>>
 		<option value="<?php echo META_FILTER_ANY?>"<?php check_selected( $p_filter[FILTER_PROPERTY_NOTE_USER_ID], META_FILTER_ANY );?>>[<?php echo lang_get( 'any' )?>]</option>
 		<?php if( access_has_project_level( config_get( 'view_handler_threshold' ) ) ) {?>
 		<option value="<?php echo META_FILTER_NONE?>"<?php check_selected( $p_filter[FILTER_PROPERTY_NOTE_USER_ID], META_FILTER_NONE );?>>[<?php echo lang_get( 'none' )?>]</option>
@@ -1830,7 +1832,7 @@ function print_filter_note_user_id( ?array $p_filter = null ) {
 				echo '>[' . lang_get( 'myself' ) . ']</option>';
 			}
 
-			print_note_option_list( $p_filter[FILTER_PROPERTY_NOTE_USER_ID] );
+			print_note_option_list( $p_filter[FILTER_PROPERTY_NOTE_USER_ID], null, null, $t_typeahead );
 		}
 	?>
 	</select>

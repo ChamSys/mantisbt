@@ -306,14 +306,27 @@ function print_captcha_input( $p_field_name ) {
  * @param integer|array $p_user_id    A user identifier or a list of them.
  * @param integer       $p_project_id A project identifier.
  * @param integer       $p_access     An access level.
+ * @param boolean       $p_typeahead  True if the users are searched as the user types instead
+ *                                    of listed (see print_user_typeahead_attributes()): only
+ *                                    the users that are selected are printed.
  * @return void
  */
-function print_user_option_list( $p_user_id, $p_project_id = null, $p_access = ANYBODY ) {
+function print_user_option_list( $p_user_id, $p_project_id = null, $p_access = ANYBODY, $p_typeahead = false ) {
 	if( null === $p_project_id ) {
 		$p_project_id = helper_get_current_project();
 	}
 
-	$t_users = user_get_option_rows( $p_project_id, $p_access );
+	if( $p_typeahead ) {
+		$t_users = array();
+		foreach( (array)$p_user_id as $t_selected_id ) {
+			$t_row = ( $t_selected_id > 0 ) ? user_cache_row( $t_selected_id, /* trigger_error */ false ) : false;
+			if( $t_row !== false ) {
+				$t_users[(int)$t_selected_id] = $t_row;
+			}
+		}
+	} else {
+		$t_users = user_get_option_rows( $p_project_id, $p_access );
+	}
 
 	# Add the specified user ID to the list
 	# If we have an array of user IDs, then we've been called from a filter
@@ -369,8 +382,8 @@ function print_user_option_list( $p_user_id, $p_project_id = null, $p_access = A
  * @param integer $p_project_id A project identifier.
  * @return void
  */
-function print_reporter_option_list( $p_user_id, $p_project_id = null ) {
-	print_user_option_list( $p_user_id, $p_project_id, config_get( 'report_bug_threshold' ) );
+function print_reporter_option_list( $p_user_id, $p_project_id = null, $p_typeahead = false ) {
+	print_user_option_list( $p_user_id, $p_project_id, config_get( 'report_bug_threshold' ), $p_typeahead );
 }
 
 /**
@@ -619,12 +632,12 @@ function print_assign_to_option_list( $p_user_id = '', $p_project_id = null, $p_
  * @param integer        $p_threshold  An access level.
  * @return void
  */
-function print_note_option_list( $p_user_id = '', $p_project_id = null, $p_threshold = null ) {
+function print_note_option_list( $p_user_id = '', $p_project_id = null, $p_threshold = null, $p_typeahead = false ) {
 	if( null === $p_threshold ) {
 		$p_threshold = config_get( 'add_bugnote_threshold' );
 	}
 
-	print_user_option_list( $p_user_id, $p_project_id, $p_threshold );
+	print_user_option_list( $p_user_id, $p_project_id, $p_threshold, $p_typeahead );
 }
 
 /**
