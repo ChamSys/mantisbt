@@ -168,13 +168,16 @@ class UserUpdateCommand extends Command {
 			$t_new_realname = string_normalize( $t_new_realname );
 		}
 
-		# ... if realname should be set by LDAP, then fetch it.
 		if( $t_ldap && config_get_global( 'use_ldap_realname' ) ) {
+			# ... if realname should be set by LDAP, then fetch it.
 			$t_username = $t_new_username ?: $t_old_username;
 			$t_realname = ldap_realname_from_username( $t_username );
 			if( !is_null( $t_realname ) && $t_realname !== $t_new_username ) {
 				$t_new_realname = $t_realname;
 			}
+		} elseif( auth_realname_managed_externally( $this->user_id ) ) {
+			# ... if it is managed by something else, then it cannot be changed here.
+			$t_new_realname = null;
 		}
 
 		if( !is_null( $t_new_realname ) && $t_old_realname !== $t_new_realname ) {
@@ -185,12 +188,15 @@ class UserUpdateCommand extends Command {
 		$t_old_email = user_get_field( $this->user_id, 'email' );
 		$t_new_email = isset( $t_user['email'] ) ? trim( $t_user['email'] ) : null;
 
-		# ... if email should be set by LDAP, then fetch it.
 		if( $t_ldap && config_get_global( 'use_ldap_email' ) ) {
+			# ... if email should be set by LDAP, then fetch it.
 			$t_email = ldap_email( $this->user_id );
 			if( !is_null( $t_email ) && $t_email !== $t_old_email ) {
 				$t_new_email = $t_email;
 			}
+		} elseif( auth_email_managed_externally( $this->user_id ) ) {
+			# ... if it is managed by something else, then it cannot be changed here.
+			$t_new_email = null;
 		}
 
 		if( !is_null( $t_new_email ) && $t_new_email !== $t_old_email ) {
