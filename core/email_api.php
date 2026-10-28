@@ -783,6 +783,33 @@ function email_generic( $p_bug_id, $p_notify_type, $p_message_id = null, array $
 }
 
 /**
+ * Tell the plugins who is about to be notified of something that happened to an issue.
+ *
+ * It is signalled when the notification is sent, with the recipients that the
+ * emails are sent to, and not when email notifications are off: they are also
+ * turned off to prevent notifications, for instance when a project is deleted.
+ *
+ * @param int         $p_bug_id      An issue identifier.
+ * @param string      $p_notify_type The kind of notification: the type of the recipients
+ *                                   ('new', 'bugnote', 'owner', ...), 'mention' or 'reminder'.
+ * @param array       $p_user_ids    The identifiers of the users to be notified.
+ * @param string|null $p_message_id  The message identifier of the notification, if it has one.
+ * @param int|null    $p_bugnote_id  The note the notification is about, if there is one.
+ *
+ * @return void
+ */
+function email_notify_recipients( $p_bug_id, $p_notify_type, array $p_user_ids, $p_message_id = null, $p_bugnote_id = null ) {
+	if( empty( $p_user_ids ) ) {
+		return;
+	}
+
+	$t_actor_id = auth_is_user_authenticated() ? auth_get_current_user_id() : NO_USER;
+
+	event_signal( 'EVENT_NOTIFY_RECIPIENTS',
+		array( (int)$p_bug_id, $p_notify_type, array_map( 'intval', array_values( $p_user_ids ) ), $p_message_id, $p_bugnote_id, (int)$t_actor_id ) );
+}
+
+/**
  * Sends a generic email to the specific set of recipients.
  *
  * @param int     $p_bug_id                 A bug identifier
@@ -802,6 +829,8 @@ function email_generic_to_recipients( int $p_bug_id, string $p_notify_type, arra
 	if( OFF == config_get( 'enable_email_notification' ) ) {
 		return;
 	}
+
+	email_notify_recipients( $p_bug_id, $p_notify_type, array_keys( $p_recipients ), $p_message_id );
 
 	ignore_user_abort( true );
 
@@ -1173,6 +1202,9 @@ function email_bugnote_add( $p_bugnote_id, $p_files = array(), $p_exclude_user_i
 
 	$t_recipients = email_collect_recipients( $t_bugnote->bug_id, 'bugnote', /* extra_user_ids */ array(), $p_bugnote_id );
 	$t_recipients_verbose = array();
+
+	email_notify_recipients( $t_bugnote->bug_id, 'bugnote', array_diff( array_keys( $t_recipients ), $p_exclude_user_ids ),
+		$t_message_id, $p_bugnote_id );
 
 	# send email to every recipient
 	foreach( $t_recipients as $t_user_id => $t_user_email ) {
@@ -1645,6 +1677,8 @@ function email_bug_reminder( $p_recipients, $p_bug_id, $p_message ) {
 		);
 	}
 
+	email_notify_recipients( $p_bug_id, 'reminder', array_unique( $p_recipients ) );
+
 	$t_project_id = bug_get_field( $p_bug_id, 'project_id' );
 	$t_sender_id = auth_get_current_user_id();
 	$t_sender = user_get_name( $t_sender_id );
@@ -1708,7 +1742,8 @@ function email_user_mention( $p_bug_id, $p_mention_user_ids, $p_message, $p_remo
 		log_event( LOG_EMAIL_VERBOSE, 'skipped mention email for U' . $t_removed_mention_user_id . ' (no access to issue or note).' );
 	}
 
-	$t_result = array();
+	# The users that are going to be mentioned, in the order they were
+	$t_notify_user_ids = array();
 	foreach( $p_mention_user_ids as $t_mention_user_id ) {
 		# Don't trigger mention emails for self mentions
 		if( $t_mention_user_id == $t_user_id ) {
@@ -1728,6 +1763,13 @@ function email_user_mention( $p_bug_id, $p_mention_user_ids, $p_message, $p_remo
 			continue;
 		}
 
+		$t_notify_user_ids[] = $t_mention_user_id;
+	}
+
+	email_notify_recipients( $p_bug_id, 'mention', $t_notify_user_ids );
+
+	$t_result = array();
+	foreach( $t_notify_user_ids as $t_mention_user_id ) {
 		lang_push( user_pref_get_language( $t_mention_user_id, $t_project_id ) );
 
 		$t_email = user_get_email( $t_mention_user_id );

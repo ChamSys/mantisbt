@@ -81,4 +81,47 @@
 
 	</section>
 
+	<section id="dev.eventref.notify.sent">
+		<title>Notifications Sent</title>
+
+		<blockquote id="dev.eventref.notify.sent.recipients">
+			<title>EVENT_NOTIFY_RECIPIENTS (Execute)</title>
+
+			<blockquote>
+				<para>
+					Triggered when MantisBT is about to notify users of something that happened to an
+					issue, with the users that are notified: the same users as the emails go to, once the
+					preferences of the users and their access to the issue and to the note have been
+					applied.  It lets a plugin do something else with the same notifications: an in-app
+					notification, a webhook, a chat message.  It is not triggered for the account emails
+					(sign up, password reset).
+				</para>
+
+				<para>
+					The event is triggered where the emails are sent, so it is not triggered when
+					<literal>$g_enable_email_notification</literal> is <literal>OFF</literal>: MantisBT also turns that
+					setting off to prevent all notifications, for instance while it deletes a project and its
+					issues.  A site that wants the event without sending emails can leave email
+					notifications on, and <literal>$g_email_send_using_cronjob</literal> on, without running the
+					cronjob that sends the queue.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Integer&gt;: the id of the issue</para></listitem>
+					<listitem><para>&lt;String&gt;: the notification type: the type of the recipients of an update
+						(<literal>new</literal>, <literal>updated</literal>, <literal>owner</literal>,
+						<literal>reopened</literal>, <literal>deleted</literal>, <literal>bugnote</literal>, ...),
+						<literal>mention</literal> or <literal>reminder</literal></para></listitem>
+					<listitem><para>&lt;Array&gt;: the ids of the users that are notified (not their email addresses)</para></listitem>
+					<listitem><para>&lt;String|null&gt;: the message identifier of the notification (its title in the
+						language files), <literal>null</literal> for mentions and reminders</para></listitem>
+					<listitem><para>&lt;Integer|null&gt;: the id of the note, when the notification is about a note</para></listitem>
+					<listitem><para>&lt;Integer&gt;: the id of the user whose action caused the notification,
+						<literal>NO_USER</literal> (0) when nobody is logged in, as in scripts</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+	</section>
+
 </section>
