@@ -9,7 +9,8 @@
 # before building (2.28.4.1, 2.28.4.2, ...). It prints the file and its SHA-512, which is what
 # a deployment pins (see the pin in the provisioning of the site that uses it).
 #
-# composer must be on the PATH, or docker: then the composer image installs vendor/.
+# composer must be on the PATH, or docker: then the composer image installs vendor/. The platform
+# requirements are ignored on purpose: the build machine is not where the code runs.
 set -eu
 
 cd "$(dirname "$0")/../.."
@@ -33,10 +34,10 @@ git archive --format=tar --prefix="$name/" HEAD | tar -x -C "$work"
 rm -rf "$work/$name/chamsys" "$work/$name/tests" "$work/$name/.git"* "$work/$name/.editorconfig" "$work/$name/.phpcs"* 2>/dev/null || true
 
 if command -v composer >/dev/null 2>&1; then
-	composer install --working-dir="$work/$name" --no-dev --no-interaction --prefer-dist --optimize-autoloader --quiet
+	composer install --working-dir="$work/$name" --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs --quiet
 else
 	docker run --rm -v "$work/$name:/app" -w /app composer:2 \
-		install --no-dev --no-interaction --prefer-dist --optimize-autoloader --quiet
+		install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs --quiet
 fi
 
 # Reproducible enough to compare two builds of the same commit: sorted names, fixed owner, the
