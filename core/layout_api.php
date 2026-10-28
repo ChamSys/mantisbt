@@ -45,6 +45,11 @@ require_api( 'access_api.php' );
 require_api( 'theme_api.php' );
 require_api( 'utility_api.php' );
 
+/**
+ * The title of the page, see layout_page_title()
+ * @global string $g_layout_page_title
+ */
+$g_layout_page_title = '';
 
 /**
  * Print the page header section
@@ -67,11 +72,33 @@ function layout_page_header( $p_page_title = '', $p_redirect_url = null, $p_page
 }
 
 /**
+ * Get or set the title of the page.
+ *
+ * The title is set by layout_page_header(), and is used as the title of the
+ * window and as a hidden heading of the page. A plugin page that only knows
+ * its title later can set it with this function, before the page content starts.
+ *
+ * @param string|null $p_title The title to set, or null to leave it as it is.
+ * @return string The title of the page.
+ */
+function layout_page_title( $p_title = null ) {
+	global $g_layout_page_title;
+
+	if( $p_title !== null && !is_blank( $p_title ) ) {
+		$g_layout_page_title = $p_title;
+	}
+
+	return $g_layout_page_title;
+}
+
+/**
  * Print the part of the page that comes before meta redirect tags should be inserted
  * @param string $p_page_title Page title.
  * @return void
  */
 function layout_page_header_begin( $p_page_title = '' ) {
+	layout_page_title( $p_page_title );
+
 	html_begin();
 	html_head_begin();
 	html_content_type();
@@ -1046,6 +1073,12 @@ function layout_main_content_row_end() {
  */
 function layout_page_content_begin() {
 	echo '<div class="page-content">' , "\n";
+
+	# The title of the page as a heading for assistive technology
+	$t_page_title = layout_page_title();
+	if( !is_blank( $t_page_title ) ) {
+		echo '<h1 class="sr-only page-title">', string_html_specialchars( $t_page_title ), '</h1>', "\n";
+	}
 }
 
 /**
