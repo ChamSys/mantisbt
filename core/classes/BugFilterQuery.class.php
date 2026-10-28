@@ -125,6 +125,7 @@ class BugFilterQuery extends DbQuery {
 	protected $rt_included_projects; # calculated list of projects in the filter scope, to be reused at each build step
 	protected $rt_table_alias_cf; # keep track of the custom field table joins, to reuse them in order by, or serach matching.
 	protected $rt_table_alias_bugnote = null; # keep track of the bugnote table joins.
+	protected $rt_search_candidate_ids = null; # the issues the search backend found, best match first, if it was used.
 	protected $needs_rebuild; # flag to force a rebuild of the final sql when additions are made after the object is first created.
 
 	/**
@@ -1579,10 +1580,26 @@ class BugFilterQuery extends DbQuery {
 			$t_private_note_projects = $this->rt_included_projects;
 		}
 
-		return $t_backend->search( $this->filter[FILTER_PROPERTY_SEARCH], array(
+		$this->rt_search_candidate_ids = $t_backend->search( $this->filter[FILTER_PROPERTY_SEARCH], array(
 			'limit' => (int)config_get_global( 'search_candidate_limit' ),
 			'private_note_project_ids' => array_values( $t_private_note_projects ),
 		) );
+
+		return $this->rt_search_candidate_ids;
+	}
+
+	/**
+	 * Get the issues the search backend found for the text search of the filter,
+	 * best match first. They are candidates only: the other conditions of the
+	 * filter and the access rules still apply when the query is run, and none of
+	 * the order of this list is used by the query itself, a caller can use it to
+	 * sort the issues it gets.
+	 *
+	 * @return array|null The ids, or null if the text search was not answered by
+	 *                    a backend with an index.
+	 */
+	public function get_search_candidate_ids() {
+		return $this->rt_search_candidate_ids;
 	}
 
 	/**
