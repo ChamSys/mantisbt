@@ -508,6 +508,15 @@ function auth_prepare_password( $p_password ) {
  * @access private
  */
 function auth_auto_create_user( $p_username, $p_password ) {
+	# A plugin can authenticate users that MantisBT does not know yet and create their account
+	$t_plugin_result = event_signal( 'EVENT_AUTH_AUTO_CREATE_USER', array( $p_username, $p_password ) );
+	if( $t_plugin_result === false ) {
+		return false;
+	}
+	if( is_int( $t_plugin_result ) && user_exists( $t_plugin_result ) ) {
+		return $t_plugin_result;
+	}
+
 	$t_login_method = config_get_global( 'login_method' );
 
 	if( $t_login_method == BASIC_AUTH ) {

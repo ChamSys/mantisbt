@@ -259,6 +259,39 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.auth.autocreateuser">
+			<title>EVENT_AUTH_AUTO_CREATE_USER (First)</title>
+
+			<blockquote>
+				<para>
+					Triggered when someone logs in with a user name that MantisBT does not know, before the
+					creation of the account that the login methods <literal>BASIC_AUTH</literal> and
+					<literal>LDAP</literal> do.  A plugin that checks the credentials against its own
+					directory can create the account and return its id: the login then goes on with
+					that account, so the account must have a password that matches what was typed under
+					the configured login method (pass the plain password to <literal>user_create()</literal>,
+					which encodes it).  The first callback that returns something other than
+					<literal>null</literal> ends the event.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;String&gt;: the user name that was typed</para></listitem>
+					<listitem><para>&lt;String|null&gt;: the plain password that was typed.  It is <literal>null</literal>
+						when a script logs in a user that was authenticated in another way, with no password
+						(<literal>auth_attempt_script_login()</literal>): a plugin must not create an account then,
+						unless it has authenticated the user itself</para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;Integer&gt;: the id of the account that the plugin created: it is used for the login</para></listitem>
+					<listitem><para>&lt;Boolean&gt;: <literal>false</literal> to refuse the login without trying the other ways to create the account</para></listitem>
+					<listitem><para><literal>null</literal> (nothing): no opinion, MantisBT goes on as it does without the event</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.auth.logout">
 			<title>EVENT_AUTH_LOGOUT (Execute)</title>
 
