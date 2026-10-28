@@ -382,7 +382,7 @@ if( $t_flags['status_show'] || $t_flags['resolution_show'] ) {
 		# choose color based on status
 		$t_status_css = html_get_status_css_fg( $t_issue['status']['id'] );
 
-		echo '<td class="bug-status">';
+		echo '<td class="bug-status" data-status="', (int)$t_issue['status']['id'], '">';
 		print_icon( 'fa-square', 'fa-status-box ' . $t_status_css );
 		echo ' ' . string_display_line( $t_issue['status']['label'] ), '</td>';
 	} else {
