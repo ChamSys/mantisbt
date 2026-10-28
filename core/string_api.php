@@ -640,14 +640,22 @@ function string_restore_valid_html_tags( $p_string, $p_multiline = true ) {
 function string_get_bug_page( $p_action ) {
 	switch( $p_action ) {
 		case 'view':
-			return 'bug_view_page.php';
+			$t_page = 'bug_view_page.php';
+			break;
 		case 'update':
-			return 'bug_update_page.php';
+			$t_page = 'bug_update_page.php';
+			break;
 		case 'report':
-			return 'bug_report_page.php';
+			$t_page = 'bug_report_page.php';
+			break;
+		default:
+			trigger_error( ERROR_GENERIC, ERROR );
 	}
 
-	trigger_error( ERROR_GENERIC, ERROR );
+	# A plugin can provide the page, for example a replacement of the report page
+	$t_plugin_page = event_signal( 'EVENT_BUG_PAGE', array( $p_action, $t_page ) );
+
+	return is_blank( $t_plugin_page ) ? $t_page : $t_plugin_page;
 }
 
 /**
@@ -782,7 +790,7 @@ function string_get_bug_update_link( $p_bug_id ) {
  * @return string
  */
 function string_get_bug_update_url( $p_bug_id ) {
-	return string_get_bug_update_page() . '?bug_id=' . $p_bug_id;
+	return helper_url_combine( string_get_bug_update_page(), array( 'bug_id' => $p_bug_id ) );
 }
 
 /**

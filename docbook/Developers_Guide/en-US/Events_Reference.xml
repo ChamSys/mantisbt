@@ -182,6 +182,35 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.bug.page">
+			<title>EVENT_BUG_PAGE (First)</title>
+
+			<blockquote>
+				<para>
+					An event that lets a plugin provide one of the pages of an issue instead of the
+					one of MantisBT, for example its own page to report an issue.  Links to the page
+					(the menu, the buttons, the issue list) use the page the plugin returns, and a
+					request for the page of MantisBT is redirected to it, keeping its parameters.
+					The callback has to return nothing for requests made from its own page, so that
+					it does not redirect to itself.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;String&gt;: the action, <literal>view</literal>,
+						<literal>update</literal> or <literal>report</literal></para></listitem>
+					<listitem><para>&lt;String&gt;: the page of MantisBT for that action</para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;String&gt;: the page to use, relative to the MantisBT directory,
+						for example <literal>plugin_page( 'report', true )</literal>, or nothing to
+						keep the default page.</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.auth.loginform">
 			<title>EVENT_AUTH_LOGIN_FORM_BEFORE and EVENT_AUTH_LOGIN_FORM_AFTER (Output)</title>
 

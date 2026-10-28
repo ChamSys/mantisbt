@@ -71,6 +71,12 @@ require_api( 'version_api.php' );
 
 require_css( 'status_config.php' );
 
+# A plugin can provide this page instead, see EVENT_BUG_PAGE
+$t_bug_page = string_get_bug_page( 'update' );
+if( $t_bug_page != basename( $_SERVER['SCRIPT_NAME'] ) ) {
+	print_header_redirect( helper_url_combine( $t_bug_page, $_GET ) );
+}
+
 $f_bug_id = gpc_get_int( 'bug_id' );
 $f_reporter_edit = gpc_get_bool( 'reporter_edit' );
 

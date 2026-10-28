@@ -75,6 +75,12 @@ require_api( 'string_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
 
+# A plugin can provide this page instead, see EVENT_BUG_PAGE
+$t_bug_page = string_get_bug_page( 'report' );
+if( $t_bug_page != basename( $_SERVER['SCRIPT_NAME'] ) ) {
+	print_header_redirect( helper_url_combine( $t_bug_page, $_GET ) );
+}
+
 $f_master_bug_id = gpc_get_int( 'm_id', 0 );
 
 if( $f_master_bug_id > 0 ) {
