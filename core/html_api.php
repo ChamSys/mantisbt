@@ -47,6 +47,7 @@
  * @uses project_api.php
  * @uses rss_api.php
  * @uses string_api.php
+ * @uses theme_api.php
  * @uses user_api.php
  * @uses utility_api.php
  * @uses layout_api.php
@@ -74,6 +75,7 @@ require_api( 'print_api.php' );
 require_api( 'project_api.php' );
 require_api( 'rss_api.php' );
 require_api( 'string_api.php' );
+require_api( 'theme_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'layout_api.php' );
@@ -153,7 +155,7 @@ function html_javascript_cdn_link( $p_url, $p_hash = '' ) {
  */
 function html_begin() {
 	$t_attributes = html_attributes_add_from_event(
-		array( 'lang' => lang_get_current_lang() ),
+		array_merge( array( 'lang' => lang_get_current_lang() ), theme_get_html_attributes() ),
 		'EVENT_LAYOUT_HTML_ATTRIBUTES' );
 
 	echo '<!DOCTYPE html>', "\n";

@@ -451,6 +451,35 @@ return array(
 			Events listed below are in order of runtime execution.
 		</para>
 
+		<blockquote id="dev.eventref.output.layout.themes">
+			<title>EVENT_THEMES (Default)</title>
+			<blockquote>
+				<para>
+					This event allows plugins to provide themes.  A theme is a list of stylesheets that
+					is linked after all the stylesheets of MantisBT, so it can restyle the pages, and an
+					id that is set as the <literal>data-theme</literal> attribute of the
+					<literal>&lt;html&gt;</literal> tag, for use in CSS selectors.  The theme in use is
+					set with <literal>$g_theme</literal>; the default theme, with the id
+					<literal>default</literal>, has no stylesheets and cannot be replaced.
+				</para>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;Array&gt;: themes by theme id (letters, digits, hyphens and underscores).
+						Each theme is an array with the keys <literal>name</literal>, the name to show to
+						users, and <literal>css</literal>, an array of stylesheets to link, in order, as paths
+						relative to the MantisBT directory or full URLs, for example
+						<programlisting>
+array( 'ocean' => array(
+	'name' => plugin_lang_get( 'theme_ocean' ),
+	'css' => array( plugin_file( 'ocean.css', true ) ),
+) );
+</programlisting>
+					</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.output.layout.htmlattributes">
 			<title>EVENT_LAYOUT_HTML_ATTRIBUTES (Default)</title>
 			<blockquote>

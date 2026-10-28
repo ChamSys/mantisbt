@@ -1216,6 +1216,14 @@ $g_fallback_language = 'english';
 $g_font_family = 'Open Sans';
 
 /**
+ * The theme to use: the id of one of the themes provided by plugins, see the
+ * EVENT_THEMES event. The default is MantisBT's own look, 'default'.
+ *
+ * @global string $g_theme
+ */
+$g_theme = 'default';
+
+/**
  * List the Google fonts that the users are allowed to choose from.
  *
  * Google offers over 800 fonts. The list below is limited to the ones tested

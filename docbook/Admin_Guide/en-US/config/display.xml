@@ -7,6 +7,15 @@
 
 	<variablelist>
 		<varlistentry>
+			<term>$g_theme</term>
+			<listitem>
+				<para>The theme to use: a set of stylesheets, loaded after the ones of MantisBT,
+					that changes the look of the pages. Themes are provided by plugins, which
+					document the ids to use. The default is <literal>default</literal>, MantisBT's own look.
+					An unknown id is ignored.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_font_family</term>
 			<listitem>
 				<para>Name of the google font family to use.</para>
