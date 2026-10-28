@@ -1213,6 +1213,20 @@ function print_font_option_list( $p_font ) {
 }
 
 /**
+ * Print the options of a dropdown list of the themes that can be used.
+ *
+ * @param string $p_theme The id of the selected theme.
+ * @return void
+ */
+function print_theme_option_list( $p_theme ) {
+	foreach( theme_get_all() as $t_id => $t_theme ) {
+		echo '<option value="' . string_attribute( $t_id ) . '"';
+		check_selected( (string)$t_id, $p_theme );
+		echo '>' . string_display_line( $t_theme['name'] ) . '</option>';
+	}
+}
+
+/**
  * Print a dropdown list of all bug actions available to a user for a specified
  * set of projects.
  *

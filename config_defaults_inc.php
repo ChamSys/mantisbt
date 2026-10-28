@@ -5773,6 +5773,7 @@ $g_public_config_names = array(
 	'tag_edit_threshold',
 	'tag_separator',
 	'tag_view_threshold',
+	'theme',
 	'time_tracking_billing_rate',
 	'time_tracking_edit_threshold',
 	'time_tracking_enabled',

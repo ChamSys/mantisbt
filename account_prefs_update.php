@@ -32,6 +32,7 @@
  * @uses html_api.php
  * @uses lang_api.php
  * @uses print_api.php
+ * @uses theme_api.php
  * @uses user_api.php
  * @uses user_pref_api.php
  */
@@ -48,6 +49,7 @@ require_api( 'gpc_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
+require_api( 'theme_api.php' );
 require_api( 'user_api.php' );
 require_api( 'user_pref_api.php' );
 
@@ -93,6 +95,18 @@ if( !in_array( $f_font, helper_get_font_list())) {
 }
 if( config_get( 'font_family', null, $f_user_id, ALL_PROJECTS ) != $f_font ) {
 	config_set( 'font_family', $f_font, $f_user_id, ALL_PROJECTS );
+}
+
+# The theme can only be chosen when there is more than one
+$f_theme = gpc_get_string( 'theme', null );
+if( $f_theme !== null ) {
+	if( !array_key_exists( $f_theme, theme_get_all() ) ) {
+		# This should not happen unless the form submission was tempered with
+		throw new ClientException( "Invalid theme", ERROR_INVALID_FIELD_VALUE, ['theme'] );
+	}
+	if( config_get( 'theme', null, $f_user_id, ALL_PROJECTS ) != $f_theme ) {
+		config_set( 'theme', $f_theme, $f_user_id, ALL_PROJECTS );
+	}
 }
 
 $t_prefs->email_on_new		= gpc_get_bool( 'email_on_new' );

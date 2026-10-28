@@ -31,6 +31,7 @@
  * @uses html_api.php
  * @uses lang_api.php
  * @uses print_api.php
+ * @uses theme_api.php
  * @uses user_api.php
  * @uses user_pref_api.php
  * @uses utility_api.php
@@ -51,6 +52,7 @@ require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
+require_api( 'theme_api.php' );
 require_api( 'user_api.php' );
 require_api( 'user_pref_api.php' );
 require_api( 'utility_api.php' );
@@ -429,6 +431,20 @@ function edit_account_prefs( $p_user_id = null, $p_error_if_protected = true, $p
 			</select>
 		</td>
 	</tr>
+	<?php if( count( theme_get_all() ) > 1 ) { ?>
+	<tr>
+		<td class="category">
+			<label for="theme">
+				<?php echo lang_get( 'theme' ) ?>
+			</label>
+		</td>
+		<td>
+			<select id="theme" name="theme" class="input-sm">
+				<?php print_theme_option_list( config_get( 'theme', null, $p_user_id, ALL_PROJECTS ) ) ?>
+			</select>
+		</td>
+	</tr>
+	<?php } ?>
 	<?php event_signal( 'EVENT_ACCOUNT_PREF_UPDATE_FORM', array( $p_user_id ) ); ?>
 	</table>
 						</div>
