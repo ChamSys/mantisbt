@@ -9,6 +9,7 @@
 #   php ARGS   run php in the php container, e.g. `stack.sh php -v`
 #   sh         shell in the php container
 #   sql        MariaDB client on the mantis database
+#   search ARGS  scripts/search_index.php, e.g. `stack.sh search --reindex`
 set -eu
 cd "$(dirname "$0")"
 
@@ -39,5 +40,6 @@ case "${1:-}" in
 	php)     shift; in_php php "$@" ;;
 	sh)      compose exec php bash ;;
 	sql)     compose exec db mariadb -umantis -pmantis mantis ;;
-	*)       sed -n '2,12p' "$0"; exit 1 ;;
+	search)  shift; in_php php scripts/search_index.php "$@" ;;
+	*)       sed -n '2,13p' "$0"; exit 1 ;;
 esac

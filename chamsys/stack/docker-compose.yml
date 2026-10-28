@@ -25,6 +25,7 @@ services:
       # The uid above has no home directory in the image.
       COMPOSER_HOME: /tmp/composer
       HOME: /tmp
+      MANTIS_SEARCH_BACKEND: ${MANTIS_SEARCH_BACKEND:-meilisearch}
       MEILI_URL: http://meilisearch:7700
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-dev-master-key-change-me}
     volumes:
