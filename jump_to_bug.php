@@ -23,18 +23,25 @@
  *
  * @uses core.php
  * @uses authentication_api.php
+ * @uses filter_constants_inc.php
  * @uses gpc_api.php
  * @uses print_api.php
  */
 
 require_once( 'core.php' );
 require_api( 'authentication_api.php' );
+require_api( 'filter_constants_inc.php' );
 require_api( 'gpc_api.php' );
 require_api( 'print_api.php' );
 
 auth_ensure_user_authenticated();
 
-# Determine which view page to redirect back to.
-$f_bug_id		= gpc_get_int( 'bug_id' );
+# The field is used to jump to an issue by id, but people also type text in it.
+$f_bug_id		= trim( gpc_get_string( 'bug_id' ) );
 
-print_header_redirect_view( $f_bug_id );
+if( ctype_digit( $f_bug_id ) ) {
+	print_header_redirect_view( (int)$f_bug_id );
+} else {
+	# Not an issue id: treat it as a text search instead of failing.
+	print_header_redirect( 'search.php?' . FILTER_PROPERTY_SEARCH . '=' . urlencode( $f_bug_id ) );
+}
