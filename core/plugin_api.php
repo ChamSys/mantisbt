@@ -239,10 +239,20 @@ function plugin_file( $p_file, $p_redirect = false, $p_base_name = null ) {
 	} else {
 		$t_current = $p_base_name;
 	}
+	$t_url = 'plugin_file.php?file=' . $t_current . '/' . $p_file;
+
+	# Add the file's modification time, so that browsers fetch a changed file
+	# right away instead of using a copy cached for hours, e.g. after a plugin
+	# is upgraded.
+	$t_file_path = plugin_file_path( $p_file, $t_current );
+	if( false !== $t_file_path ) {
+		$t_url .= '&v=' . (int)filemtime( $t_file_path );
+	}
+
 	if( $p_redirect ) {
-		return 'plugin_file.php?file=' . $t_current . '/' . $p_file;
+		return $t_url;
 	} else {
-		return helper_mantis_url( 'plugin_file.php?file=' . $t_current . '/' . $p_file );
+		return helper_mantis_url( $t_url );
 	}
 }
 
