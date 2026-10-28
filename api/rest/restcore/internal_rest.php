@@ -31,6 +31,7 @@ $g_app->group('/internal', function() use ( $g_app ) {
 	$g_app->any( '/autocomplete', 'rest_internal_autocomplete' );
 	$g_app->any( '/config_display', 'rest_internal_config_display' );
 	$g_app->get( '/issue_search', 'rest_internal_issue_search' );
+	$g_app->get( '/user_search', 'rest_internal_user_search' );
 });
 
 /**
@@ -114,6 +115,30 @@ function rest_internal_issue_search( \Slim\Http\Request $p_request, \Slim\Http\R
 	}
 
 	$t_command = new IssueQuickSearchCommand( array( 'query' => $t_query ) );
+	$t_result = $t_command->execute();
+
+	return $p_response->withStatus( HTTP_STATUS_SUCCESS )
+		->withHeader( 'Cache-Control', 'private, no-store' )
+		->withJson( $t_result );
+}
+
+/**
+ * Search for the users that a field may offer, for choosing one as the user types.
+ *
+ * @param \Slim\Http\Request $p_request   The request.
+ * @param \Slim\Http\Response $p_response The response.
+ * @param array $p_args Arguments
+ * @return \Slim\Http\Response The augmented response.
+ */
+function rest_internal_user_search( \Slim\Http\Request $p_request, \Slim\Http\Response $p_response, array $p_args ) {
+	$t_query = array();
+	foreach( array( 'scope', 'q', 'project_id', 'limit' ) as $t_param ) {
+		if( $p_request->getParam( $t_param ) !== null ) {
+			$t_query[$t_param] = $p_request->getParam( $t_param );
+		}
+	}
+
+	$t_command = new UserSearchCommand( array( 'query' => $t_query ) );
 	$t_result = $t_command->execute();
 
 	return $p_response->withStatus( HTTP_STATUS_SUCCESS )
