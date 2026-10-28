@@ -66,7 +66,6 @@ function url_get( $p_url ) {
 
 		# Retrieve data
 		$t_data = curl_exec( $t_curl );
-		curl_close( $t_curl );
 
 		if( $t_data !== false ) {
 			return $t_data;
