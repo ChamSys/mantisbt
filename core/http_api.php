@@ -78,10 +78,8 @@ function is_browser_chrome() {
 function http_content_disposition_header( $p_filename, $p_inline = false ) {
 	if( !headers_sent() ) {
 		$t_encoded_filename = rawurlencode( $p_filename );
-		$t_disposition = '';
-		if( !$p_inline ) {
-			$t_disposition = 'attachment;';
-		}
+		# RFC 6266 requires a disposition type, even for inline content.
+		$t_disposition = $p_inline ? 'inline;' : 'attachment;';
 		if( is_browser_internet_explorer() || is_browser_chrome() ) {
 			# Internet Explorer does not support RFC2231 however it does
 			# incorrectly decode URL encoded filenames and we can use this to
