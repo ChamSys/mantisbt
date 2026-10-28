@@ -793,24 +793,45 @@ function user_delete_profiles( $p_user_id ) {
 }
 
 /**
+ * Limit a list of users to the current user, if they may not see the other
+ * users of the project, see $g_show_user_list_threshold.
+ *
+ * @param array $p_users      The rows of the users, by user id.
+ * @param int   $p_project_id A project identifier.
+ * @return array The rows of the users that the current user may see.
+ * @access public
+ */
+function user_limit_user_list( array $p_users, $p_project_id ) {
+	if( access_has_project_level( config_get( 'show_user_list_threshold', null, null, $p_project_id ), $p_project_id ) ) {
+		return $p_users;
+	}
+
+	$t_user_id = auth_get_current_user_id();
+	return isset( $p_users[$t_user_id] ) ? array( $t_user_id => $p_users[$t_user_id] ) : array();
+}
+
+/**
  * Get the users that can be chosen for a field of a project: the ones of the
  * project that have at least an access level, or those of all the projects the
  * current user can access.
  *
  * @param int       $p_project_id A project identifier, or ALL_PROJECTS.
  * @param int|array $p_access     An access level, or a list of them.
+ * @param string    $p_search     Only the users whose user name or, if real names are
+ *                                shown, real name contains this text.
  * @return array The rows of the users (id, username, realname, access_level) by user id.
  * @access public
  */
-function user_get_option_rows( $p_project_id, $p_access = ANYBODY ) {
+function user_get_option_rows( $p_project_id, $p_access = ANYBODY, $p_search = '' ) {
 	if( $p_project_id !== ALL_PROJECTS ) {
-		return project_get_all_user_rows( $p_project_id, $p_access );
+		return user_limit_user_list( project_get_all_user_rows( $p_project_id, $p_access, true, $p_search, user_show_realname() ), $p_project_id );
 	}
 
 	# Get list of users having access level for all accessible projects
 	$t_users = array();
 	foreach( user_get_accessible_projects( auth_get_current_user_id() ) as $t_project_id ) {
-		$t_project_users_list = project_get_all_user_rows( $t_project_id, $p_access );
+		$t_project_users_list = user_limit_user_list(
+			project_get_all_user_rows( $t_project_id, $p_access, true, $p_search, user_show_realname() ), $t_project_id );
 		# Do a 'smart' merge of the project's user list, into an
 		# associative array (to remove duplicates)
 		foreach( $t_project_users_list as $t_id => $t_user ) {

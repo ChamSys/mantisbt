@@ -710,6 +710,33 @@ $g_show_user_email_threshold = NOBODY;
 $g_show_user_realname_threshold = NOBODY;
 
 /**
+ * Access level needed to see the other users in the lists of users of filters
+ * and fields, and in searches for users. Below it, a user is only offered
+ * themselves. The default, ANYBODY, lists every user that can have the role the
+ * field is for, so on a tracker that is open to customers they can see each
+ * other: raise it to prevent that.
+ *
+ * @global int $g_show_user_list_threshold
+ */
+$g_show_user_list_threshold = ANYBODY;
+
+/**
+ * Search for users as the user types, instead of listing them all, in the lists
+ * of users of a filter, when more users than this can be chosen. 0 never does.
+ * Without JavaScript such a list only has the users that are selected.
+ *
+ * @global int $g_user_typeahead_min_users
+ */
+$g_user_typeahead_min_users = 0;
+
+/**
+ * The number of searches for users that a user may make per minute, 0 for no limit.
+ *
+ * @global int $g_user_typeahead_rate_limit
+ */
+$g_user_typeahead_rate_limit = 120;
+
+/**
  * Select the method to mail by.
  *
  * This config option is specific to PhpMailer provider.
@@ -5506,6 +5533,7 @@ $g_global_settings = array(
 	'search_backend',
 	'search_candidate_limit',
 	'search_live_rate_limit',
+	'user_typeahead_rate_limit',
 	'search_meilisearch_index',
 	'search_meilisearch_key',
 	'search_meilisearch_timeout',
