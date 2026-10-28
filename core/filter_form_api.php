@@ -1200,7 +1200,7 @@ function print_filter_per_page( ?array $p_filter = null ) {
 		$p_filter = $g_filter;
 	}
 	?><!-- Number of bugs per page -->
-		<input class="input-xs" type="text" name="<?php echo FILTER_PROPERTY_ISSUES_PER_PAGE;?>" size="3" maxlength="7" value="<?php echo $p_filter[FILTER_PROPERTY_ISSUES_PER_PAGE]?>" />
+		<input class="input-xs" type="text" name="<?php echo FILTER_PROPERTY_ISSUES_PER_PAGE;?>" size="3" maxlength="7" aria-label="<?php echo lang_get( 'show' ) ?>" value="<?php echo $p_filter[FILTER_PROPERTY_ISSUES_PER_PAGE]?>" />
 		<?php
 }
 

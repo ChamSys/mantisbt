@@ -4,6 +4,12 @@ var serialized_form_fields = new Array();
 $(document).ready(function(){
 	$('#filter-toggle').on('click', function (event) {
 		$('#filter-bar-queries').toggle();
+
+		// The widget is collapsed by its own handler, which may run after this one
+		var t_toggle = $(this);
+		setTimeout(function () {
+			t_toggle.attr('aria-expanded', t_toggle.closest('.widget-box').hasClass('collapsed') ? 'false' : 'true');
+		}, 0);
 	});
 
 	$('#filter-bar-search-txt').on('change', function (event) {

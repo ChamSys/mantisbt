@@ -1328,7 +1328,7 @@ function filter_draw_selection_area() {
 						</ul>
 					</div>
 				<?php } ?>
-				<a id="filter-toggle" data-action="collapse" href="#">
+				<a id="filter-toggle" data-action="collapse" href="#" role="button" aria-label="<?php echo lang_get( 'filters' ) ?>" aria-expanded="<?php echo $t_collapse_block ? 'false' : 'true' ?>">
 					<?php print_icon( $t_block_icon, '1 ace-icon bigger-125' ); ?>
 				</a>
 			</div>
@@ -1355,7 +1355,7 @@ function filter_draw_selection_area() {
 				<div class="widget-menu hidden-xs">
 					<form method="post" action="view_all_set.php">
 						<input type="hidden" name="type" value="<?php echo FILTER_ACTION_LOAD ?>" />
-						<select id="filter-bar-query-id" class="input-xs">
+						<select id="filter-bar-query-id" class="input-xs" aria-label="<?php echo lang_get( 'use_saved_filters' ) ?>">
 							<option value="-1">&nbsp;</option>
 							<?php
 							$t_source_query_id = isset( $t_filter['_source_query_id'] ) ? (int)$t_filter['_source_query_id'] : -1;
@@ -1374,6 +1374,7 @@ function filter_draw_selection_area() {
 					<form method="post" action="view_all_set.php">
 						<input type="hidden" name="type" value="<?php echo FILTER_ACTION_PARSE_ADD ?>" />
 						<input id="filter-bar-search-txt" type="text" size="16" class="input-xs"
+							   aria-label="<?php echo lang_get( 'search' ) ?>"
 							   placeholder="<?php echo lang_get( 'search' ) ?>"
 							   name="<?php echo FILTER_PROPERTY_SEARCH ?>"
 							   value="<?php echo string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ); ?>" />
@@ -1432,7 +1433,7 @@ function filter_draw_selection_area() {
 							<?php # CSRF protection not required here - form does not result in modifications?>
 							<input type="hidden" name="type" value="<?php echo FILTER_ACTION_LOAD ?>" />
 							<label><?php echo lang_get( 'load' ) ?>
-								<select class="input-s" name="source_query_id">
+								<select class="input-s" name="source_query_id" aria-label="<?php echo lang_get( 'use_saved_filters' ) ?>">
 									<option value="-1">&nbsp;</option>
 									<?php
 									$t_source_query_id = isset( $t_filter['_source_query_id'] ) ? (int)$t_filter['_source_query_id'] : -1;
@@ -1474,7 +1475,7 @@ function filter_draw_selection_area() {
 				<div class="btn-toolbar pull-left">
 					<div class="form-inline">
 						<?php echo '<input type="text" id="filter-search-txt" class="input-sm" size="16" name="', FILTER_PROPERTY_SEARCH, '"'
-							, ' placeholder="' . lang_get( 'search' ) . '" value="', string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ), '" />';
+							, ' aria-label="' . lang_get( 'search' ) . '" placeholder="' . lang_get( 'search' ) . '" value="', string_attribute( $t_filter[FILTER_PROPERTY_SEARCH] ), '" />';
 						?>
 						<input type="submit" class="btn btn-primary btn-sm btn-white btn-round no-float" name="filter_submit" value="<?php echo lang_get( 'filter_button' )?>" />
 					</div>
