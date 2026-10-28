@@ -132,7 +132,7 @@ $t_bottom_buttons_enabled = !$t_force_readonly && ( $t_action_button_position ==
 # Start of Template
 #
 
-echo '<div class="col-md-12 col-xs-12">';
+echo '<div class="col-md-12 col-xs-12" data-panel="details">';
 echo '<div class="widget-box widget-color-blue2">';
 echo '<div class="widget-header widget-header-small">';
 echo '<h4 class="widget-title lighter">';
@@ -677,7 +677,7 @@ if( $t_flags['monitor_show'] ) {
 	$t_block_css = $t_collapse_block ? 'collapsed' : '';
 	$t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 ?>
-	<div class="col-md-12 col-xs-12">
+	<div class="col-md-12 col-xs-12" data-panel="details">
 	<div class="space-10"></div>
 
 	<div id="monitors" class="widget-box widget-color-blue2 <?php echo $t_block_css ?>">
@@ -784,7 +784,7 @@ if( config_get( 'time_tracking_enabled' ) &&
 # History
 if( $t_flags['history_show'] && $f_history ) {
 ?>
-	<div class="col-md-12 col-xs-12">
+	<div class="col-md-12 col-xs-12" data-panel="history">
 		<div class="space-10"></div>
 <?php
 	$t_collapse_block = is_collapsed( 'history' );
@@ -1013,7 +1013,7 @@ function bug_view_relationship_view_box( $p_bug_id, $p_can_update ) {
 	$t_event_buttons = event_signal( 'EVENT_MENU_ISSUE_RELATIONSHIP', $p_bug_id );
 	$t_show_top_div = $p_can_update || $t_relationship_graph || !empty( $t_event_buttons );
 ?>
-	<div class="col-md-12 col-xs-12">
+	<div class="col-md-12 col-xs-12" data-panel="details">
 	<div class="space-10"></div>
 <?php
 	$t_collapse_block = is_collapsed( 'relationships' );
