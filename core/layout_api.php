@@ -457,6 +457,8 @@ function layout_user_font_preference() {
 	echo '<style>', "\n";
 	echo  '* { font-family: "' . $t_font_family . '"; } ', "\n";
 	echo  'h1, h2, h3, h4, h5 { font-family: "' . $t_font_family . '"; } ', "\n";
+	# For stylesheets of themes: the font of the user
+	echo  ':root { --font-family: "' . $t_font_family . '"; } ', "\n";
 	echo '</style>', "\n";
 }
 
