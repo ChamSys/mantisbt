@@ -225,6 +225,19 @@ function plugin_file_path( $p_filename = '', $p_base_name = '' ) {
 }
 
 /**
+ * Get the plugin page that is being shown.
+ *
+ * @return string|null The plugin and page, as in "Plugin/page", or null when
+ *                     the request is not for a plugin page.
+ * @access public
+ */
+function plugin_get_current_page() {
+	global $g_plugin_current_page;
+
+	return isset( $g_plugin_current_page ) ? $g_plugin_current_page : null;
+}
+
+/**
  * Get the URL to the plugin wrapper file page.
  *
  * @param string $p_file      File name.

@@ -45,6 +45,9 @@ if( !preg_match( '/^([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+[\/a-zA-Z0-9_-]*)/', $f_pag
 $t_basename = $t_matches[1];
 $t_action = $t_matches[2];
 
+# The page being shown, for plugin_get_current_page()
+$g_plugin_current_page = $t_basename . '/' . $t_action;
+
 $t_plugin = plugin_get( $t_basename );
 
 if( plugin_needs_upgrade( $t_plugin ) ) {

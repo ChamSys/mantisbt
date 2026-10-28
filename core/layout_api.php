@@ -72,6 +72,29 @@ function layout_page_header( $p_page_title = '', $p_redirect_url = null, $p_page
 }
 
 /**
+ * Check if a menu link points to the page being shown.
+ *
+ * For a link to a plugin page (plugin.php?page=Plugin/page) the plugin and the
+ * page have to match exactly; for any other link the page name has to be the
+ * name of the script of the request.
+ *
+ * @param string $p_url The link, relative to the MantisBT directory or absolute.
+ * @return bool
+ * @access public
+ */
+function layout_url_is_current_page( $p_url ) {
+	$t_path = (string)parse_url( $p_url, PHP_URL_PATH );
+
+	if( basename( $t_path ) == 'plugin.php' ) {
+		parse_str( (string)parse_url( $p_url, PHP_URL_QUERY ), $t_query );
+		return isset( $t_query['page'] ) && plugin_get_current_page() !== null
+			&& $t_query['page'] == plugin_get_current_page();
+	}
+
+	return $p_url == basename( $_SERVER['SCRIPT_NAME'] );
+}
+
+/**
  * Get or set the title of the page.
  *
  * The title is set by layout_page_header(), and is used as the title of the
@@ -973,7 +996,7 @@ function layout_sidebar_begin() {
  * @return void
  */
 function layout_sidebar_menu( $p_page, $p_title, $p_icon, $p_active_sidebar_page = null ) {
-	$t_active = ( $p_page == $p_active_sidebar_page || $p_page == basename( $_SERVER['SCRIPT_NAME'] ) );
+	$t_active = ( $p_page == $p_active_sidebar_page || layout_url_is_current_page( $p_page ) );
 
 	# A stable id for the item, for stylesheets and scripts: the name of the page
 	# (without .php), or plugin-<plugin>-<page> for the pages of plugins
