@@ -107,7 +107,7 @@ if( ( $t_filter_position & FILTER_POSITION_TOP ) == FILTER_POSITION_TOP ) {
 	$v_start = 0;
 	$v_end = 0;
 	if (count($t_rows) > 0) {
-		$v_start = $g_filter['per_page'] * ($f_page_number - 1) + 1;
+		$v_start = ( isset( $t_per_page ) ? $t_per_page : $g_filter['per_page'] ) * ($f_page_number - 1) + 1;
 		$v_end = $v_start + count($t_rows) - 1;
 	}
 	echo '<span class="badge"> ' . $v_start . ' - ' . $v_end . ' / ' . $t_bug_count . '</span>' ;

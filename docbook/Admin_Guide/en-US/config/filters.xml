@@ -23,6 +23,15 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_filter_per_page_max</term>
+			<listitem>
+				<para>The most issues that the issue list shows on a page, 0 for no limit (the default).
+					A filter that asks for more, or for all of them, shows this many per page, with the
+					other pages reached with the pager. Print, export and the APIs are not limited.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_view_filters = SIMPLE_DEFAULT;</term>
 			<listitem>
 				<para>Controls the display of the filter pages. Possible values

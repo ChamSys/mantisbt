@@ -65,6 +65,17 @@ if( ( ALL_PROJECTS == $t_project_id || project_exists( $t_project_id ) ) && $t_p
 }
 
 $t_per_page = 0;
+
+# The most issues that are shown on a page: "all" and bigger counts are limited to it
+$t_per_page_max = (int)config_get( 'filter_per_page_max' );
+if( $t_per_page_max > 0 ) {
+	$t_filter = filter_get_bug_rows_filter();
+	$t_per_page = (int)$t_filter[FILTER_PROPERTY_ISSUES_PER_PAGE];
+	if( $t_per_page <= 0 || $t_per_page > $t_per_page_max ) {
+		$t_per_page = $t_per_page_max;
+	}
+}
+
 $t_bug_count = 0;
 $t_page_count = 0;
 

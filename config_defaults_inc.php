@@ -4175,6 +4175,18 @@ $g_filter_custom_fields_per_row = 8;
 $g_view_filters = SIMPLE_DEFAULT;
 
 /**
+ * The most issues that the issue list shows on a page, 0 for no limit. A
+ * filter that asks for more, or for all of them, shows this many per page
+ * (the other pages count them as before: exports, print and the APIs are not
+ * limited). A very long list is slow to produce and to read, and the
+ * list of the issues that are shown is also kept in a cookie for the previous
+ * and next links of the issue page.
+ *
+ * @global int $g_filter_per_page_max
+ */
+$g_filter_per_page_max = 0;
+
+/**
  * The backend used for the text search of the issue filter.
  *
  * Possible values are:
