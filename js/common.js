@@ -898,3 +898,35 @@ function enableDropzone( classPrefix, autoUpload ) {
 
 	return zone_object;
 }
+
+/**
+ * Name the controls of the fields of the filter with the name of their field.
+ * The name is in a cell of its own, next to the cell with the controls, so the
+ * controls have none. The cell with the controls has it in data-label.
+ *
+ * @param {Element|Document} root Where to look: the page, or the cell that a
+ *                                field was just loaded in.
+ */
+function filter_name_controls( root ) {
+	$( root ).find( 'td[data-field][data-label]' ).addBack( 'td[data-field][data-label]' ).each( function() {
+		var label = $( this ).attr( 'data-label' );
+
+		$( this ).find( 'select, textarea, input' )
+			.not( '[type=hidden], [type=checkbox], [type=radio], [type=submit], [type=button]' )
+			.each( function() {
+				var named = this.hasAttribute( 'aria-label' ) || this.hasAttribute( 'aria-labelledby' )
+					|| ( this.id && $( 'label[for="' + this.id + '"]' ).length > 0 );
+				if( !named ) {
+					$( this ).attr( 'aria-label', label );
+				}
+			} );
+	} );
+}
+
+$( document ).ready( function() {
+	filter_name_controls( document );
+} );
+
+document.addEventListener( 'mantis:content-loaded', function( event ) {
+	filter_name_controls( event.detail.root );
+} );
