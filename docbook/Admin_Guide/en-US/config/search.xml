@@ -69,6 +69,25 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_search_live_enabled</term>
+			<listitem>
+				<para>Whether to suggest issues as the user types in the search box of the menu bar
+					(the best ten matches, with a link to all the results). It needs a backend with an
+					index, such as Meilisearch, and is ignored with the default one, as searching with SQL
+					on every key press would be too slow. The user only gets issues that the issue list
+					would show them for the same text. It defaults to OFF.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_search_live_rate_limit</term>
+			<listitem>
+				<para>The number of searches as the user types that a user may make per minute. It
+					defaults to 120, 0 means no limit.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_search_meilisearch_url</term>
 			<listitem>
 				<para>The address of the Meilisearch server. The default is

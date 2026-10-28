@@ -170,6 +170,17 @@ function layout_url_is_current_page( $p_url ) {
 }
 
 /**
+ * Check if the search box of the menu bar suggests issues as the user types.
+ *
+ * @return bool
+ * @access public
+ */
+function layout_has_quick_search() {
+	return db_is_connected() && auth_is_user_authenticated() && !current_user_is_anonymous()
+		&& search_live_is_available();
+}
+
+/**
  * Get or set the title of the page.
  *
  * The title is set by layout_page_header(), and is used as the title of the
@@ -196,6 +207,12 @@ function layout_page_title( $p_title = null ) {
  */
 function layout_page_header_begin( $p_page_title = '' ) {
 	layout_page_title( $p_page_title );
+
+	if( layout_has_quick_search() ) {
+		require_css( 'combobox.css' );
+		require_js( 'combobox.js' );
+		require_js( 'search_live.js' );
+	}
 
 	html_begin();
 	html_head_begin();
@@ -1279,9 +1296,15 @@ function layout_breadcrumbs() {
 	# Bug Jump form
 	# CSRF protection not required here - form does not result in modifications
 	echo '<div id="nav-search" class="nav-search">';
+	$t_quick_search = layout_has_quick_search();
+	$t_search_label = lang_get( $t_quick_search ? 'issue_id_or_search' : 'issue_id' );
 	echo '<form class="form-search" method="post" role="search" action="' . helper_mantis_url( 'jump_to_bug.php' ) . '">';
 	echo '<span class="input-icon">';
-	echo '<input type="text" name="bug_id" autocomplete="off" class="nav-search-input" aria-label="' . lang_get( 'issue_id' ) . '" placeholder="' . lang_get( 'issue_id' ) . '">';
+	echo '<input type="text" name="bug_id" autocomplete="off" class="nav-search-input" aria-label="' . $t_search_label . '" placeholder="' . $t_search_label . '"';
+	if( $t_quick_search ) {
+		echo ' data-quick-search="' . string_attribute( helper_mantis_url( 'api/rest/index.php/internal/issue_search' ) ) . '"';
+	}
+	echo '>';
 	print_icon( 'fa-search', 'ace-icon nav-search-icon' );
 	echo '</span>';
 	echo '</form>';

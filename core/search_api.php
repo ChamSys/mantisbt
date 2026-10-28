@@ -70,6 +70,18 @@ function search_backend_get() {
 }
 
 /**
+ * Check if the search as the user types (and the suggestions of similar issues
+ * when reporting one) can be used: it is enabled with $g_search_live_enabled and
+ * the search backend has an index, which keeps it fast.
+ *
+ * @return bool
+ * @access public
+ */
+function search_live_is_available() {
+	return ON == config_get( 'search_live_enabled' ) && search_backend_get()->has_index();
+}
+
+/**
  * Build the documents that represent issues in the index of a search backend.
  *
  * The data is read straight from the database, not through the issue API, so
