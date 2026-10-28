@@ -79,6 +79,10 @@ $g_cache_current_user_id = NO_USER;
 /**
  * Gets set of flags for authentication for the specified user.
  *
+ * When no user is specified and nobody is logged in, the plugins are asked for
+ * the flags that apply before anyone is logged in (for example the login
+ * page), with NO_USER as user id and an empty username.
+ *
  * @param int|null|bool $p_user_id  The user id or null for logged in user or
  *                                  NO_USER/false for user that doesn't exist
  *                                  in the system, that may be auto-provisioned.
@@ -88,13 +92,29 @@ $g_cache_current_user_id = NO_USER;
  * @throws ClientException
  */
 function auth_flags( $p_user_id = null, $p_username = '' ) {
+	static $s_guest_flags_pending = false;
+
 	# If user id is null but username is set, let the plugin handle it per #27836
 	if ( is_null( $p_user_id ) || ( $p_user_id === false && is_null( $p_username ) ) ) {
-		# If user id is not provided and user is not authenticated return default flags.
+		# If user id is not provided and user is not authenticated, ask the plugins
+		# for the flags that apply to everyone before logging in.
+		# If the plugin's callback leads back here, return the default flags.
 		# Otherwise, we can get into a loop as in #22740
 		# If user is false and username is null, display a more user-friendly error per #25061
 		if( !auth_is_user_authenticated() ) {
-			return new AuthFlags();
+			if( $s_guest_flags_pending ) {
+				return new AuthFlags();
+			}
+
+			$s_guest_flags_pending = true;
+			$t_flags = event_signal( 'EVENT_AUTH_USER_FLAGS', array( array(
+				'user_id' => NO_USER,
+				'username' => '',
+				'email' => '',
+			) ) );
+			$s_guest_flags_pending = false;
+
+			return is_null( $t_flags ) ? new AuthFlags() : $t_flags;
 		}
 
 		$t_user_id = auth_get_current_user_id();

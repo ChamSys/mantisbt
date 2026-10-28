@@ -171,6 +171,11 @@
 					of the options, then the default will be used for the rest.
 				</para>
 				<para>
+					The event is also triggered when nobody is logged in yet, to get the flags that apply to
+					everyone before logging in, such as the login page and the page to go to after logging out.
+					In that case the user id is <literal>NO_USER</literal> and the username and email are empty.
+				</para>
+				<para>
 					Checkout <ulink url="https://github.com/mantisbt-plugins/SampleAuth">SampleAuth plugin</ulink>
 					for more details.
 				</para>
