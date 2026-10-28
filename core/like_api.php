@@ -267,3 +267,31 @@ function user_like_delete_all( $p_user_id ) {
 		bug_like_update_count( $t_bug_id );
 	}
 }
+
+/**
+ * Get what the current user can know about the likes of an issue.
+ *
+ * @param int $p_bug_id An issue identifier.
+ * @return array With: count (the number of likes), liked_by_me, can_like (whether
+ *               the user can like or unlike it now) and, if the user may see who
+ *               likes it, likers (an array of id and name).
+ * @access public
+ */
+function like_get_info( $p_bug_id ) {
+	$t_user_id = auth_get_current_user_id();
+
+	$t_info = array(
+		'count' => bug_get_like_count( $p_bug_id ),
+		'liked_by_me' => user_is_liking_bug( $t_user_id, $p_bug_id ),
+		'can_like' => like_can_like( $p_bug_id, $t_user_id ),
+	);
+
+	if( like_can_view_likers( $p_bug_id, $t_user_id ) ) {
+		$t_info['likers'] = array();
+		foreach( bug_get_likers( $p_bug_id ) as $t_liker_id ) {
+			$t_info['likers'][] = array( 'id' => $t_liker_id, 'name' => user_get_name( $t_liker_id ) );
+		}
+	}
+
+	return $t_info;
+}
