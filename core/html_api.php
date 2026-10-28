@@ -128,6 +128,22 @@ function html_rss_link() {
 }
 
 /**
+ * Print data for the scripts of the page, as a JSON block that is not executed
+ * (so it works with the content security policy, which forbids inline scripts).
+ * A script reads it with JSON.parse( document.getElementById( id ).textContent ).
+ *
+ * @param string $p_id   The id of the element.
+ * @param mixed  $p_data The data, as accepted by json_encode().
+ * @return void
+ */
+function html_print_json_data( $p_id, $p_data ) {
+	# The flags make the JSON safe to put in HTML: no </script>, no entities
+	echo '<script type="application/json" id="', string_attribute( $p_id ), '">',
+		json_encode( $p_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ),
+		'</script>', "\n";
+}
+
+/**
  * Prints a <script> tag to include a JavaScript file.
  * @param string $p_filename Name of JavaScript file (with extension) to include,
  *                           looked for in the js directory, or the URL of a plugin
