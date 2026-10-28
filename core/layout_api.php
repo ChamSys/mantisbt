@@ -973,12 +973,20 @@ function layout_sidebar_begin() {
  * @return void
  */
 function layout_sidebar_menu( $p_page, $p_title, $p_icon, $p_active_sidebar_page = null ) {
-	if( $p_page == $p_active_sidebar_page ||
-		$p_page == basename( $_SERVER['SCRIPT_NAME'] ) ) {
-		echo '<li class="active">' . "\n";
-	} else {
-		echo '<li>' . "\n";
+	$t_active = ( $p_page == $p_active_sidebar_page || $p_page == basename( $_SERVER['SCRIPT_NAME'] ) );
+
+	# A stable id for the item, for stylesheets and scripts: the name of the page
+	# (without .php), or plugin-<plugin>-<page> for the pages of plugins
+	$t_path = (string)parse_url( $p_page, PHP_URL_PATH );
+	$t_menu_id = basename( $t_path, '.php' );
+	if( basename( $t_path ) == 'plugin.php' ) {
+		parse_str( (string)parse_url( $p_page, PHP_URL_QUERY ), $t_query );
+		if( isset( $t_query['page'] ) ) {
+			$t_menu_id = 'plugin-' . str_replace( '/', '-', $t_query['page'] );
+		}
 	}
+
+	echo '<li', $t_active ? ' class="active"' : '', ' data-menu-id="', string_attribute( $t_menu_id ), '">', "\n";
 
 	# Handle relative / absolute urls
 	if( !is_null( parse_url( $p_page, PHP_URL_SCHEME ) ) ) {
@@ -987,7 +995,7 @@ function layout_sidebar_menu( $p_page, $p_title, $p_icon, $p_active_sidebar_page
 		$t_url = helper_mantis_url( $p_page );
 	}
 
-	echo '<a href="' . $t_url . '">' . "\n";
+	echo '<a href="' . $t_url . '"', $t_active ? ' aria-current="page"' : '', '>' . "\n";
 	print_icon( $p_icon, 'menu-icon' );
 	echo "\n" . '<span class="menu-text"> ' . lang_get_defaulted( $p_title ) . ' </span>' . "\n";
 	echo '</a>' . "\n";
