@@ -894,11 +894,18 @@ function layout_navbar_user_avatar( $p_img_class = 'nav' ) {
  * @access public
  */
 function layout_get_sidebar_items() {
+	static $s_items = array();
+
 	if( !auth_is_user_authenticated() ) {
 		return array();
 	}
 
 	$t_current_project = helper_get_current_project();
+
+	# The items are asked for by more than one part of a page: build them once
+	if( isset( $s_items[$t_current_project] ) ) {
+		return $s_items[$t_current_project];
+	}
 
 	# Store all items in an array before outputting
 	$t_sidebar_items = array();
@@ -1024,6 +1031,8 @@ function layout_get_sidebar_items() {
 	if( is_array( $t_modified_sidebar_items ) && count( $t_modified_sidebar_items ) > 0 ) {
 		$t_sidebar_items = $t_modified_sidebar_items[0];
 	}
+
+	$s_items[$t_current_project] = $t_sidebar_items;
 
 	return $t_sidebar_items;
 }
