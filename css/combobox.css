@@ -1,0 +1,57 @@
+/*
+ * The list of suggestions of the combobox, see js/combobox.js. It is plain on
+ * purpose: a theme styles it with these classes.
+ */
+.mantis-combobox-list {
+	position: fixed;
+	z-index: 1060;
+	margin: 0;
+	padding: 4px 0;
+	list-style: none;
+	max-height: 60vh;
+	overflow-y: auto;
+	background: #fff;
+	color: #333;
+	border: 1px solid #ccc;
+	border-radius: 0 0 3px 3px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	text-align: left;
+}
+
+.mantis-combobox-list[hidden] {
+	display: none;
+}
+
+.mantis-combobox-option {
+	display: block;
+	padding: 6px 12px;
+	cursor: pointer;
+}
+
+.mantis-combobox-option.active,
+.mantis-combobox-option:hover {
+	background: #eee;
+}
+
+.mantis-combobox-option .mantis-combobox-label {
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.mantis-combobox-option .mantis-combobox-detail {
+	display: block;
+	font-size: 85%;
+	color: #777;
+}
+
+.mantis-combobox-footer {
+	border-top: 1px solid #ddd;
+	font-style: italic;
+}
+
+.mantis-combobox-message {
+	padding: 6px 12px;
+	color: #777;
+}
