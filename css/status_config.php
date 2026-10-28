@@ -62,11 +62,19 @@ $t_status_string = config_get( 'status_enum_string' );
 $t_statuses = MantisEnum::getAssocArrayIndexedByValues( $t_status_string );
 $t_colors = config_get( 'status_colors' );
 
+# The colors are also available as CSS variables, for themes: --status-<id>
+$t_variables = '';
+
 foreach( $t_statuses as $t_id => $t_label ) {
 	# Status color class
 	if( array_key_exists( $t_label, $t_colors ) ) {
 		$t_color = $t_colors[$t_label];
 		echo '.' . html_get_status_css_fg( $t_id ) . " { color: {$t_color}; }\n";
 		echo '.' . html_get_status_css_bg( $t_id ) . " { background-color: {$t_color}; }\n";
+		$t_variables .= "\t--status-{$t_id}: {$t_color};\n";
 	}
+}
+
+if( $t_variables !== '' ) {
+	echo ":root {\n{$t_variables}}\n";
 }
