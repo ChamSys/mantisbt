@@ -224,3 +224,30 @@ function search_process_queue( $p_max_issues = 100 ) {
 
 	return count( $t_bug_ids );
 }
+
+/**
+ * Queue all the issues, to rebuild the index of the search backend.
+ *
+ * @return void
+ * @access public
+ */
+function search_queue_add_all() {
+	if( !search_backend_get()->has_index() ) {
+		return;
+	}
+
+	db_param_push();
+	$t_query = 'INSERT INTO {search_queue} ( bug_id, date_queued ) SELECT id, ' . (int)db_now() . ' FROM {bug}';
+	db_query( $t_query );
+}
+
+/**
+ * Count the entries in the search queue.
+ *
+ * @return int
+ * @access public
+ */
+function search_queue_count() {
+	$t_query = new DbQuery( 'SELECT COUNT(*) FROM {search_queue}' );
+	return (int)$t_query->value();
+}
