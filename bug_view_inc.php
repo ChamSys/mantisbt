@@ -241,13 +241,13 @@ if( $t_flags['id_show'] || $t_flags['project_show'] || $t_flags['category_show']
 	echo '<tr class="bug-header-data" data-section="header">';
 
 	# Bug ID
-	echo '<td class="bug-id">', $t_flags['id_show'] ? $t_issue_view['id_formatted'] : '', '</td>';
+	echo '<td class="bug-id" data-label="', string_attribute( lang_get( 'id' ) ), '">', $t_flags['id_show'] ? $t_issue_view['id_formatted'] : '', '</td>';
 
 	# Project
-	echo '<td class="bug-project">', $t_flags['project_show'] && isset( $t_issue['project']['name'] ) ? string_display_line( $t_issue['project']['name'] ) : '', '</td>';
+	echo '<td class="bug-project" data-label="', string_attribute( lang_get( 'email_project' ) ), '">', $t_flags['project_show'] && isset( $t_issue['project']['name'] ) ? string_display_line( $t_issue['project']['name'] ) : '', '</td>';
 
 	# Category
-	echo '<td class="bug-category">';
+	echo '<td class="bug-category" data-label="', string_attribute( lang_get( 'category' ) ), '">';
 	if( $t_flags['category_show'] && isset( $t_issue['category']['name'] ) ) {
 		if( $t_flags['can_update'] && !category_is_enabled( $t_issue['category']['id'] ) ) {
 			print_icon( 'warning',
@@ -261,13 +261,13 @@ if( $t_flags['id_show'] || $t_flags['project_show'] || $t_flags['category_show']
 	echo '</td>';
 
 	# View Status
-	echo '<td class="bug-view-status">', $t_flags['view_state_show'] && isset( $t_issue['view_state']['label'] ) ? string_display_line( $t_issue['view_state']['label'] ) : '', '</td>';
+	echo '<td class="bug-view-status" data-label="', string_attribute( lang_get( 'view_status' ) ), '">', $t_flags['view_state_show'] && isset( $t_issue['view_state']['label'] ) ? string_display_line( $t_issue['view_state']['label'] ) : '', '</td>';
 
 	# Date Submitted
-	echo '<td class="bug-date-submitted">', $t_flags['created_at_show'] ? $t_issue_view['created_at'] : '', '</td>';
+	echo '<td class="bug-date-submitted" data-label="', string_attribute( lang_get( 'date_submitted' ) ), '">', $t_flags['created_at_show'] ? $t_issue_view['created_at'] : '', '</td>';
 
 	# Date Updated
-	echo '<td class="bug-last-modified">',  $t_flags['updated_at_show'] ? $t_issue_view['updated_at'] : '', '</td>';
+	echo '<td class="bug-last-modified" data-label="', string_attribute( lang_get( 'last_update' ) ), '">',  $t_flags['updated_at_show'] ? $t_issue_view['updated_at'] : '', '</td>';
 
 	echo '</tr>';
 
