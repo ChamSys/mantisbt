@@ -1984,6 +1984,43 @@ function user_set_default_project( $p_user_id, $p_project_id ) {
 }
 
 /**
+ * Set the global access level of a user.
+ *
+ * Unlike user_set_field(), this can change the access level of a protected
+ * account when asked to, for plugins that manage the access level of the
+ * accounts they sign in (for instance from the groups of an identity provider).
+ *
+ * @param int  $p_user_id         A valid user identifier.
+ * @param int  $p_access_level    One of the access levels of $g_access_levels_enum_string.
+ * @param bool $p_allow_protected Whether to allow the change for a protected
+ *                                account. This defaults to false.
+ *
+ * @return true
+ * @throws ClientException
+ */
+function user_set_access_level( $p_user_id, $p_access_level, $p_allow_protected = false ) {
+	if( !$p_allow_protected ) {
+		user_ensure_unprotected( $p_user_id );
+	}
+
+	if( !MantisEnum::hasValue( config_get( 'access_levels_enum_string' ), (int)$p_access_level ) ) {
+		throw new ClientException(
+			sprintf( "Invalid access level '%s'.", $p_access_level ),
+			ERROR_INVALID_FIELD_VALUE,
+			array( 'access_level' )
+		);
+	}
+
+	db_param_push();
+	$t_query = 'UPDATE {user} SET access_level=' . db_param() . ' WHERE id=' . db_param();
+	db_query( $t_query, array( (int)$p_access_level, (int)$p_user_id ) );
+
+	user_clear_cache( $p_user_id );
+
+	return true;
+}
+
+/**
  * Set the user's password to the given string, encoded as appropriate.
  *
  * @param int    $p_user_id         A valid user identifier.
