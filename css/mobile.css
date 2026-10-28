@@ -268,24 +268,24 @@
 		grid-column: 1 / -1;
 	}
 
-	/* Forms (report, update, add a note): the label above its control, one field per line */
+	/* Forms (report, update, add a note, monitors): the label above its control, one field per line */
 
-	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table,
-	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody,
+	:is(#report_bug_form, #bugnote_add, #monitors) .widget-main > .table-responsive > table,
+	:is(#report_bug_form, #bugnote_add, #monitors) .widget-main > .table-responsive > table > tbody,
 	table.bug-update-table,
 	table.bug-update-table > tbody {
 		display: block;
 		width: 100%;
 	}
 
-	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr,
+	:is(#report_bug_form, #bugnote_add, #monitors) .widget-main > .table-responsive > table > tbody > tr,
 	table.bug-update-table > tbody > tr {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
 		border-bottom: 1px solid var(--mobile-border);
 	}
 
-	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr > :is(th, td),
+	:is(#report_bug_form, #bugnote_add, #monitors) .widget-main > .table-responsive > table > tbody > tr > :is(th, td),
 	table.bug-update-table > tbody > tr > :is(th, td) {
 		display: block;
 		width: auto !important;
@@ -295,13 +295,13 @@
 		white-space: normal;
 	}
 
-	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr > th,
+	:is(#report_bug_form, #bugnote_add, #monitors) .widget-main > .table-responsive > table > tbody > tr > th,
 	table.bug-update-table > tbody > tr > th {
 		padding-bottom: 0;
 		font-weight: 600;
 	}
 
-	:is(#report_bug_form, #bugnote_add) .widget-main > .table-responsive > table > tbody > tr > :is(th, td):empty,
+	:is(#report_bug_form, #bugnote_add, #monitors) .widget-main > .table-responsive > table > tbody > tr > :is(th, td):empty,
 	table.bug-update-table > tbody > tr > :is(th, td):empty {
 		display: none;
 	}
