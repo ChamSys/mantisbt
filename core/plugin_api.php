@@ -245,6 +245,32 @@ function plugin_get_current_page() {
 }
 
 /**
+ * Require a stylesheet of a plugin to be in the page headers, like require_css().
+ * It has to be called before the page header is printed.
+ *
+ * @param string $p_file      File name, in the files directory of the plugin.
+ * @param string $p_base_name Plugin base name (defaults to current plugin).
+ * @return void
+ * @access public
+ */
+function plugin_require_css( $p_file, $p_base_name = null ) {
+	require_css( plugin_file( $p_file, true, $p_base_name ) );
+}
+
+/**
+ * Require a script of a plugin to be in the page headers, like require_js().
+ * It has to be called before the page header is printed.
+ *
+ * @param string $p_file      File name, in the files directory of the plugin.
+ * @param string $p_base_name Plugin base name (defaults to current plugin).
+ * @return void
+ * @access public
+ */
+function plugin_require_js( $p_file, $p_base_name = null ) {
+	require_js( plugin_file( $p_file, true, $p_base_name ) );
+}
+
+/**
  * Get the URL to the plugin wrapper file page.
  *
  * @param string $p_file      File name.

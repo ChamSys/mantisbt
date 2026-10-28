@@ -128,11 +128,14 @@ function html_rss_link() {
 
 /**
  * Prints a <script> tag to include a JavaScript file.
- * @param string $p_filename Name of JavaScript file (with extension) to include.
+ * @param string $p_filename Name of JavaScript file (with extension) to include,
+ *                           looked for in the js directory, or the URL of a plugin
+ *                           file (plugin_file.php?file=...), which is used as is.
  * @return void
  */
 function html_javascript_link( $p_filename ) {
-	echo "\t", '<script src="', helper_mantis_url( 'js/' . $p_filename ), '"></script>', "\n";
+	$t_filename = ( strpos( $p_filename, 'plugin_file.php?' ) === 0 ) ? $p_filename : 'js/' . $p_filename;
+	echo "\t", '<script src="', helper_mantis_url( $t_filename ), '"></script>', "\n";
 }
 
 /**
