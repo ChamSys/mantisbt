@@ -33,6 +33,7 @@
  * @uses helper_api.php
  * @uses logging_api.php
  * @uses project_api.php
+ * @uses search_api.php
  * @uses tag_api.php
  * @uses user_api.php
  * @uses utility_api.php
@@ -50,6 +51,7 @@ require_api( 'gpc_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'logging_api.php' );
 require_api( 'project_api.php' );
+require_api( 'search_api.php' );
 require_api( 'tag_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
@@ -1538,6 +1540,12 @@ class BugFilterQuery extends DbQuery {
 
 	/**
 	 * Build the query parts for the filter property "text search"
+	 *
+	 * The search is answered by the backend selected with $g_search_backend. If
+	 * it has an index of its own it only provides candidate issues; the other
+	 * conditions of the filter, and what the user is allowed to see, are
+	 * applied to those as to any other issue. Otherwise (or if the backend
+	 * cannot answer) the text is searched with SQL.
 	 * @return void
 	 */
 	protected function build_prop_search() {
@@ -1545,6 +1553,70 @@ class BugFilterQuery extends DbQuery {
 			return;
 		}
 
+		$t_candidate_ids = $this->search_candidate_ids();
+		if( $t_candidate_ids === null ) {
+			$this->build_prop_search_sql();
+		} else {
+			$this->build_prop_search_ids( $t_candidate_ids );
+		}
+	}
+
+	/**
+	 * Ask the search backend for the issues that match the text search.
+	 *
+	 * @return array|null The ids of the matching issues, or null if the backend
+	 *                    has no index or cannot answer.
+	 */
+	protected function search_candidate_ids() {
+		$t_backend = search_backend_get();
+		if( !$t_backend->has_index() ) {
+			return null;
+		}
+
+		# Private notes are only searched in the projects where the user can read them.
+		$t_private_note_projects = $this->helper_filter_projects_using_access( 'private_bugnote_threshold' );
+		if( ALL_PROJECTS == $t_private_note_projects ) {
+			$t_private_note_projects = $this->rt_included_projects;
+		}
+
+		return $t_backend->search( $this->filter[FILTER_PROPERTY_SEARCH], array(
+			'limit' => (int)config_get_global( 'search_candidate_limit' ),
+			'private_note_project_ids' => array_values( $t_private_note_projects ),
+		) );
+	}
+
+	/**
+	 * Build the query parts for the filter property "text search", using the
+	 * candidate issues found by a search backend.
+	 *
+	 * @param array $p_bug_ids The ids of the issues that match the text.
+	 * @return void
+	 */
+	protected function build_prop_search_ids( array $p_bug_ids ) {
+		$t_where = array();
+		if( empty( $p_bug_ids ) ) {
+			$t_where[] = '1 = 0';
+		} else {
+			$t_where[] = $this->sql_in( '{bug}.id', $this->helper_array_map_int( $p_bug_ids ) );
+		}
+
+		# As with the SQL search, a number also matches the issue with that id.
+		foreach( $this->helper_search_terms() as $t_search_term => $t_negate ) {
+			if( !$t_negate && is_numeric( $t_search_term ) && $t_search_term <= DB_MAX_INT ) {
+				$t_where[] = '{bug}.id = ' . $this->param( (int)$t_search_term );
+			}
+		}
+
+		$this->add_where( '( ' . implode( ' OR ', $t_where ) . ' )' );
+	}
+
+	/**
+	 * Split the text search into terms: words, or phrases in quotes, each
+	 * possibly negated with a leading "-".
+	 *
+	 * @return array Negation flag by search term.
+	 */
+	protected function helper_search_terms() {
 		# break up search terms by spacing or quoting
 		preg_match_all( "/-?([^'\"\s]+|\"[^\"]+\"|'[^']+')/", $this->filter[FILTER_PROPERTY_SEARCH], $t_matches, PREG_SET_ORDER );
 
@@ -1553,6 +1625,16 @@ class BugFilterQuery extends DbQuery {
 		foreach( $t_matches as $t_match ) {
 			$t_search_terms[trim( $t_match[1], "\'\"" )] = ( $t_match[0][0] == '-' );
 		}
+		return $t_search_terms;
+	}
+
+	/**
+	 * Build the query parts for the filter property "text search", with SQL
+	 * conditions on the text of the issues and their notes.
+	 * @return void
+	 */
+	protected function build_prop_search_sql() {
+		$t_search_terms = $this->helper_search_terms();
 
 		$t_bugnote_table = $this->helper_table_alias_for_bugnote();
 
