@@ -139,7 +139,7 @@ if( config_get_global( 'admin_checks' ) == ON ) {
 	# Check if the admin directory is accessible
 	$t_admin_dir = __DIR__ . '/admin';
 	$t_admin_dir_is_accessible = @is_readable( $t_admin_dir );
-	if( $t_admin_dir_is_accessible ) {
+	if( $t_admin_dir_is_accessible && config_get_global( 'admin_dir_check' ) == ON ) {
 		$t_warnings[] = lang_get( 'warning_admin_directory_present' );
 	}
 

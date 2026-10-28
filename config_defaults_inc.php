@@ -1319,6 +1319,17 @@ $g_search_title = '%window_title%';
 $g_admin_checks = ON;
 
 /**
+ * Warn on the login page when the admin directory can be read.
+ *
+ * The check only looks at the file system, not at whether the web server serves
+ * the directory, so it can be switched off, separately from the other
+ * {@see $g_admin_checks}, when access to it is blocked there.
+ *
+ * @global int $g_admin_dir_check
+ */
+$g_admin_dir_check = ON;
+
+/**
  * Favicon image.
  *
  * This icon should be of 'image/x-icon' MIME type, and its size 16x16 pixels.
@@ -5326,6 +5337,7 @@ $g_global_settings = array(
 	'absolute_path',
 	'absolute_path_default_upload_folder',
 	'admin_checks',
+	'admin_dir_check',
 	'allow_anonymous_login',
 	'allow_browser_cache',
 	'allow_permanent_cookie',

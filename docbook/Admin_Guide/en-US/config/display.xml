@@ -91,6 +91,17 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_admin_dir_check</term>
+			<listitem>
+				<para>Warn on the login page when the admin directory can be read. The check
+					only looks at the file system, not at whether the web server serves the
+					directory, so it can be switched off, separately from the other
+					<emphasis>$g_admin_checks</emphasis>, when access to it is blocked there.
+					It defaults to ON.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_favicon_image</term>
 			<listitem>
 				<para>Path to the favorites icon relative to MantisBT root folder
