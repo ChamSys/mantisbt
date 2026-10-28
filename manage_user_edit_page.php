@@ -91,7 +91,6 @@ if( !$t_user ) {
 # current user.
 access_ensure_global_level( $t_user['access_level'] );
 
-$t_ldap = ( LDAP == config_get_global( 'login_method' ) );
 
 # User action buttons: RESET/UNLOCK, IMPERSONATE and DELETE
 $t_reset = $t_user['id'] != auth_get_current_user_id()
@@ -156,8 +155,8 @@ print_manage_menu( 'manage_user_page.php' );
 					<!-- Realname -->
 					<tr>
 <?php
-	if( $t_ldap && ON == config_get_global( 'use_ldap_realname' ) ) {
-		# With LDAP
+	if( auth_realname_managed_externally( $t_user_id ) ) {
+		# Managed externally (LDAP, or an authentication plugin)
 ?>
 						<td class="category">
 							<?php echo lang_get( 'realname_label' ) ?>
@@ -167,7 +166,7 @@ print_manage_menu( 'manage_user_page.php' );
 						</td>
 <?php
 	} else {
-		# Without LDAP
+		# Managed in MantisBT
 ?>
 						<td class="category">
 							<label for="edit-realname">
@@ -189,8 +188,8 @@ print_manage_menu( 'manage_user_page.php' );
 					<!-- Email -->
 					<tr>
 <?php
-	if( $t_ldap && ON == config_get_global( 'use_ldap_email' ) ) {
-		# With LDAP
+	if( auth_email_managed_externally( $t_user_id ) ) {
+		# Managed externally (LDAP, or an authentication plugin)
 ?>
 						<td class="category">
 							<?php echo lang_get( 'email_label' ) ?>
@@ -200,7 +199,7 @@ print_manage_menu( 'manage_user_page.php' );
 						</td>
 <?php
 	} else {
-		# Without LDAP
+		# Managed in MantisBT
 ?>
 						<td class="category">
 							<label for="edit-realname">
