@@ -89,6 +89,7 @@ $g_robots_meta = '';
 $g_error_send_page_header = true;
 
 $g_stylesheets_included = array();
+$g_stylesheets_included_late = array();
 $g_scripts_included = array();
 
 /**
@@ -262,12 +263,31 @@ function html_title( $p_page_title = '' ) {
 
 /**
  * Require a CSS file to be in html page headers
- * @param string $p_stylesheet_path Path to CSS style sheet.
+ * @param string  $p_stylesheet_path Path to CSS style sheet.
+ * @param boolean $p_late            Link it after all the stylesheets of MantisBT and of
+ *                                   the theme, so that it can override them.
  * @return void
  */
-function require_css( $p_stylesheet_path ) {
-	global $g_stylesheets_included;
-	$g_stylesheets_included[$p_stylesheet_path] = $p_stylesheet_path;
+function require_css( $p_stylesheet_path, $p_late = false ) {
+	global $g_stylesheets_included, $g_stylesheets_included_late;
+
+	if( $p_late ) {
+		$g_stylesheets_included_late[$p_stylesheet_path] = $p_stylesheet_path;
+	} else {
+		$g_stylesheets_included[$p_stylesheet_path] = $p_stylesheet_path;
+	}
+}
+
+/**
+ * Print the links to the CSS files that were required to come last.
+ * @return void
+ */
+function html_css_late() {
+	global $g_stylesheets_included_late;
+
+	foreach( $g_stylesheets_included_late as $t_stylesheet_path ) {
+		html_css_link( $t_stylesheet_path );
+	}
 }
 
 /**

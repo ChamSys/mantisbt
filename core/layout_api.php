@@ -136,6 +136,7 @@ function layout_page_header_begin( $p_page_title = '' ) {
 	html_css();
 	layout_head_css();
 	theme_print_css();
+	html_css_late();
 	html_rss_link();
 
 	$t_favicon_image = config_get_global( 'favicon_image' );
