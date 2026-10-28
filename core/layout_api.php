@@ -263,6 +263,7 @@ function layout_is_rtl() {
  */
 function layout_head_meta() {
 	echo "\t" , '<meta name="viewport" content="width=device-width, initial-scale=1.0">' , "\n";
+	theme_print_meta();
 }
 
 /**

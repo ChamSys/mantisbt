@@ -51,7 +51,11 @@ define( 'THEME_DEFAULT', 'default' );
  * array of themes by theme id (letters, digits, hyphens and underscores). Each
  * theme is an array with:
  * - 'name': the name to show to users,
- * - 'css': the stylesheets to load, as paths or URLs, in order.
+ * - 'css': the stylesheets to load, as paths or URLs, in order,
+ * - 'color_schemes': optionally, the color schemes the theme styles, 'light'
+ *   and/or 'dark'. Users of a theme that has them can choose between
+ *   them and the automatic one, which follows their system, see
+ *   theme_get_color_scheme().
  *
  * @return array The themes by id, starting with the default one.
  * @access public
@@ -60,7 +64,7 @@ function theme_get_all() {
 	static $s_themes = null;
 
 	if( $s_themes === null ) {
-		$s_themes = array( THEME_DEFAULT => array( 'name' => lang_get( 'theme_default' ), 'css' => array() ) );
+		$s_themes = array( THEME_DEFAULT => array( 'name' => lang_get( 'theme_default' ), 'css' => array(), 'color_schemes' => array() ) );
 
 		foreach( event_signal( 'EVENT_THEMES' ) as $t_plugin_results ) {
 			foreach( $t_plugin_results as $t_result ) {
@@ -75,6 +79,9 @@ function theme_get_all() {
 					$s_themes[$t_id] = array(
 						'name' => isset( $t_theme['name'] ) ? (string)$t_theme['name'] : $t_id,
 						'css' => isset( $t_theme['css'] ) ? array_values( (array)$t_theme['css'] ) : array(),
+						'color_schemes' => isset( $t_theme['color_schemes'] )
+							? array_values( array_intersect( (array)$t_theme['color_schemes'], array( 'light', 'dark' ) ) )
+							: array(),
 					);
 				}
 			}
@@ -115,7 +122,63 @@ function theme_print_css() {
 }
 
 /**
- * Get the attributes that the theme in use sets on the html tag.
+ * Check if any of the themes styles more than one color scheme, so that users
+ * can choose one.
+ *
+ * @return bool
+ * @access public
+ */
+function theme_has_color_schemes() {
+	foreach( theme_get_all() as $t_theme ) {
+		if( !empty( $t_theme['color_schemes'] ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Get the color scheme to use, from $g_color_scheme ('auto', 'light' or 'dark').
+ *
+ * @return string The color scheme, or an empty string if the theme in use does
+ *                not style any color scheme.
+ * @access public
+ */
+function theme_get_color_scheme() {
+	$t_themes = theme_get_all();
+	if( empty( $t_themes[theme_get_current()]['color_schemes'] ) ) {
+		return '';
+	}
+
+	$t_scheme = (string)config_get( 'color_scheme', null, null, ALL_PROJECTS );
+
+	return in_array( $t_scheme, array( 'light', 'dark' ), true ) ? $t_scheme : 'auto';
+}
+
+/**
+ * Print the meta tag that tells the browser which color schemes the page
+ * supports, so that form controls and scrollbars match.
+ *
+ * @return void
+ * @access public
+ */
+function theme_print_meta() {
+	$t_scheme = theme_get_color_scheme();
+	if( $t_scheme === '' ) {
+		return;
+	}
+
+	$t_themes = theme_get_all();
+	$t_supported = $t_themes[theme_get_current()]['color_schemes'];
+	$t_content = ( $t_scheme === 'auto' ) ? implode( ' ', $t_supported ) : $t_scheme;
+
+	echo "\t", '<meta name="color-scheme" content="', $t_content, '">', "\n";
+}
+
+/**
+ * Get the attributes that the theme in use sets on the html tag: the theme id
+ * and the color scheme.
  *
  * @return array Attribute values by attribute name.
  * @access public
@@ -123,5 +186,14 @@ function theme_print_css() {
 function theme_get_html_attributes() {
 	$t_id = theme_get_current();
 
-	return ( $t_id === THEME_DEFAULT ) ? array() : array( 'data-theme' => $t_id );
+	$t_attributes = array();
+	if( $t_id !== THEME_DEFAULT ) {
+		$t_attributes['data-theme'] = $t_id;
+	}
+	$t_scheme = theme_get_color_scheme();
+	if( $t_scheme !== '' ) {
+		$t_attributes['data-color-scheme'] = $t_scheme;
+	}
+
+	return $t_attributes;
 }

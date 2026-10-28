@@ -1224,6 +1224,15 @@ $g_font_family = 'Open Sans';
 $g_theme = 'default';
 
 /**
+ * The color scheme to use, when the theme in use styles more than one: 'light',
+ * 'dark' or 'auto', which follows the system setting of the user. Users can
+ * choose their own.
+ *
+ * @global string $g_color_scheme
+ */
+$g_color_scheme = 'auto';
+
+/**
  * List the Google fonts that the users are allowed to choose from.
  *
  * Google offers over 800 fonts. The list below is limited to the ones tested
@@ -5509,6 +5518,7 @@ $g_public_config_names = array(
 	'compress_html',
 	'cookie_prefix',
 	'cookie_time_length',
+	'color_scheme',
 	'copyright_statement',
 	'create_permalink_threshold',
 	'create_project_threshold',

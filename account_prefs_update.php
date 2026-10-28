@@ -109,6 +109,18 @@ if( $f_theme !== null ) {
 	}
 }
 
+# The color scheme can only be chosen when a theme styles more than one
+$f_color_scheme = gpc_get_string( 'color_scheme', null );
+if( $f_color_scheme !== null ) {
+	if( !in_array( $f_color_scheme, array( 'auto', 'light', 'dark' ), true ) ) {
+		# This should not happen unless the form submission was tempered with
+		throw new ClientException( "Invalid color scheme", ERROR_INVALID_FIELD_VALUE, ['color_scheme'] );
+	}
+	if( config_get( 'color_scheme', null, $f_user_id, ALL_PROJECTS ) != $f_color_scheme ) {
+		config_set( 'color_scheme', $f_color_scheme, $f_user_id, ALL_PROJECTS );
+	}
+}
+
 $t_prefs->email_on_new		= gpc_get_bool( 'email_on_new' );
 $t_prefs->email_on_assigned	= gpc_get_bool( 'email_on_assigned' );
 $t_prefs->email_on_feedback	= gpc_get_bool( 'email_on_feedback' );

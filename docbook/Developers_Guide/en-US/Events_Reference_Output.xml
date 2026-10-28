@@ -467,12 +467,20 @@ return array(
 					<title>Return Value</title>
 					<listitem><para>&lt;Array&gt;: themes by theme id (letters, digits, hyphens and underscores).
 						Each theme is an array with the keys <literal>name</literal>, the name to show to
-						users, and <literal>css</literal>, an array of stylesheets to link, in order, as paths
-						relative to the MantisBT directory or full URLs, for example
+						users, <literal>css</literal>, an array of stylesheets to link, in order, as paths
+						relative to the MantisBT directory or full URLs, and optionally
+						<literal>color_schemes</literal>, an array with <literal>light</literal> and/or
+						<literal>dark</literal> if the theme styles them.  For such a theme the
+						<literal>&lt;html&gt;</literal> tag gets a <literal>data-color-scheme</literal>
+						attribute, <literal>light</literal>, <literal>dark</literal> or
+						<literal>auto</literal> (follow the system, which the theme handles with
+						<literal>prefers-color-scheme</literal>), from the user's preference, and the page
+						gets a <literal>color-scheme</literal> meta tag.  For example
 						<programlisting>
 array( 'ocean' => array(
 	'name' => plugin_lang_get( 'theme_ocean' ),
 	'css' => array( plugin_file( 'ocean.css', true ) ),
+	'color_schemes' => array( 'light', 'dark' ),
 ) );
 </programlisting>
 					</para></listitem>

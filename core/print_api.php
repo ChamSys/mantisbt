@@ -1227,6 +1227,20 @@ function print_theme_option_list( $p_theme ) {
 }
 
 /**
+ * Print the options of a dropdown list of the color schemes.
+ *
+ * @param string $p_scheme The selected color scheme.
+ * @return void
+ */
+function print_color_scheme_option_list( $p_scheme ) {
+	foreach( array( 'auto', 'light', 'dark' ) as $t_scheme ) {
+		echo '<option value="' . $t_scheme . '"';
+		check_selected( $t_scheme, $p_scheme );
+		echo '>' . lang_get( 'color_scheme_' . $t_scheme ) . '</option>';
+	}
+}
+
+/**
  * Print a dropdown list of all bug actions available to a user for a specified
  * set of projects.
  *

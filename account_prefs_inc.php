@@ -445,6 +445,20 @@ function edit_account_prefs( $p_user_id = null, $p_error_if_protected = true, $p
 		</td>
 	</tr>
 	<?php } ?>
+	<?php if( theme_has_color_schemes() ) { ?>
+	<tr>
+		<td class="category">
+			<label for="color_scheme">
+				<?php echo lang_get( 'color_scheme' ) ?>
+			</label>
+		</td>
+		<td>
+			<select id="color_scheme" name="color_scheme" class="input-sm">
+				<?php print_color_scheme_option_list( config_get( 'color_scheme', null, $p_user_id, ALL_PROJECTS ) ) ?>
+			</select>
+		</td>
+	</tr>
+	<?php } ?>
 	<?php event_signal( 'EVENT_ACCOUNT_PREF_UPDATE_FORM', array( $p_user_id ) ); ?>
 	</table>
 						</div>

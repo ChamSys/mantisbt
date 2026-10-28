@@ -16,6 +16,16 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_color_scheme</term>
+			<listitem>
+				<para>The color scheme to use when the theme in use styles more than one:
+					<literal>light</literal>, <literal>dark</literal> or <literal>auto</literal>
+					(the default), which follows the system setting of the user. Users can choose
+					their own on the preferences page. It has no effect with a theme that does not
+					style color schemes, including the default one.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_font_family</term>
 			<listitem>
 				<para>Name of the google font family to use.</para>
