@@ -25,6 +25,8 @@ The rules it is built with:
 | Hide other users from the user lists | `$g_show_user_list_threshold` | ANYBODY (as stock) |
 | Likes on issues | `$g_enable_likes` | OFF |
 | Layout for phones | `$g_mobile_layout` | OFF |
+| Several favicons (SVG, PNG sizes, Apple icon) | `$g_favicon_image` as a list | one icon, as stock |
+| An image for the brand in the navbar | `$g_navbar_logo_image` | empty (the site name) |
 | Themes from plugins, light and dark | `$g_theme`, `$g_color_scheme` | `default`, `auto` |
 | Largest page of the issue list | `$g_filter_per_page_max` | 0 (no limit) |
 | utf8mb4 connections | `$g_db_charset` | stock behaviour |
@@ -61,6 +63,14 @@ The rules it is built with:
   names" setting and `$g_limit_reporters`; it never returns email addresses; it has a minimum query length, a
   result cap and a rate limit (`$g_user_typeahead_rate_limit`). Without JavaScript the list holds the users that
   are selected.
+- **Merge two accounts:** `user_merge()` and a page (a button on the details page of a user) give everything the
+  first account did and owns to the second and delete the first: issues, notes, files, history entries,
+  revisions, tags, categories, news, sponsorships, filters and profiles, and the monitoring, likes, project access
+  and configuration where the second account has none of its own (its own are kept). It runs in a transaction,
+  asks for the password again, needs the access of deleting a user for both accounts, cannot merge the own account
+  or the last administrator, and is logged (`LOG_USER_MANAGEMENT`). Plugins give the rows they keep for users on
+  `EVENT_MANAGE_USER_MERGE`. The old and new values of a handler or reporter change in an issue's history are not
+  rewritten.
 - **`$g_show_user_list_threshold`**: stock MantisBT lists every user who could be reporter or handler to everyone,
   which on a tracker open to customers lets them see each other. Raise this to a minimum access level to stop it.
 
@@ -84,9 +94,15 @@ updated and never sends mail. Access is `$g_like_bug_threshold`, with `$g_like_o
 - a bar at the bottom of the screen with the first four items of the main menu and a Menu button for the sidebar;
 - on the issue page, the panels (details, notes, history) shown one at a time, chosen with tabs that follow the
   WAI-ARIA tabs pattern (arrow keys, Home and End, right to left aware). Links to something in another panel
-  (`#c123`, `#history`, `#attachments`) open that panel first.
+  (`#c123`, `#history`, `#attachments`) open that panel first;
+- the form to add a note and the buttons of an issue (edit, assign, change status, monitor, like, ...) open as
+  sheets from the bottom of the screen, from a button on the page. The sheet is the element of the page, not a
+  copy, and it is a modal dialog while it is open: the focus goes in and stays in, Escape or a tap on the scrim
+  closes it, the focus goes back to the button. After a note is sent the issue opens on its notes;
+- the filter, which is several screens long on a phone, starts collapsed when there are issues to show (not saved,
+  so what the user chose on a larger screen is kept).
 
-It needs no theme. A theme restyles it through the same markup. Plugins that add something to the issue page
+It needs no theme. A theme restyles it through the same markup (`data-sheet` marks a sheet). Plugins that add something to the issue page
 should wrap it in an element with `data-panel="details"`, `"notes"` or `"history"`.
 
 ## Themes
@@ -95,6 +111,9 @@ should wrap it in an element with `data-panel="details"`, `"notes"` or `"history
   `$g_theme` chooses one and users can choose their own on the preferences page. A theme can ask for
   `viewport-fit=cover`.
 - **Light and dark:** `$g_color_scheme` (`light`, `dark`, `auto`) for themes that style more than one, per-user too.
+- **Icons and brand:** `$g_favicon_image` can be a list of icons with their `rel`, `type` and `sizes` (a string works
+  as before and prints the same link), and `$g_navbar_logo_image` shows an image in the navbar in place of the
+  site name (which becomes its text alternative). The footer can be replaced with `EVENT_LAYOUT_FOOTER`.
 - **Hooks for styling:** `EVENT_LAYOUT_HTML_ATTRIBUTES` and `EVENT_LAYOUT_BODY_ATTRIBUTES`; the status colors as
   CSS variables `--status-<id>` and `data-status` on issue rows and status cells; the user's font as
   `--font-family`.
@@ -104,6 +123,9 @@ should wrap it in an element with `data-panel="details"`, `"notes"` or `"history
 - **Landmarks and labels:** a skip link, `role="navigation"` regions with names, translated screen reader texts, an
   `<h1>` for assistive technology on every page (`layout_page_title()`), labels for the login fields, the note
   text area and the controls of the filter, `aria-current` in the menu and the pager, which is now a `<nav>`.
+- **Filter controls have names:** each control of a filter field gets the name of its field (`aria-label`) by script,
+  in the issue list and on the static filter page. The static filter page still has unnamed controls without
+  JavaScript.
 - **Data attributes** that stay stable: `data-section` on the rows of the issue page, `data-panel`, `data-label`,
   `data-note-id`, `data-user-id`, `data-bug-id`, `data-status`, `data-menu-id` on the sidebar, `data-pager`,
   `data-field` and `data-label` in the filter. The `#attachments` anchor is on the attachments row.
@@ -125,6 +147,11 @@ Things a plugin could only do by rewriting the page output before:
 - **Assets:** `require_js()` works for plugin files, `plugin_require_css()` / `plugin_require_js()`, and a way to
   load a stylesheet last. `plugin_file.php` is served without the database, plugins or a session cookie, with
   immutable cache headers and the modification time in the URL.
+- **Events for what happens in the tracker:** `EVENT_NOTIFY_RECIPIENTS` tells who is notified of a change to an
+  issue, a note, a mention or a reminder (user ids, after preferences and access were applied: for in-app
+  notifications or webhooks; it is signalled where the emails are sent, so not when email notifications are off);
+  `EVENT_SUMMARY_PANELS` adds panels to the summary page; `EVENT_MANAGE_USER_MERGE` moves a plugin's rows when
+  users are merged.
 - **Display names:** `EVENT_DISPLAY_USER_NAME` changes how a user is shown, and user names carry `data-user-id`.
 - **Rate limiting:** `token_rate_limit_allow()` limits requests per user, for endpoints that plugins add.
 - **Internal REST group** `/api/rest/internal/` for endpoints used by the pages themselves (issue search, user
@@ -136,7 +163,9 @@ Hooks for a plugin that signs users in with OpenID Connect or similar, without p
 `EVENT_AUTH_LOGIN_FORM_BEFORE` / `_AFTER`, `EVENT_AUTH_USER_FLAGS` triggered before anyone is logged in,
 `AuthFlags::setProfileManagedExternally()` (the account and user management pages then respect fields that are
 owned by the provider, and `UserUpdateCommand` ignores changes to them), `EVENT_AUTH_LOGIN` and
-`EVENT_AUTH_LOGOUT`, `user_create()` with an option to skip the signup email, `db_begin()` / `db_commit()` /
+`EVENT_AUTH_LOGOUT`, `EVENT_AUTH_AUTO_CREATE_USER` (a plugin that checks credentials against its own directory
+creates the account of an unknown user, or refuses the login), `user_set_access_level()` (changes the access level
+of an account, protected ones too when asked), `user_create()` with an option to skip the signup email, `db_begin()` / `db_commit()` /
 `db_rollback()`, and `form_security_check()`, a token check that returns instead of halting.
 
 ## Bug fixes
@@ -172,5 +201,6 @@ JavaScript.
 ## Not here
 
 Things the fork does not do, on purpose or not yet: no Bootstrap migration (the Ace theme stays), no
-notification bell or in-app notifications, no bundled plugins, the pager still renders in its original DOM order
-and the page has no `role="main"` yet (both change markup that existing plugins select on).
+notification bell or in-app notifications (only the event they would need), no bundled plugins, the pager still
+renders in its original DOM order and the page has no `role="main"` yet (both change markup that existing plugins
+select on).

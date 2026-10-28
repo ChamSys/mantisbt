@@ -1262,8 +1262,10 @@ $g_color_scheme = 'auto';
 /**
  * Lay the pages out for phones: a stylesheet and a script that apply to
  * screens narrower than 768 pixels. Tables become stacked cards, the issue page
- * shows one section at a time (details, notes, history), the main menu moves to
- * a bar at the bottom of the screen, and forms get larger controls. Nothing
+ * shows one section at a time (details, notes, history), the form to add a note
+ * and the buttons of an issue open as sheets from the bottom of the screen, the
+ * filter starts collapsed, the main menu moves to a bar at the bottom of the
+ * screen, and forms get larger controls. Nothing
  * changes on wider screens. A theme can restyle all of it, the elements and
  * their data-* attributes are the same with or without a theme.
  *
