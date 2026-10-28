@@ -232,6 +232,7 @@ if( config_get_global( 'admin_checks' ) == ON ) {
 			?>
 
 			<label for="username" class="block clearfix">
+				<span class="sr-only"><?php echo $t_username_label ?></span>
 				<span class="block input-icon input-icon-right">
 					<input id="username" name="username" type="text" placeholder="<?php echo $t_username_label ?>"
 						   size="32" maxlength="<?php echo DB_FIELD_SIZE_USERNAME;?>" value="<?php echo string_attribute( $t_username ); ?>"

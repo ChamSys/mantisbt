@@ -234,6 +234,7 @@ if( config_get_global( 'admin_checks' ) == ON && file_exists( __DIR__ .'/admin/.
 			?>
 			<input hidden readonly type="text" name="username" class="hidden" tabindex="-1" value="<?php echo string_html_specialchars( $t_username ) ?>" id="hidden_username" />
 			<label for="password" class="block clearfix">
+				<span class="sr-only"><?php echo lang_get( 'password' ) ?></span>
 				<span class="block input-icon input-icon-right">
 					<input id="password" name="password" type="password" placeholder="<?php echo lang_get( 'password' ) ?>"
 						   size="32" maxlength="<?php echo auth_get_password_max_size(); ?>"
