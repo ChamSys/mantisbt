@@ -636,6 +636,8 @@ function auth_login_user( $p_user_id, $p_perm_login = false ) {
 	auth_set_cookies( $p_user_id, $p_perm_login );
 	auth_set_tokens( $p_user_id );
 
+	event_signal( 'EVENT_AUTH_LOGIN', array( (int)$p_user_id, (bool)$p_perm_login ) );
+
 	return true;
 }
 
@@ -786,6 +788,11 @@ function auth_attempt_script_login( $p_username, $p_password = null ) {
  */
 function auth_logout() {
 	global $g_cache_current_user_id, $g_cache_cookie_valid;
+
+	# Before anything is cleared, so that plugins can still use the user and the session.
+	if( $g_cache_current_user_id != NO_USER ) {
+		event_signal( 'EVENT_AUTH_LOGOUT', array( (int)$g_cache_current_user_id ) );
+	}
 
 	if( !user_is_protected( $g_cache_current_user_id ) ) {
 		# Reset the user's cookie string

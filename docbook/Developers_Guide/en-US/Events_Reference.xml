@@ -210,6 +210,44 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.auth.login">
+			<title>EVENT_AUTH_LOGIN (Execute)</title>
+
+			<blockquote>
+				<para>
+					Triggered when a user has been logged in, whichever way: with a password, by an
+					authentication plugin that calls <function>auth_login_user()</function>, or by
+					any other code that does.  The cookies and tokens are already set.  Plugins can use
+					it, for example, to update the user's profile or permissions from an external
+					system.  It is not triggered for the anonymous login or for logins done by scripts.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Integer&gt;: the user id</para></listitem>
+					<listitem><para>&lt;Boolean&gt;: whether the user asked to stay logged in ("remember me")</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
+		<blockquote id="dev.eventref.auth.logout">
+			<title>EVENT_AUTH_LOGOUT (Execute)</title>
+
+			<blockquote>
+				<para>
+					Triggered when the logged in user is being logged out, before the cookies and the
+					session are cleared, so plugins can still read the session, for example to end
+					the session at an external identity provider as well.  It is not triggered when
+					nobody is logged in.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Integer&gt;: the id of the user that is logging out</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.cronjob">
 			<title>EVENT_CRONJOB (Execute)</title>
 
