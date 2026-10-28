@@ -108,6 +108,7 @@ use Mantis\Exceptions\ClientException;
  * @property int $view_state
  * @property string $summary
  * @property float $sponsorship_total
+ * @property int $like_count
  * @property int $sticky
  * @property int $due_date
  * @property int $profile_id
@@ -244,6 +245,11 @@ class BugData {
 	protected $sponsorship_total = 0;
 
 	/**
+	 * Number of users that like the issue, see like_api.php
+	 */
+	protected $like_count = 0;
+
+	/**
 	 * Sticky
 	 */
 	protected $sticky = 0;
@@ -347,6 +353,7 @@ class BugData {
 			case 'projection':
 			case 'category_id':
 			case 'bug_text_id':
+			case 'like_count':
 				$p_value = (int)$p_value;
 				break;
 			case 'target_version':
@@ -1971,6 +1978,7 @@ function bug_set_field( $p_bug_id, $p_field_name, $p_value ) {
 		case 'view_state':
 		case 'profile_id':
 		case 'sponsorship_total':
+		case 'like_count':
 			$c_value = (int)$p_value;
 			break;
 

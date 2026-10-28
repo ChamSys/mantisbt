@@ -914,6 +914,18 @@ $g_upgrade[214] = array( 'CreateTableSQL', array( db_get_table( 'search_queue' )
 	) );
 $g_upgrade[215] = array( 'CreateIndexSQL', array( 'idx_search_queue_bug_id', db_get_table( 'search_queue' ), 'bug_id' ) );
 
+# Likes: who likes an issue, and how many do, see like_api.php
+$g_upgrade[216] = array( 'CreateTableSQL', array( db_get_table( 'bug_like' ), "
+	bug_id					I		UNSIGNED NOTNULL PRIMARY DEFAULT '0',
+	user_id					I		UNSIGNED NOTNULL PRIMARY DEFAULT '0',
+	date_submitted			I		UNSIGNED NOTNULL DEFAULT '1'",
+	$t_table_options
+	) );
+$g_upgrade[217] = array( 'CreateIndexSQL', array( 'idx_bug_like_user_id', db_get_table( 'bug_like' ), 'user_id' ) );
+$g_upgrade[218] = array( 'AddColumnSQL', array( db_get_table( 'bug' ), "
+	like_count				I		UNSIGNED NOTNULL DEFAULT '0'" ) );
+$g_upgrade[219] = array( 'CreateIndexSQL', array( 'idx_bug_like_count', db_get_table( 'bug' ), 'like_count' ) );
+
 # ----------------------------------------------------------------------------
 # End of schema definition, clear local variables
 #
