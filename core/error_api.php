@@ -269,6 +269,10 @@ function error_handler( $p_type, $p_error, $p_file, $p_line ) {
 			} else {
 				$t_error_type = 'APPLICATION ERROR #' . $p_error;
 				$t_error_description = error_string( $p_error );
+
+				# Application errors are only rendered into the response, so
+				# also record them in the server log.
+				error_log( $t_error_type . ': ' . $t_error_description . ' ' . $t_error_location );
 			}
 			break;
 		case E_USER_WARNING:
