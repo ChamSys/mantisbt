@@ -51,7 +51,6 @@
  * @uses helper_api.php
  * @uses html_api.php
  * @uses lang_api.php
- * @uses ldap_api.php
  * @uses print_api.php
  * @uses string_api.php
  * @uses user_api.php
@@ -71,7 +70,6 @@ require_api( 'form_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
-require_api( 'ldap_api.php' );
 require_api( 'print_api.php' );
 require_api( 'string_api.php' );
 require_api( 'tokens_api.php' );
@@ -94,8 +92,6 @@ layout_page_begin();
 $t_row = user_get_row( auth_get_current_user_id() );
 
 extract( $t_row, EXTR_PREFIX_ALL, 'u' );
-
-$t_ldap = ( LDAP == config_get_global( 'login_method' ) );
 
 # In case we're using LDAP to get the email address... this will pull out
 #  that version instead of the one in the DB
@@ -232,11 +228,11 @@ print_account_menu( 'account_page.php' );
 				</td>
 				<td>
 				<?php
-				if( $t_ldap && ON == config_get_global( 'use_ldap_email' ) ) {
-					# With LDAP
+				if( auth_email_managed_externally() ) {
+					# Managed externally (LDAP, or an authentication plugin)
 					echo string_display_line( $u_email );
 				} else {
-					# Without LDAP
+					# Managed in MantisBT
 					$t_show_update_button = true;
 					echo '<div class="">';
 					print_email_input( 'email', $u_email );
@@ -249,11 +245,11 @@ print_account_menu( 'account_page.php' );
 			<tr><?php
 				echo '<td class="category">' . lang_get( 'realname' ) . '</td>';
 				echo '<td>';
-				if( $t_ldap && ON == config_get_global( 'use_ldap_realname' ) ) {
-					# With LDAP
-					echo string_display_line( ldap_realname_from_username( $u_username ) );
+				if( auth_realname_managed_externally() ) {
+					# Managed externally (LDAP, or an authentication plugin)
+					echo string_display_line( user_get_realname( $u_id ) );
 				} else {
-					# Without LDAP
+					# Managed in MantisBT
 					$t_show_update_button = true;
 					echo '<input class="input-sm" id="realname" type="text" size="32" maxlength="'
 						. DB_FIELD_SIZE_REALNAME . '" name="realname" value="'

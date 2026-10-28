@@ -131,12 +131,10 @@ if( $t_account_verification && is_blank( $f_password ) ) {
 	trigger_error( ERROR_EMPTY_FIELD, ERROR );
 }
 
-$t_ldap = ( LDAP == config_get_global( 'login_method' ) );
-
-# Update email (but only if LDAP isn't being used)
+# Update email (but only if it isn't managed externally, e.g. by LDAP)
 # Do not update email for a user verification
 if( !$t_account_verification
-	&& !( $t_ldap && config_get_global( 'use_ldap_email' ) )
+	&& !auth_email_managed_externally( $t_user_id )
 ) {
 	$f_email = trim( $f_email );
 	if( !is_blank( $f_email ) && $f_email != user_get_email( $t_user_id ) ) {
@@ -144,8 +142,8 @@ if( !$t_account_verification
 	}
 }
 
-# Update real name (but only if LDAP isn't being used)
-if( !( $t_ldap && config_get_global( 'use_ldap_realname' ) ) ) {
+# Update real name (but only if it isn't managed externally, e.g. by LDAP)
+if( !auth_realname_managed_externally( $t_user_id ) ) {
 	# strip extra spaces from real name
 	$t_realname = string_normalize( $f_realname );
 	if( $t_realname != user_get_field( $t_user_id, 'realname' ) ) {
