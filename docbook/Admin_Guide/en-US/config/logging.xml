@@ -273,6 +273,14 @@ $g_display_errors = array(
 						</listitem>
 					</varlistentry>
 					<varlistentry>
+						<term>LOG_USER_MANAGEMENT</term>
+						<listitem>
+							<para>logs the management of users that changes data in bulk, for now the
+								merge of a user into another one.
+							</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
 						<term>LOG_ALL</term>
 						<listitem>
 							<para>combines all of the above log levels

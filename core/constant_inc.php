@@ -590,6 +590,7 @@ define( 'LOG_DATABASE', 32 );       # logging for Database
 define( 'LOG_WEBSERVICE', 64 );     # logging for Web Service Requests
 define( 'LOG_EMAIL_VERBOSE', 128 ); # logging for verbose email internals
 define( 'LOG_PLUGIN', 256 );        # logging for plugins
+define( 'LOG_USER_MANAGEMENT', 512 ); # logging of the management of users (merges)
 
 # COLUMNS_TARGET_*
 define( 'COLUMNS_TARGET_VIEW_PAGE', 1 );

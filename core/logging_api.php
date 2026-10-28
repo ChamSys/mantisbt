@@ -48,6 +48,7 @@ $g_log_levels = array(
 	LOG_DATABASE => 'DB',
 	LOG_WEBSERVICE => 'WEBSERVICE',
 	LOG_PLUGIN => 'PLUGIN',
+	LOG_USER_MANAGEMENT => 'USER',
 );
 
 /**
