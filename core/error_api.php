@@ -273,6 +273,15 @@ function error_handler( $p_type, $p_error, $p_file, $p_line ) {
 				# Application errors are only rendered into the response, so
 				# also record them in the server log.
 				error_log( $t_error_type . ': ' . $t_error_description . ' ' . $t_error_location );
+
+				# The message of a database error includes the text of the
+				# failing query, or the database server's reply (which can
+				# name the host and user), so hide it from the response unless
+				# detailed errors are enabled, as is done for PHP exceptions.
+				if( !$t_show_detailed_errors && in_array( $p_error,
+						array( ERROR_DB_CONNECT_FAILED, ERROR_DB_QUERY_FAILED, ERROR_DB_SELECT_FAILED ) ) ) {
+					$t_error_description = '';
+				}
 			}
 			break;
 		case E_USER_WARNING:
