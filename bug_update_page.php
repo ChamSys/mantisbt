@@ -193,7 +193,7 @@ if( $t_top_buttons_enabled ) {
 <?php
 }
 ?>
-		<table class="table table-bordered table-condensed table-striped">
+		<table class="table table-bordered table-condensed table-striped bug-update-table">
 			<tbody>
 <?php
 event_signal( 'EVENT_UPDATE_BUG_FORM_TOP', array( $t_bug_id ) );
