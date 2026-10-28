@@ -90,6 +90,7 @@
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/reminders.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/bughistory.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/sponsorship.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/likes.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/customfields.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/myview.xml" />
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="config/relationship.xml" />

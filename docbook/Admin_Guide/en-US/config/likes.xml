@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+ <!ENTITY % BOOK_ENTITIES SYSTEM "Admin_Guide.ent">
+]>
+<section id="admin.config.likes">
+	<title>Likes</title>
+
+	<para>Users can like an issue, to say that they are affected by it or want it done, instead
+		of adding a note that only says "+1".  An issue shows how many users like it, the issue list
+		has a sortable <emphasis>Likes</emphasis> column (add it to the columns of the list), and the
+		summary page lists the most liked issues.  Liking does not change the date an issue was last
+		updated and does not send emails.  The count and the likes are also available through the REST
+		API, at <literal>/api/rest/issues/{id}/likes</literal>.
+	</para>
+
+	<variablelist>
+		<varlistentry>
+			<term>$g_enable_likes</term>
+			<listitem>
+				<para>Whether to enable likes. It defaults to OFF.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_like_bug_threshold</term>
+			<listitem>
+				<para>The access level needed to like an issue. The default is REPORTER. The anonymous
+					account can never like issues.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_show_likers_threshold</term>
+			<listitem>
+				<para>The access level needed to see who likes an issue. The default is DEVELOPER.
+					Everybody who can see an issue sees how many users like it.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_like_own_issue</term>
+			<listitem>
+				<para>Whether users can like the issues they reported. It defaults to ON.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>$g_like_readonly_issues</term>
+			<listitem>
+				<para>Whether users can like issues that are read only. It defaults to OFF. Taking
+					a like back is always possible while likes are enabled.</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</section>
