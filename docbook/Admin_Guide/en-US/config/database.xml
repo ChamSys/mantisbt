@@ -199,6 +199,20 @@
 						NOTE: the installer does not yet fully support the use of dsn's</para>
 				</listitem>
 			</varlistentry>
+			<varlistentry>
+				<term>$g_db_charset</term>
+				<listitem>
+					<para>The character set of the database connection, for MySQL
+						and MariaDB only. The default is <literal>UTF8</literal>
+						(MySQL's 3-byte utf8), which cannot store characters outside the
+						Basic Multilingual Plane, such as emoji: MantisBT replaces them
+						with U+FFFD before saving. To keep them, convert the database
+						and its tables to <literal>utf8mb4</literal> and set this to
+						<literal>utf8mb4</literal>. Only letters, digits and underscores
+						are allowed.
+					</para>
+				</listitem>
+			</varlistentry>
 
 		</variablelist>
 	</section>
