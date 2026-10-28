@@ -23,6 +23,7 @@
  *
  * @uses core.php
  * @uses authentication_api.php
+ * @uses config_api.php
  * @uses filter_constants_inc.php
  * @uses gpc_api.php
  * @uses print_api.php
@@ -30,6 +31,7 @@
 
 require_once( 'core.php' );
 require_api( 'authentication_api.php' );
+require_api( 'config_api.php' );
 require_api( 'filter_constants_inc.php' );
 require_api( 'gpc_api.php' );
 require_api( 'print_api.php' );
@@ -38,6 +40,12 @@ auth_ensure_user_authenticated();
 
 # The field is used to jump to an issue by id, but people also type text in it.
 $f_bug_id		= trim( gpc_get_string( 'bug_id' ) );
+
+# An issue id is often typed or pasted with the # that links use
+$t_link_tag = config_get( 'bug_link_tag' );
+if( !is_blank( $t_link_tag ) && strpos( $f_bug_id, $t_link_tag ) === 0 && ctype_digit( substr( $f_bug_id, strlen( $t_link_tag ) ) ) ) {
+	$f_bug_id = substr( $f_bug_id, strlen( $t_link_tag ) );
+}
 
 if( ctype_digit( $f_bug_id ) ) {
 	print_header_redirect_view( (int)$f_bug_id );
