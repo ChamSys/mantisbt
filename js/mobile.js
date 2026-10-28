@@ -259,6 +259,31 @@
 	}
 
 	/**
+	 * On a phone the filter, which is as long as the screen several times over, starts
+	 * collapsed when there are issues to look at, so that the list is what the page opens
+	 * on. It is collapsed the way the page restores the state it saved, which is not saved
+	 * itself: what the user chooses on a larger screen is not changed by this.
+	 */
+	function collapseOnPhone(box, query) {
+		var widget = document.getElementById('filter');
+		var toggle = document.getElementById('filter-toggle');
+
+		if (!query.matches || !widget || !toggle || widget.classList.contains('collapsed') ||
+			!document.querySelector('#buglist tbody tr[data-bug-id]')) {
+			return;
+		}
+
+		widget.classList.add('collapsed');
+		toggle.setAttribute('aria-expanded', 'false');
+
+		var icon = toggle.querySelector('.ace-icon');
+		if (icon) {
+			icon.classList.remove('fa-chevron-up');
+			icon.classList.add('fa-chevron-down');
+		}
+	}
+
+	/**
 	 * The filter is a list of fields, each with its value. A tap on a value opens the field for
 	 * editing, as the link of its label does (the labels are not displayed as such on a phone, the
 	 * name of the field is shown above the value instead).
@@ -270,6 +295,8 @@
 		if (!box || !query) {
 			return;
 		}
+
+		collapseOnPhone(box, query);
 
 		box.addEventListener('click', function (event) {
 			var cell = event.target.closest ? event.target.closest('td[data-field]') : null;
