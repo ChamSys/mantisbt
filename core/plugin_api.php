@@ -367,6 +367,14 @@ function plugin_file_include( $p_filename, $p_basename = null ) {
 		header( 'Content-Type: ' . $t_content_type );
 	}
 
+	# The URL built by plugin_file() has the modification time of the file, so
+	# a file asked for with it never changes; the browser asks again for any other
+	if( isset( $_GET['v'] ) ) {
+		header( 'Cache-Control: public, max-age=31536000, immutable' );
+	} else {
+		header( 'Cache-Control: no-cache' );
+	}
+
 	$t_mtime = @filemtime( $t_file_path );
 	header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s \G\M\T', $t_mtime ) );
 	if( isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] )

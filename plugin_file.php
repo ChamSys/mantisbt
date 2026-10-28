@@ -32,7 +32,15 @@ header( 'Content-type: ' );
 
 const DISABLE_INLINE_ERROR_REPORTING = true;
 
+# Static files do not need the database, the plugins, a session or a user:
+# serve them without starting any of those, which also sets no cookie.
+define( 'MANTIS_MAINTENANCE_MODE', true );
+
 require_once( 'core.php' );
+
+# Loading the APIs starts a session, but a static file does not need its cookie
+header_remove( 'Set-Cookie' );
+
 require_api( 'config_api.php' );
 require_api( 'constant_inc.php' );
 require_api( 'gpc_api.php' );
@@ -59,6 +67,10 @@ if( !preg_match( $t_regex, $f_file, $t_matches ) ) {
 $t_basename = $t_matches[1];
 $t_file = $t_matches[2];
 
-$t_plugin = plugin_get( $t_basename );
+# The plugins are not loaded here, so check that the plugin is there, not that it is installed
+if( !is_dir( $t_plugin_path . $t_basename ) ) {
+	error_parameters( $t_basename, $t_file );
+	trigger_error( ERROR_PLUGIN_FILE_NOT_FOUND, ERROR );
+}
 
 plugin_file_include( $t_file, $t_basename );
