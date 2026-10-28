@@ -534,7 +534,9 @@ array( 'ocean' => array(
 						<literal>viewport-fit=cover</literal> in its viewport meta tag, and the theme keeps
 						content clear with <literal>env( safe-area-inset-* )</literal>), and
 						<literal>js</literal>, an array of scripts, as plugin file URLs or full URLs, that are
-						loaded at the end of the page, after the scripts of MantisBT.</para></listitem>
+						loaded at the end of the page, after the scripts of MantisBT.  The content security policy
+						of MantisBT only allows scripts from the site itself, so scripts from another
+						address need the policy to be changed, see <literal>$g_custom_headers</literal>.</para></listitem>
 				</itemizedlist>
 			</blockquote>
 		</blockquote>

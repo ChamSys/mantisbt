@@ -225,6 +225,9 @@ $(document).ready( function() {
 			context: $('#' + targetID),
 			success: function(html) {
 				$(this).html(html);
+
+				// Let scripts enhance the controls that were just added to the page
+				document.dispatchEvent(new CustomEvent('mantis:content-loaded', { detail: { root: this.get(0) } }));
 			},
 			error: function(obj,status,error) {
 				$(this).html('<span class="error-msg">' + status + ': ' + error + '</span>');
