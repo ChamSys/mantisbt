@@ -151,8 +151,8 @@ $t_block_icon = $t_collapse_block ? 'fa-chevron-down' : 'fa-chevron-up';
 			$t_time_tracking_hhmm = '';
 		}
 ?>
-<tr class="bugnote visible-on-hover-toggle" id="c<?php echo $t_activity['id'] ?>">
-	<td class="category">
+<tr class="bugnote visible-on-hover-toggle" id="c<?php echo $t_activity['id'] ?>" data-note-id="<?php echo (int)$t_activity['id'] ?>" data-user-id="<?php echo (int)$t_activity['user_id'] ?>" data-private="<?php echo $t_activity['private'] ? 1 : 0 ?>">
+	<td class="category bugnote-meta">
 		<div class="pull-left padding-2"><?php print_avatar( $t_activity['user_id'], 'bugnote', 80 ); ?>
 		</div>
 		<div class="pull-left padding-2">

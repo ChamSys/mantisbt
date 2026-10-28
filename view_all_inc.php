@@ -305,7 +305,7 @@ function write_bug_rows( array $p_rows ) {
 			$t_in_stickies = false;
 		}
 
-		echo '<tr data-status="', (int)$t_row->status, '">';
+		echo '<tr data-bug-id="', (int)$t_row->id, '" data-project-id="', (int)$t_row->project_id, '" data-status="', (int)$t_row->status, '">';
 		foreach( $g_columns as $t_column ) {
 			helper_call_custom_function( 'print_column_value', array( $t_column, $t_row ) );
 		}

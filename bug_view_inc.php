@@ -808,7 +808,7 @@ if( $t_flags['history_show'] && $f_history ) {
 			<div class="widget-body">
 				<div class="widget-main no-padding">
 					<div class="table-responsive">
-	<table class="table table-bordered table-condensed table-hover table-striped">
+	<table class="table table-bordered table-condensed table-hover table-striped bug-history">
 		<thead>
 			<tr>
 				<th class="small-caption">
