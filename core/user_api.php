@@ -37,6 +37,7 @@
  * @uses project_api.php
  * @uses project_hierarchy_api.php
  * @uses string_api.php
+ * @uses tokens_api.php
  * @uses user_pref_api.php
  * @uses utility_api.php
  */
@@ -55,6 +56,7 @@ require_api( 'ldap_api.php' );
 require_api( 'project_api.php' );
 require_api( 'project_hierarchy_api.php' );
 require_api( 'string_api.php' );
+require_api( 'tokens_api.php' );
 require_api( 'user_pref_api.php' );
 require_api( 'utility_api.php' );
 
@@ -788,7 +790,7 @@ function user_delete_profiles( $p_user_id ) {
  * Delete a user account.
  *
  * Related information is also deleted (profiles, preferences, project-specific
- * access levels).
+ * access levels, tokens, monitored issues, private filters).
  *
  * @param int $p_user_id A valid user identifier.
  *
@@ -814,6 +816,24 @@ function user_delete( $p_user_id ) {
 
 	# Revoke all API tokens
 	api_token_revoke_all( $p_user_id );
+
+	# Remove the remaining data that belongs to the user: tokens, print
+	# preferences, monitored issues, and private or current filters (public
+	# filters are kept, as other users may be using them).
+	token_delete_by_owner( $p_user_id );
+
+	db_param_push();
+	$t_query = 'DELETE FROM {user_print_pref} WHERE user_id=' . db_param();
+	db_query( $t_query, array( $c_user_id ) );
+
+	db_param_push();
+	$t_query = 'DELETE FROM {bug_monitor} WHERE user_id=' . db_param();
+	db_query( $t_query, array( $c_user_id ) );
+
+	db_param_push();
+	$t_query = 'DELETE FROM {filters} WHERE user_id=' . db_param()
+		. ' AND ( is_public IS NULL OR is_public = ' . db_param() . ' )';
+	db_query( $t_query, array( $c_user_id, false ) );
 
 	# Remove account
 	db_param_push();
