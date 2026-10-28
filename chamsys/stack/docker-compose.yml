@@ -40,6 +40,33 @@ services:
       timeout: 5s
       retries: 5
 
+  # Keeps the Meilisearch index up to date (cron would do this elsewhere): scripts/search_index.php
+  # processes the queue of issues that changed. Run `stack.sh search --reindex` once to index
+  # issues that existed before.
+  search-indexer:
+    build:
+      context: php
+    restart: unless-stopped
+    user: "${CONTAINER_UID:-1000}:${CONTAINER_GID:-1000}"
+    environment:
+      MANTIS_DB_HOST: db
+      MANTIS_DB_NAME: mantis
+      MANTIS_DB_USER: mantis
+      MANTIS_DB_PASSWORD: mantis
+      MANTIS_URL: http://localhost:${MANTIS_HTTP_PORT:-8088}/
+      MANTIS_SEARCH_BACKEND: ${MANTIS_SEARCH_BACKEND:-meilisearch}
+      MEILI_URL: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-dev-master-key-change-me}
+    volumes:
+      - ../..:/var/www/html
+      - ./config_inc.php:/var/www/html/config/config_inc.php:ro
+    command: ["sh", "-c", "php scripts/search_index.php --setup && while true; do php scripts/search_index.php || true; sleep 5; done"]
+    depends_on:
+      db:
+        condition: service_healthy
+      meilisearch:
+        condition: service_started
+
   nginx:
     image: nginx:alpine
     restart: unless-stopped
