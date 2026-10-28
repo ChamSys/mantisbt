@@ -692,7 +692,8 @@ function layout_navbar() {
 	$t_navbar_logo = config_get_global( 'navbar_logo_image' );
 	if( !is_blank( $t_navbar_logo ) ) {
 		# An image instead of the name of the site, which is its text alternative
-		echo '<img class="navbar-brand-logo" src="', string_attribute( helper_mantis_url( $t_navbar_logo ) ), '" alt="',
+		$t_navbar_logo_url = is_null( parse_url( $t_navbar_logo, PHP_URL_SCHEME ) ) ? helper_mantis_url( $t_navbar_logo ) : $t_navbar_logo;
+		echo '<img class="navbar-brand-logo" src="', string_attribute( $t_navbar_logo_url ), '" alt="',
 			string_attribute( config_get( 'window_title' ) ), '">';
 	} else {
 		echo '<span class="smaller-75"> ';
