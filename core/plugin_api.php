@@ -168,19 +168,26 @@ function plugin_get( $p_basename = null ) {
  * @param string $p_page      Page name.
  * @param bool   $p_redirect  Return url for redirection.
  * @param string $p_base_name Plugin base name (defaults to current plugin).
+ * @param array  $p_params    Query parameters to add to the URL, by name.
  *
  * @return string
  */
-function plugin_page( $p_page, $p_redirect = false, $p_base_name = null ) {
+function plugin_page( $p_page, $p_redirect = false, $p_base_name = null, array $p_params = array() ) {
 	if( is_null( $p_base_name ) ) {
 		$t_current = plugin_get_current();
 	} else {
 		$t_current = $p_base_name;
 	}
+
+	$t_url = 'plugin.php?page=' . $t_current . '/' . $p_page;
+	if( !empty( $p_params ) ) {
+		$t_url = helper_url_combine( $t_url, $p_params );
+	}
+
 	if( $p_redirect ) {
-		return 'plugin.php?page=' . $t_current . '/' . $p_page;
+		return $t_url;
 	} else {
-		return helper_mantis_url( 'plugin.php?page=' . $t_current . '/' . $p_page );
+		return helper_mantis_url( $t_url );
 	}
 }
 
