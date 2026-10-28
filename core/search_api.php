@@ -25,11 +25,13 @@
  *
  * @uses config_api.php
  * @uses constant_inc.php
+ * @uses database_api.php
  * @uses error_api.php
  */
 
 require_api( 'config_api.php' );
 require_api( 'constant_inc.php' );
+require_api( 'database_api.php' );
 require_api( 'error_api.php' );
 
 require_once( __DIR__ . '/classes/SearchBackend.class.php' );
@@ -59,4 +61,77 @@ function search_backend_get() {
 	}
 
 	return $s_backend;
+}
+
+/**
+ * Build the documents that represent issues in the index of a search backend.
+ *
+ * The data is read straight from the database, not through the issue API, so
+ * that it does not depend on who is logged in: access to the results is
+ * decided later by the issue filter. Private note text is kept apart from
+ * public note text, so that it can be left out of searches by users who may
+ * not read it.
+ *
+ * @param array $p_bug_ids The ids of the issues.
+ *
+ * @return array The documents, by issue id. Issues that do not exist have none.
+ *               Each document has the keys: id, project_id, summary,
+ *               description, steps_to_reproduce, additional_information,
+ *               category, tags, notes (the text of the public notes) and
+ *               private_notes (the text of the private notes).
+ * @access public
+ */
+function search_issue_documents( array $p_bug_ids ) {
+	$t_bug_ids = array_values( array_unique( array_map( 'intval', $p_bug_ids ) ) );
+	if( empty( $t_bug_ids ) ) {
+		return array();
+	}
+
+	$t_documents = array();
+
+	$t_query = new DbQuery();
+	$t_query->sql( 'SELECT b.id, b.project_id, b.summary, c.name AS category,'
+		. ' t.description, t.steps_to_reproduce, t.additional_information'
+		. ' FROM {bug} b JOIN {bug_text} t ON b.bug_text_id = t.id'
+		. ' LEFT JOIN {category} c ON b.category_id = c.id'
+		. ' WHERE b.id IN ' . $t_query->param( $t_bug_ids ) );
+	foreach( $t_query->fetch_all() as $t_row ) {
+		$t_id = (int)$t_row['id'];
+		$t_documents[$t_id] = array(
+			'id' => $t_id,
+			'project_id' => (int)$t_row['project_id'],
+			'summary' => (string)$t_row['summary'],
+			'description' => (string)$t_row['description'],
+			'steps_to_reproduce' => (string)$t_row['steps_to_reproduce'],
+			'additional_information' => (string)$t_row['additional_information'],
+			'category' => (string)$t_row['category'],
+			'tags' => array(),
+			'notes' => '',
+			'private_notes' => '',
+		);
+	}
+	if( empty( $t_documents ) ) {
+		return array();
+	}
+	$t_found_ids = array_keys( $t_documents );
+
+	$t_query = new DbQuery();
+	$t_query->sql( 'SELECT bt.bug_id, g.name FROM {bug_tag} bt JOIN {tag} g ON bt.tag_id = g.id'
+		. ' WHERE bt.bug_id IN ' . $t_query->param( $t_found_ids ) );
+	foreach( $t_query->fetch_all() as $t_row ) {
+		$t_documents[(int)$t_row['bug_id']]['tags'][] = (string)$t_row['name'];
+	}
+
+	$t_query = new DbQuery();
+	$t_query->sql( 'SELECT n.bug_id, n.view_state, x.note FROM {bugnote} n'
+		. ' JOIN {bugnote_text} x ON n.bugnote_text_id = x.id'
+		. ' WHERE n.bug_id IN ' . $t_query->param( $t_found_ids )
+		. ' ORDER BY n.id' );
+	foreach( $t_query->fetch_all() as $t_row ) {
+		$t_field = ( (int)$t_row['view_state'] == VS_PRIVATE ) ? 'private_notes' : 'notes';
+		$t_bug_id = (int)$t_row['bug_id'];
+		$t_documents[$t_bug_id][$t_field] .= ( $t_documents[$t_bug_id][$t_field] === '' ? '' : "\n" ) . $t_row['note'];
+	}
+
+	return $t_documents;
 }
