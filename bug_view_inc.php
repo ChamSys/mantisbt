@@ -1289,6 +1289,20 @@ function bug_view_action_buttons( $p_bug_id, $p_flags ) {
 		echo '</div>';
 	}
 
+	# Like
+	$t_like_user_id = auth_get_current_user_id();
+	if( like_is_enabled( $t_bug->project_id ) && !user_is_anonymous( $t_like_user_id ) ) {
+		$t_liking = user_is_liking_bug( $t_like_user_id, $p_bug_id );
+		if( $t_liking || like_can_like( $p_bug_id, $t_like_user_id ) ) {
+			$t_like_count = bug_get_like_count( $p_bug_id );
+			$t_like_label = lang_get( $t_liking ? 'unlike_bug_button' : 'like_bug_button' )
+				. ( $t_like_count > 0 ? ' (' . $t_like_count . ')' : '' );
+			echo '<div class="pull-left padding-right-2">';
+			html_button( $t_liking ? 'bug_like_delete.php' : 'bug_like_add.php', $t_like_label, array( 'bug_id' => $p_bug_id ) );
+			echo '</div>';
+		}
+	}
+
 	# Stick
 	if( $p_flags['can_sticky'] ) {
 		echo '<div class="pull-left padding-right-2">';
