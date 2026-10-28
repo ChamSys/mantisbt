@@ -41,6 +41,8 @@ class AuthMiddleware {
 
 			# Search for the token among the different authorization headers.
 			foreach( $t_authorization_headers as $t_api_token ) {
+				# Also accept the standard "Bearer <token>" form (RFC 6750).
+				$t_api_token = preg_replace( '/^Bearer\s+/i', '', trim( $t_api_token ) );
 				$t_user_id = api_token_get_user( $t_api_token );
 				if( $t_user_id !== false ) {
 					# Valid token found

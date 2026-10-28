@@ -7,8 +7,8 @@ info:
   version: 2.28.4
   description: |-
     REST API calls have to be authenticated by creating an API token for the user doing the calls,
-    and then passing the API token in the 'Authorization' header.  However, for anonymous access,
-    the API key and header are not needed.
+    and then passing the API token in the 'Authorization' header, either as is or as
+    'Bearer <token>'.  However, for anonymous access, the API key and header are not needed.
 
     There has been significant improvements and feature additions for REST API in each of the
     recent releases.  Hence, it is highly recommended to use latest release when leveraging the
