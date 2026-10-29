@@ -358,7 +358,8 @@ function bugnote_process_mentions( $p_bug_id, $p_bugnote_id, $p_bugnote_text ) {
 		$p_bug_id,
 		$t_filtered_mentioned_user_ids,
 		$p_bugnote_text,
-		$t_removed_mentions_user_ids );
+		$t_removed_mentions_user_ids,
+		$p_bugnote_id );
 }
 
 /**

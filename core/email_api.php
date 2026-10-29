@@ -1719,11 +1719,12 @@ function email_bug_reminder( $p_recipients, $p_bug_id, $p_message ) {
  * @param array  $p_mention_user_ids         User id or list of user ids array.
  * @param string $p_message                  Optional message to add to the e-mail.
  * @param array  $p_removed_mention_user_ids The users that were removed due to lack of access.
+ * @param int|null $p_bugnote_id             The note the mentions are in, if they are in a note (given to EVENT_NOTIFY_RECIPIENTS).
  *
  * @return array        List of users ids to whom the mentioned e-mail were actually sent
  * @throws ClientException
  */
-function email_user_mention( $p_bug_id, $p_mention_user_ids, $p_message, $p_removed_mention_user_ids = array() ) {
+function email_user_mention( $p_bug_id, $p_mention_user_ids, $p_message, $p_removed_mention_user_ids = array(), $p_bugnote_id = null ) {
 	if( OFF == config_get( 'enable_email_notification' ) ) {
 		log_event( LOG_EMAIL_VERBOSE, 'email notifications disabled.' );
 		return array();
@@ -1766,7 +1767,7 @@ function email_user_mention( $p_bug_id, $p_mention_user_ids, $p_message, $p_remo
 		$t_notify_user_ids[] = $t_mention_user_id;
 	}
 
-	email_notify_recipients( $p_bug_id, 'mention', $t_notify_user_ids );
+	email_notify_recipients( $p_bug_id, 'mention', $t_notify_user_ids, null, $p_bugnote_id );
 
 	$t_result = array();
 	foreach( $t_notify_user_ids as $t_mention_user_id ) {

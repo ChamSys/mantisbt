@@ -127,10 +127,11 @@ function mention_get_users( $p_text ) {
  * @param array $p_mentioned_user_ids An array of user ids
  * @param string $p_message The message containing the mentions.
  * @param array $p_removed_mentions_user_ids The list of ids removed due to lack of access to issue or note.
+ * @param int|null $p_bugnote_id The note the mentions are in, if they are in a note.
  * @return array array of user ids actually received mention notifications.
  */
-function mention_process_user_mentions( $p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids ) {
-	return email_user_mention( $p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids );
+function mention_process_user_mentions( $p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids, $p_bugnote_id = null ) {
+	return email_user_mention( $p_bug_id, $p_mentioned_user_ids, $p_message, $p_removed_mentions_user_ids, $p_bugnote_id );
 }
 
 /**
