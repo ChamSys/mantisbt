@@ -138,7 +138,8 @@ Things a plugin could only do by rewriting the page output before:
 
 - **Replace parts of the layout:** `EVENT_LAYOUT_NAVBAR`, `_SIDEBAR`, `_BREADCRUMBS` and `_FOOTER` receive the same
   data the default code uses and replace it when the callback prints and returns true; `EVENT_MENU_USER` for the
-  user menu; `layout_get_sidebar_items()` returns the main menu as data. Menu events accept array items.
+  user menu; `layout_get_sidebar_items()`, `layout_get_user_menu_items()` and `layout_get_projects_menu()` return
+  the main menu, the user menu and the project switcher as data. Menu events accept array items.
 - **Write pages without boilerplate:** `MantisPlugin::pages()` declares the access and CSRF rules of a plugin's
   pages (closed by default), `plugin_page()` takes query parameters, `layout_widget_begin/end()` draws the standard
   widget, `layout_url_is_current_page()` lights the active sidebar item and tab of plugin pages,
@@ -183,6 +184,7 @@ of an account, protected ones too when asked), `user_create()` with an option to
 - `$g_filter_per_page_max` caps the page size of the issue list (only the page; print, export and the APIs are
   not capped) and the range shown in the list heading is right.
 - `$g_admin_dir_check` switches off the admin directory warning separately from the other admin checks.
+- The update issue page has a Cancel button next to Update Information, which goes back to the issue.
 
 ## Upgrading from 2.28.4
 
