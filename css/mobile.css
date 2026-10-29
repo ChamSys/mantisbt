@@ -4,7 +4,7 @@
  * Everything is inside the media query, so nothing changes on wider screens.
  * It keys on the data-* attributes and the classes of the page that are
  * documented as stable (data-section, data-panel, data-label, data-menu-id,
- * data-status, data-pager), not on the structure of the Ace markup. Colors come
+ * data-status, data-pager, data-empty), not on the structure of the Ace markup. Colors come
  * from the status variables and from inheritance, so a theme loaded after this
  * file can restyle it with its own variables.
  */
@@ -635,6 +635,12 @@
 	#buglist > tbody > tr[data-status="50"] { border-left-color: var(--status-50, var(--mobile-border)); }
 	#buglist > tbody > tr[data-status="80"] { border-left-color: var(--status-80, var(--mobile-border)); }
 	#buglist > tbody > tr[data-status="90"] { border-left-color: var(--status-90, var(--mobile-border)); }
+
+	/* My View: a box without issues is only its header */
+
+	.widget-box[data-empty] > .widget-body {
+		display: none;
+	}
 
 	/* Pager: the current page and the links to move, the range of pages does not fit */
 

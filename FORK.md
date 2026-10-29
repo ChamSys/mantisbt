@@ -88,6 +88,7 @@ updated and never sends mail. Access is `$g_like_bug_threshold`, with `$g_like_o
 `$g_mobile_layout` adds a stylesheet and a script that apply below 768 pixels and change nothing on larger screens:
 
 - stacked rows on the issue and update pages and one card per issue in the list, with the color of the status;
+- a box of My View without issues is only its header (`data-empty` on the box);
 - one field per line in the filter (a tap on a value opens it for editing), a pager that shows the current page and
   the links to move;
 - inputs of 16px and targets of 44px (no zoom on focus on iOS), safe area insets;
