@@ -37,4 +37,6 @@ $t_logout_redirect = auth_logout_redirect_page();
 
 auth_logout();
 
-print_header_redirect( $t_logout_redirect, true, false );
+# The page may be on another site, for instance the end of the session at an identity provider
+$t_logout_redirect_is_url = !is_null( parse_url( (string)$t_logout_redirect, PHP_URL_SCHEME ) );
+print_header_redirect( $t_logout_redirect, true, false, $t_logout_redirect_is_url );
