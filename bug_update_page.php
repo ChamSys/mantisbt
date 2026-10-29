@@ -195,6 +195,7 @@ if( $t_top_buttons_enabled ) {
 					<input <?php echo helper_get_tab_index(); ?>
 						type="submit" class="btn btn-primary btn-white btn-round"
 						value="<?php echo lang_get( 'update_information_button' ); ?>" />
+					<?php print_link_button( string_get_bug_view_url( $t_bug_id ), lang_get( 'cancel_button' ), 'btn-sm' ); ?>
 				</div>
 <?php
 }
@@ -794,6 +795,7 @@ if( $t_bottom_buttons_enabled ) {
 		<input <?php echo helper_get_tab_index(); ?>
 			type="submit" class="btn btn-primary btn-white btn-round"
 			value="<?php echo lang_get( 'update_information_button' ); ?>" />
+		<?php print_link_button( string_get_bug_view_url( $t_bug_id ), lang_get( 'cancel_button' ), 'btn-sm' ); ?>
 	</div>
 <?php
 }
