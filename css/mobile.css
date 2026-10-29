@@ -370,6 +370,12 @@
 		scroll-margin-top: calc(var(--mobile-navbar-height) + var(--mobile-target) + 16px);
 	}
 
+	/* The tabs go to the notes and to the history: the buttons that jump to them are not needed */
+	[data-panel="details"] .widget-toolbox a[href="#bugnotes"],
+	[data-panel="details"] .widget-toolbox a[href$="#history"] {
+		display: none;
+	}
+
 	/* Update page: the header is as on the issue page, but its labels are the labels of the fields: they stay for screen readers */
 
 	table.bug-update-table > tbody > tr.bug-header {
