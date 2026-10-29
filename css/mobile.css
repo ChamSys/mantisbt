@@ -122,6 +122,19 @@
 		min-width: 0;
 	}
 
+	/* Bootstrap keeps the text of every cell of a responsive table on one line, which turns notes,
+	   monitors, relationships and My View into a sideways scroll with the text cut off: on a phone it wraps */
+
+	.table-responsive > .table > thead > tr > th,
+	.table-responsive > .table > thead > tr > td,
+	.table-responsive > .table > tbody > tr > th,
+	.table-responsive > .table > tbody > tr > td,
+	.table-responsive > .table > tfoot > tr > th,
+	.table-responsive > .table > tfoot > tr > td {
+		white-space: normal;
+		overflow-wrap: break-word;
+	}
+
 	/* Tables that are forms or key-value lists: one column of label above value */
 
 	.widget-main .table-responsive {
