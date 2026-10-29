@@ -853,6 +853,82 @@ function layout_navbar_projects_menu() {
 }
 
 /**
+ * Get the projects menu of the navbar, for the current user.
+ *
+ * A theme that draws the project switcher itself reads the projects here, to
+ * show the ones of the default navbar and mark the current one.
+ *
+ * @return array|null Null when the navbar does not show a projects menu for
+ *                    this user (see layout_navbar_can_show_projects_menu()).
+ *                    Otherwise an array with current, the name of the current
+ *                    project, and items: All Projects, then the projects the user
+ *                    can access with their subprojects below them, each an array
+ *                    with url, label, depth (0 for the top level) and active.
+ * @access public
+ */
+function layout_get_projects_menu() {
+	if( !layout_navbar_can_show_projects_menu() ) {
+		return null;
+	}
+
+	$t_user_id = auth_get_current_user_id();
+	$t_current_project_id = helper_get_current_project();
+	$t_trace = implode( ';', helper_get_current_project_trace() );
+
+	# Check user's access to the project, and if not authorized select display
+	# ALL PROJECTS to avoid disclosing the private project's name.
+	if( ALL_PROJECTS == $t_current_project_id || !access_get_project_level( $t_current_project_id ) ) {
+		$t_current = lang_get( 'all_projects' );
+	} else {
+		$t_current = project_get_field( $t_current_project_id, 'name' );
+	}
+
+	project_cache_array_rows( user_get_all_accessible_projects( $t_user_id ) );
+
+	$t_items = array( array(
+		'url' => helper_mantis_url( 'set_project.php?project_id=' . ALL_PROJECTS ),
+		'label' => project_get_name( ALL_PROJECTS ),
+		'depth' => 0,
+		'active' => ( ALL_PROJECTS == $t_current_project_id ) ) );
+	foreach( user_get_accessible_projects( $t_user_id ) as $t_id ) {
+		$t_items[] = array(
+			'url' => helper_mantis_url( 'set_project.php?project_id=' . $t_id ),
+			'label' => project_get_name( $t_id ),
+			'depth' => 0,
+			'active' => ( 0 == strcmp( $t_id, $t_trace ) ) );
+		$t_items = array_merge( $t_items, layout_get_projects_menu_subitems( $t_id, $t_trace, array( $t_id ) ) );
+	}
+
+	return array( 'current' => $t_current, 'items' => $t_items );
+}
+
+/**
+ * Get the subprojects of a project that the current user can access, for
+ * layout_get_projects_menu().
+ *
+ * @param integer $p_parent_id A parent project identifier.
+ * @param string  $p_trace     The current project trace.
+ * @param array   $p_parents   The parents of the project, from the top.
+ * @return array The items of the subprojects and of theirs, in the order of the menu.
+ */
+function layout_get_projects_menu_subitems( $p_parent_id, $p_trace, array $p_parents ) {
+	$t_items = array();
+
+	foreach( user_get_accessible_subprojects( auth_get_current_user_id(), $p_parent_id ) as $t_id ) {
+		$t_full_id = implode( ';', $p_parents ) . ';' . $t_id;
+		$t_items[] = array(
+			'url' => helper_mantis_url( 'set_project.php?project_id=' . $t_full_id ),
+			'label' => project_get_name( $t_id ),
+			'depth' => count( $p_parents ),
+			'active' => ( 0 == strcmp( $t_full_id, $p_trace ) ) );
+		$t_items = array_merge( $t_items,
+			layout_get_projects_menu_subitems( $t_id, $p_trace, array_merge( $p_parents, array( $t_id ) ) ) );
+	}
+
+	return $t_items;
+}
+
+/**
  * Print navbar buttons
  * @return void
  */
