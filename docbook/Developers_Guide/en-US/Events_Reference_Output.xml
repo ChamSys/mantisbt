@@ -655,6 +655,24 @@ array( 'ocean' => array(
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.output.layout.mobilebar">
+			<title>EVENT_LAYOUT_MOBILE_BAR (Output)</title>
+			<blockquote>
+				<para>
+					This event allows plugins to add entries to the bar at the bottom of the screen on phones
+					(see <literal>$g_mobile_layout</literal>), after the items of the main menu and before the
+					Menu button.  The entries are links or buttons, children of the
+					<literal>nav.mobile-tabbar</literal> element that the callback prints, and the stylesheet
+					of the layout draws them like the other ones.
+				</para>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;String&gt;: HTML code to output.</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.output.layout.usermenu">
 			<title>EVENT_MENU_USER (Default)</title>
 			<blockquote>

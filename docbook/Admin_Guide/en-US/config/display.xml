@@ -43,6 +43,16 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_mobile_bar_items</term>
+			<listitem>
+				<para>The items of the main menu that the bar at the bottom of the screen shows on phones
+					(see <literal>$g_mobile_layout</literal>), by their menu id: the name of the page without
+					<literal>.php</literal>, or <literal>plugin-&lt;plugin&gt;-&lt;page&gt;</literal> for the pages
+					of plugins, as in the <literal>data-menu-id</literal> of the sidebar. An item that the user
+					may not see is left out. An empty list, which is the default, shows the first four items.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_font_family</term>
 			<listitem>
 				<para>Name of the google font family to use.</para>

@@ -1790,7 +1790,24 @@ function layout_mobile_bar() {
 		return;
 	}
 
-	$t_items = array_slice( layout_get_visible_sidebar_items( layout_get_sidebar_items() ), 0, 4 );
+	$t_items = layout_get_visible_sidebar_items( layout_get_sidebar_items() );
+
+	$t_chosen_ids = config_get( 'mobile_bar_items' );
+	if( is_array( $t_chosen_ids ) && count( $t_chosen_ids ) > 0 ) {
+		$t_chosen = array();
+		foreach( $t_chosen_ids as $t_id ) {
+			foreach( $t_items as $t_item ) {
+				if( layout_get_menu_id( $t_item['url'] ) == $t_id ) {
+					$t_chosen[] = $t_item;
+					break;
+				}
+			}
+		}
+		$t_items = $t_chosen;
+	} else {
+		$t_items = array_slice( $t_items, 0, 4 );
+	}
+
 	if( count( $t_items ) == 0 ) {
 		return;
 	}
@@ -1809,6 +1826,9 @@ function layout_mobile_bar() {
 		print_icon( $t_icon, 'mobile-tabbar-icon' );
 		echo '<span>', lang_get_defaulted( $t_item['title'] ), '</span></a>', "\n";
 	}
+
+	# Plugins can add entries (links or buttons) before the button of the sidebar
+	event_signal( 'EVENT_LAYOUT_MOBILE_BAR' );
 
 	# The rest of the menu is the sidebar, which the script opens and closes
 	echo '<button type="button" class="mobile-tabbar-menu" aria-controls="sidebar" aria-expanded="false" hidden>';

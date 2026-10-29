@@ -91,7 +91,9 @@ updated and never sends mail. Access is `$g_like_bug_threshold`, with `$g_like_o
 - one field per line in the filter (a tap on a value opens it for editing), a pager that shows the current page and
   the links to move;
 - inputs of 16px and targets of 44px (no zoom on focus on iOS), safe area insets;
-- a bar at the bottom of the screen with the first four items of the main menu and a Menu button for the sidebar;
+- a bar at the bottom of the screen with the first four items of the main menu (or the ones in
+  `$g_mobile_bar_items`) and a Menu button for the sidebar. `EVENT_LAYOUT_MOBILE_BAR` lets a plugin add entries to
+  it, and a theme that draws its own sidebar marks it `data-sidebar` and its button `data-sidebar-toggle`;
 - on the issue page, the panels (details, notes, history) shown one at a time, chosen with tabs that follow the
   WAI-ARIA tabs pattern (arrow keys, Home and End, right to left aware). Links to something in another panel
   (`#c123`, `#history`, `#attachments`) open that panel first;

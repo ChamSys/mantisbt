@@ -1274,6 +1274,17 @@ $g_color_scheme = 'auto';
 $g_mobile_layout = OFF;
 
 /**
+ * The items of the main menu that the bar at the bottom of the screen shows on
+ * phones (see $g_mobile_layout), by their menu id: the name of the page without
+ * .php, or plugin-<plugin>-<page> for the pages of plugins, as in the
+ * data-menu-id of the sidebar. An empty list shows the first four. An item
+ * that the user may not see is left out.
+ *
+ * @global array $g_mobile_bar_items
+ */
+$g_mobile_bar_items = array();
+
+/**
  * List the Google fonts that the users are allowed to choose from.
  *
  * Google offers over 800 fonts. The list below is limited to the ones tested
