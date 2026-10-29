@@ -146,6 +146,8 @@ Things a plugin could only do by rewriting the page output before:
   data the default code uses and replace it when the callback prints and returns true; `EVENT_MENU_USER` for the
   user menu; `layout_get_sidebar_items()`, `layout_get_user_menu_items()` and `layout_get_projects_menu()` return
   the main menu, the user menu and the project switcher as data. Menu events accept array items.
+- **Record errors:** `EVENT_ERROR` offers an application error to the plugins before it is logged; a callback that
+  records it (with more context, or in a log service) returns true and the fork does not write its own line.
 - **Write pages without boilerplate:** `MantisPlugin::pages()` declares the access and CSRF rules of a plugin's
   pages (closed by default), `plugin_page()` takes query parameters, `layout_widget_begin/end()` draws the standard
   widget, `layout_url_is_current_page()` lights the active sidebar item and tab of plugin pages,

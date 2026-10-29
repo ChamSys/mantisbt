@@ -34,6 +34,7 @@ event_declare_many( array(
 	# Events specific to the core system
 	'EVENT_CORE_READY' => EVENT_TYPE_EXECUTE,
 	'EVENT_CORE_HEADERS' => EVENT_TYPE_EXECUTE,
+	'EVENT_ERROR' => EVENT_TYPE_FIRST,
 
 	# REST API Events
 	'EVENT_REST_API_ROUTES' => EVENT_TYPE_EXECUTE,

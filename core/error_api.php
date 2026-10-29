@@ -139,6 +139,38 @@ function error_stack_trace( $p_exception = null ) {
 }
 
 /**
+ * Offer an error to the plugins to record (EVENT_ERROR), before the error handler writes it to the
+ * server log. Does nothing before the events exist, and not for an error raised while a plugin is
+ * recording one.
+ *
+ * @param int        $p_type        The level of the error, E_USER_ERROR.
+ * @param int|string $p_error       The error number (see ERROR_* constants).
+ * @param string     $p_file        The filename that the error was raised in.
+ * @param int        $p_line        The line number the error was raised at.
+ * @param string     $p_description The description of the error.
+ * @return boolean True if a plugin recorded the error, so that it is not logged here.
+ */
+function error_signal_plugins( $p_type, $p_error, $p_file, $p_line, $p_description ) {
+	global $g_error_parameters;
+	static $s_signalled = false;
+
+	if( $s_signalled || !function_exists( 'event_is_declared' ) || !event_is_declared( 'EVENT_ERROR' ) ) {
+		return false;
+	}
+
+	$s_signalled = true;
+	try {
+		$t_recorded = ( true === event_signal( 'EVENT_ERROR',
+			array( $p_type, $p_error, $p_file, $p_line, $p_description, is_array( $g_error_parameters ) ? $g_error_parameters : array() ) ) );
+	} catch( Throwable $t_exception ) {
+		$t_recorded = false;
+	}
+	$s_signalled = false;
+
+	return $t_recorded;
+}
+
+/**
  * Default error handler.
  *
  * This handler will not receive E_ERROR, E_PARSE, E_CORE_*, or E_COMPILE_* errors.
@@ -259,7 +291,9 @@ function error_handler( $p_type, $p_error, $p_file, $p_line ) {
 				global $g_exception;
 				$t_error_description = $g_exception->getMessage();
 				$t_error_to_log = $t_error_description . "\n" . error_stack_trace_as_string();
-				error_log( $t_error_to_log );
+				if( !error_signal_plugins( $p_type, $p_error, $p_file, $p_line, $t_error_description ) ) {
+					error_log( $t_error_to_log );
+				}
 
 				# If show detailed errors is OFF hide PHP exceptions since they sometimes
 				# include file path.
@@ -271,8 +305,10 @@ function error_handler( $p_type, $p_error, $p_file, $p_line ) {
 				$t_error_description = error_string( $p_error );
 
 				# Application errors are only rendered into the response, so
-				# also record them in the server log.
-				error_log( $t_error_type . ': ' . $t_error_description . ' ' . $t_error_location );
+				# also record them in the server log, unless a plugin has.
+				if( !error_signal_plugins( $p_type, $p_error, $p_file, $p_line, $t_error_description ) ) {
+					error_log( $t_error_type . ': ' . $t_error_description . ' ' . $t_error_location );
+				}
 
 				# The message of a database error includes the text of the
 				# failing query, or the database server's reply (which can

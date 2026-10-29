@@ -114,6 +114,38 @@
 			</blockquote>
 		</blockquote>
 
+		<blockquote id="dev.eventref.system.error">
+			<title>EVENT_ERROR (First)</title>
+
+			<blockquote>
+				<para>
+					This event is triggered when an application error is raised (<literal>E_USER_ERROR</literal>,
+					which includes an exception that was not caught), before MantisBT writes it to the server log.
+					A plugin that records the error itself, for example with more context or in a log service,
+					returns <literal>true</literal> and MantisBT does not write its own line; no other callback is
+					called.  The error is still shown to the user as before.  The event is not triggered for an
+					error that is raised while a callback is running.
+				</para>
+
+				<itemizedlist>
+					<title>Parameters</title>
+					<listitem><para>&lt;Integer&gt;: the level of the error, <literal>E_USER_ERROR</literal></para></listitem>
+					<listitem><para>&lt;Integer&gt;: the error number (<literal>ERROR_*</literal>), or
+						<literal>ERROR_PHP</literal> for an exception</para></listitem>
+					<listitem><para>&lt;String&gt;: the file the error was raised in</para></listitem>
+					<listitem><para>&lt;Integer&gt;: the line the error was raised at</para></listitem>
+					<listitem><para>&lt;String&gt;: the description of the error (the message of the exception)</para></listitem>
+					<listitem><para>&lt;Array&gt;: the parameters of the error, as given to
+						<function>error_parameters()</function></para></listitem>
+				</itemizedlist>
+
+				<itemizedlist>
+					<title>Return Value</title>
+					<listitem><para>&lt;Boolean&gt;: <literal>true</literal> if the error was recorded.</para></listitem>
+				</itemizedlist>
+			</blockquote>
+		</blockquote>
+
 		<blockquote id="dev.eventref.system.rest_api_routes">
 			<title>EVENT_REST_API_ROUTES (Execute)</title>
 
