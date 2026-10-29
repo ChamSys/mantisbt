@@ -745,6 +745,49 @@ function layout_navbar_menu_item( $p_url, $p_title, $p_icon ) {
 }
 
 /**
+ * Get the items of the user menu of the navbar, for the current user: the
+ * account, the feed, the items of plugins (EVENT_MENU_USER) and the logout.
+ *
+ * A theme that draws the user menu itself reads the items here, to show the
+ * same ones as the default navbar.
+ *
+ * @return array An array of items, each an array with url, label (already in the
+ *               language of the user) and icon (a Font Awesome class), or the
+ *               array( 'divider' => true ) that separates the plugin items.
+ * @access public
+ */
+function layout_get_user_menu_items() {
+	$t_items = array();
+
+	# My Account
+	if( !current_user_is_protected() ) {
+		$t_items[] = array( 'url' => helper_mantis_url( 'account_page.php' ), 'label' => lang_get( 'account_link' ), 'icon' => 'fa-user' );
+	}
+
+	# RSS Feed
+	if( OFF != config_get( 'rss_enabled' ) ) {
+		$t_items[] = array( 'url' => rss_get_issues_feed_url(), 'label' => lang_get( 'rss' ), 'icon' => 'fa-rss-square orange' );
+	}
+
+	$t_items[] = array( 'divider' => true );
+
+	# Items of plugins, as links like the ones above: array( 'url' => ..., 'label' => ..., 'icon' => ... )
+	foreach( plugin_menu_items( 'EVENT_MENU_USER' ) as $t_item ) {
+		if( is_array( $t_item ) ) {
+			$t_items[] = array(
+				'url' => helper_mantis_url( $t_item['url'] ),
+				'label' => lang_get_defaulted( $t_item['label'] ),
+				'icon' => $t_item['icon'] ?? 'fa-circle-o' );
+		}
+	}
+
+	# Logout
+	$t_items[] = array( 'url' => helper_mantis_url( auth_logout_page() ), 'label' => lang_get( 'logout_link' ), 'icon' => 'fa-sign-out' );
+
+	return $t_items;
+}
+
+/**
  * Print navbar user menu at the top right of the page
  * @param bool $p_show_avatar decide whether to show logged in user avatar
  * @return void
@@ -766,27 +809,14 @@ function layout_navbar_user_menu( $p_show_avatar = true ) {
 	echo '</a>';
 	echo '<ul class="user-menu dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret dropdown-close">';
 
-	# My Account
-	if( !current_user_is_protected() ) {
-		layout_navbar_menu_item( helper_mantis_url( 'account_page.php' ), lang_get( 'account_link' ), 'fa-user' );
-	}
-
-	# RSS Feed
-	if( OFF != config_get( 'rss_enabled' ) ) {
-		layout_navbar_menu_item( htmlspecialchars( rss_get_issues_feed_url() ), lang_get( 'rss' ), 'fa-rss-square orange' );
-	}
-
-	echo '<li class="divider"></li>';
-
-	# Items of plugins, as links like the ones above: array( 'url' => ..., 'label' => ..., 'icon' => ... )
-	foreach( plugin_menu_items( 'EVENT_MENU_USER' ) as $t_item ) {
-		if( is_array( $t_item ) ) {
-			layout_navbar_menu_item( string_attribute( helper_mantis_url( $t_item['url'] ) ), lang_get_defaulted( $t_item['label'] ), $t_item['icon'] ?? 'fa-circle-o' );
+	foreach( layout_get_user_menu_items() as $t_item ) {
+		if( isset( $t_item['divider'] ) ) {
+			echo '<li class="divider"></li>';
+		} else {
+			layout_navbar_menu_item( string_attribute( $t_item['url'] ), $t_item['label'], $t_item['icon'] );
 		}
 	}
 
-	# Logout
-	layout_navbar_menu_item( helper_mantis_url( auth_logout_page() ), lang_get( 'logout_link' ), 'fa-sign-out' );
 	echo '</ul>';
 	echo '</li>';
 }
