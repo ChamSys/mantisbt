@@ -675,6 +675,82 @@
 		text-align: center;
 	}
 
+	/* Filter header: the title with its menu and toggle on a line, the reset and the search on the next */
+
+	.widget-box:has(table.filters) > .widget-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px 8px;
+		height: auto;
+		padding: 4px 8px;
+		line-height: normal;
+	}
+
+	.widget-box:has(table.filters) > .widget-header > .widget-title {
+		flex: 1 1 auto;
+		line-height: var(--mobile-target);
+	}
+
+	.widget-box:has(table.filters) > .widget-header > .widget-toolbar {
+		float: none;
+		order: 1;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		height: auto;
+		line-height: normal;
+		border: 0;
+	}
+
+	.widget-box:has(table.filters) > .widget-header > .widget-toolbar > a,
+	.widget-box:has(table.filters) > .widget-header .widget-menu > a:not(.btn) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--mobile-target);
+		min-height: var(--mobile-target);
+	}
+
+	.widget-box:has(table.filters) > .widget-header > #filter-bar-queries {
+		float: none;
+		order: 2;
+		flex: 1 0 100%;
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+		height: auto;
+		margin: 0;
+		line-height: normal;
+		border: 0;
+	}
+
+	#filter-bar-queries > .widget-menu {
+		float: none;
+		margin: 0;
+	}
+
+	#filter-bar-queries > .widget-menu:last-child {
+		flex: 1 1 auto;
+	}
+
+	#filter-bar-queries > .widget-menu:last-child form {
+		display: flex;
+		gap: 4px;
+	}
+
+	#filter-bar-queries > .widget-menu:last-child input[type="text"] {
+		flex: 1 1 auto;
+		width: 100%;
+		min-width: 0;
+		min-height: var(--mobile-target);
+	}
+
+	#filter-bar-queries .btn {
+		min-width: var(--mobile-target);
+		min-height: var(--mobile-target);
+	}
+
 	/* Filter: one field per line, the label above the control */
 
 	.filter-box table,
