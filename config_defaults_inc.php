@@ -1285,6 +1285,17 @@ $g_mobile_layout = OFF;
 $g_mobile_bar_items = array();
 
 /**
+ * Print the pager in reading order: first, previous, the page numbers, next and
+ * last. The default is the markup of MantisBT 2.28, which is the other way
+ * round (last first) and floated to the right, so that assistive technology
+ * reads it backwards. A stylesheet that depends on that markup needs to carry
+ * both.
+ *
+ * @global integer $g_pager_natural_order
+ */
+$g_pager_natural_order = OFF;
+
+/**
  * List the Google fonts that the users are allowed to choose from.
  *
  * Google offers over 800 fonts. The list below is limited to the ones tested

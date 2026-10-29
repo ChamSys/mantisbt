@@ -1453,7 +1453,7 @@ function layout_main_container_end() {
  * @return void
  */
 function layout_main_content_begin() {
-	echo '<div class="main-content" id="main-content" tabindex="-1">' , "\n";
+	echo '<div class="main-content" id="main-content" role="main" tabindex="-1">' , "\n";
 }
 
 /**

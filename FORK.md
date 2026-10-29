@@ -125,7 +125,10 @@ should wrap it in an element with `data-panel="details"`, `"notes"` or `"history
 
 - **Landmarks and labels:** a skip link, `role="navigation"` regions with names, translated screen reader texts, an
   `<h1>` for assistive technology on every page (`layout_page_title()`), labels for the login fields, the note
-  text area and the controls of the filter, `aria-current` in the menu and the pager, which is now a `<nav>`.
+  text area and the controls of the filter, `aria-current` in the menu and the pager, which is now a `<nav>`, and
+  `role="main"` on the content of the page (a theme that draws a `<main>` of its own should not print a second
+  one). `$g_pager_natural_order` prints the pager in reading order (first, previous, the pages, next, last) instead
+  of last first floated to the right.
 - **Filter controls have names:** each control of a filter field gets the name of its field (`aria-label`) by script,
   in the issue list and on the static filter page. The static filter page still has unnamed controls without
   JavaScript.
@@ -206,6 +209,5 @@ JavaScript.
 ## Not here
 
 Things the fork does not do, on purpose or not yet: no Bootstrap migration (the Ace theme stays), no
-notification bell or in-app notifications (only the event they would need), no bundled plugins, the pager still
-renders in its original DOM order and the page has no `role="main"` yet (both change markup that existing plugins
-select on).
+notification bell or in-app notifications (only the event they would need), no bundled plugins, and the pager is
+in its original DOM order unless `$g_pager_natural_order` is on (it changes markup that existing plugins select on).

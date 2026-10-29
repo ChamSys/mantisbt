@@ -1683,22 +1683,41 @@ function print_small_button( $p_link, $p_url_text, $p_new_window = false ) {
  * @return void
  */
 function print_page_link( $p_page_url, $p_text = '', $p_page_no = 0, $p_page_cur = 0, $p_temp_filter_key = null, $p_type = 'page' ) {
+	echo page_link_get( $p_page_url, $p_text, $p_page_no, $p_page_cur, $p_temp_filter_key, $p_type );
+}
+
+/**
+ * Get the HTML of a page link, as print_page_link() prints it. With
+ * $g_pager_natural_order the items are not floated to the right.
+ * @param string  $p_page_url       The Page URL.
+ * @param string  $p_text           The displayed text for the link.
+ * @param integer $p_page_no        The page number to link to.
+ * @param integer $p_page_cur       The current page number.
+ * @param integer $p_temp_filter_key Temporary filter key.
+ * @param string  $p_type           The kind of link, for the data-pager attribute: first, prev, page, next or last.
+ * @return string
+ */
+function page_link_get( $p_page_url, $p_text = '', $p_page_no = 0, $p_page_cur = 0, $p_temp_filter_key = null, $p_type = 'page' ) {
 	if( is_blank( $p_text ) ) {
 		$p_text = $p_page_no;
 	}
 
+	$t_float = ON == config_get( 'pager_natural_order' ) ? '' : ' pull-right';
+
 	if( ( 0 < $p_page_no ) && ( $p_page_no != $p_page_cur ) ) {
-		echo '<li class="pull-right" data-pager="', $p_type, '" data-page="', (int)$p_page_no, '"> ';
+		$t_html = '<li' . ( $t_float ? ' class="pull-right"' : '' ) . ' data-pager="' . $p_type . '" data-page="' . (int)$p_page_no . '"> ';
 		$t_delimiter = ( strpos( $p_page_url, '?' ) ? '&' : '?' );
+		ob_start();
 		if( $p_temp_filter_key ) {
 			print_link( $p_page_url . $t_delimiter . 'filter=' . $p_temp_filter_key . '&page_number=' . $p_page_no, $p_text );
 		} else {
 			print_link( $p_page_url . $t_delimiter . 'page_number=' . $p_page_no, $p_text );
 		}
-		echo ' </li>';
-	} else {
-		echo '<li class="disabled pull-right" data-pager="', $p_type, '"><a aria-disabled="true">' . $p_text . '</a></li>';
+		$t_html .= ob_get_clean() . ' </li>';
+		return $t_html;
 	}
+
+	return '<li class="disabled' . $t_float . '" data-pager="' . $p_type . '"><a aria-disabled="true">' . $p_text . '</a></li>';
 }
 
 /**
@@ -1736,13 +1755,21 @@ function print_page_links( $p_page, $p_start, $p_end, $p_current, $p_temp_filter
 	print( '<nav class="pagination-nav" aria-label="' . lang_get( 'pagination' ) . '">' );
 	print( '<ul class="pagination small no-margin"> ' );
 
-	# Next and Last links
-	print_page_link( $p_page, $t_last, $p_end, $p_current, $p_temp_filter_key, 'last' );
-	if( $p_current < $p_end ) {
-		print_page_link( $p_page, $t_next, $p_current + 1, $p_current, $p_temp_filter_key, 'next' );
-	} else {
-		print_page_link( $p_page, $t_next, 0, 0, $p_temp_filter_key, 'next' );
-	}
+	$t_natural = ( ON == config_get( 'pager_natural_order' ) );
+	$t_float = $t_natural ? '' : ' pull-right';
+	$t_gap = '<li' . ( $t_natural ? '' : ' class="pull-right"' ) . ' data-pager="gap"><a aria-hidden="true"> ... </a></li>';
+
+	# First and previous links, next and last links
+	$t_head = array(
+		page_link_get( $p_page, $t_first, 1, $p_current, $p_temp_filter_key, 'first' ),
+		page_link_get( $p_page, $t_prev, $p_current - 1, $p_current, $p_temp_filter_key, 'prev' ),
+	);
+	$t_tail = array(
+		$p_current < $p_end
+			? page_link_get( $p_page, $t_next, $p_current + 1, $p_current, $p_temp_filter_key, 'next' )
+			: page_link_get( $p_page, $t_next, 0, 0, $p_temp_filter_key, 'next' ),
+		page_link_get( $p_page, $t_last, $p_end, $p_current, $p_temp_filter_key, 'last' ),
+	);
 
 	# Page numbers ...
 
@@ -1753,30 +1780,32 @@ function print_page_links( $p_page, $p_start, $p_end, $p_current, $p_temp_filter
 	$t_last_page = $t_first_page + $t_page_links;
 	$t_last_page = min( $t_last_page, $p_end );
 
-	if( $t_last_page < $p_end ) {
-		print( '<li class="pull-right" data-pager="gap"><a aria-hidden="true"> ... </a></li>' );
-	}
-
-	for( $i = $t_last_page;$i >= $t_first_page;$i-- ) {
+	for( $i = $t_first_page; $i <= $t_last_page; $i++ ) {
 		if( $i == $p_current ) {
-			array_push( $t_items, '<li class="active pull-right" data-pager="page" data-page="' . $i . '"><a aria-current="page">' . $i . '</a></li>' );
+			array_push( $t_items, '<li class="active' . $t_float . '" data-pager="page" data-page="' . $i . '"><a aria-current="page">' . $i . '</a></li>' );
 		} else {
 			$t_delimiter = ( strpos( $p_page, '?' ) ? '&' : '?' ) ;
 			$t_filter_param = filter_get_temporary_key_param( $p_temp_filter_key );
 			$t_filter_param .= $t_filter_param === null ? '' : '&amp;';
-			array_push( $t_items, '<li class="pull-right" data-pager="page" data-page="' . $i . '"><a href="' . $p_page . $t_delimiter . $t_filter_param . 'page_number=' . $i . '">' . $i . '</a></li>' );
+			array_push( $t_items, '<li' . ( $t_float ? ' class="pull-right"' : '' ) . ' data-pager="page" data-page="' . $i . '"><a href="' . $p_page . $t_delimiter . $t_filter_param . 'page_number=' . $i . '">' . $i . '</a></li>' );
 		}
 	}
-	echo implode( '&#160;', $t_items );
 
-	if( $t_first_page > 1 ) {
-		print( '<li class="pull-right" data-pager="gap"><a aria-hidden="true"> ... </a></li>' );
+	if( $t_natural ) {
+		# In reading order: first, previous, the pages, next and last
+		echo implode( '', $t_head );
+		echo $t_first_page > 1 ? $t_gap : '';
+		echo implode( '&#160;', $t_items );
+		echo $t_last_page < $p_end ? $t_gap : '';
+		echo implode( '', $t_tail );
+	} else {
+		# Floated to the right, so the markup is the other way round
+		echo implode( '', array_reverse( $t_tail ) );
+		echo $t_last_page < $p_end ? $t_gap : '';
+		echo implode( '&#160;', array_reverse( $t_items ) );
+		echo $t_first_page > 1 ? $t_gap : '';
+		echo implode( '', array_reverse( $t_head ) );
 	}
-
-
-	# First and previous links
-	print_page_link( $p_page, $t_prev, $p_current - 1, $p_current, $p_temp_filter_key, 'prev' );
-	print_page_link( $p_page, $t_first, 1, $p_current, $p_temp_filter_key, 'first' );
 
 	print( ' </ul>' );
 	print( '</nav>' );

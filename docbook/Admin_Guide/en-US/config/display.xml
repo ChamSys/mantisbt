@@ -53,6 +53,15 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_pager_natural_order</term>
+			<listitem>
+				<para>Print the pager in reading order: first, previous, the page numbers, next and last.
+					The default, <literal>OFF</literal>, is the markup of MantisBT 2.28, which is the other way
+					round (last first) and floated to the right, so that assistive technology reads it
+					backwards. A stylesheet that depends on that markup needs to carry both.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_font_family</term>
 			<listitem>
 				<para>Name of the google font family to use.</para>
