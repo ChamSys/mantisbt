@@ -133,7 +133,7 @@ should wrap it in an element with `data-panel="details"`, `"notes"` or `"history
   in the issue list and on the static filter page. The static filter page still has unnamed controls without
   JavaScript.
 - **Data attributes** that stay stable: `data-section` on the rows of the issue page, `data-panel`, `data-label`,
-  `data-note-id`, `data-user-id`, `data-bug-id`, `data-status`, `data-menu-id` on the sidebar, `data-pager`,
+  `data-note-id`, `data-user-id`, `data-bug-id`, `data-status`, `data-menu-id` on the sidebar, `data-pager`, `data-empty`,
   `data-field` and `data-label` in the filter. The `#attachments` anchor is on the attachments row.
 - **`mantis:content-loaded`:** an event fired on the document when a field of the filter is loaded dynamically, so
   scripts do not need a `MutationObserver`.
