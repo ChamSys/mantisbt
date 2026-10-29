@@ -34,28 +34,37 @@
 
 	/**
 	 * The Menu button of the bottom bar opens and closes the sidebar, the same
-	 * way as the button of the navbar does, and shows whether it is open.
+	 * way as the button of the navbar does, and shows whether it is open. A theme
+	 * that draws its own sidebar marks the sidebar with data-sidebar and its button
+	 * with data-sidebar-toggle: the button keeps aria-expanded up to date, or the
+	 * sidebar gets the class display when it is open.
 	 */
 	function initMenuButton() {
 		var button = document.querySelector('.mobile-tabbar-menu');
-		var toggler = document.getElementById('menu-toggler');
-		var sidebar = document.getElementById('sidebar');
+		var toggler = document.getElementById('menu-toggler') || document.querySelector('[data-sidebar-toggle]');
+		var sidebar = document.getElementById('sidebar') || document.querySelector('[data-sidebar]');
 
 		if (!button || !toggler || !sidebar) {
 			return;
 		}
 
 		function sync() {
-			button.setAttribute('aria-expanded', sidebar.classList.contains('display') ? 'true' : 'false');
+			var open = sidebar.classList.contains('display') || toggler.getAttribute('aria-expanded') === 'true';
+			button.setAttribute('aria-expanded', open ? 'true' : 'false');
 		}
 
+		if (sidebar.id) {
+			button.setAttribute('aria-controls', sidebar.id);
+		}
 		button.hidden = false;
 		button.addEventListener('click', function () {
 			toggler.click();
 		});
 
 		if (typeof MutationObserver === 'function') {
-			new MutationObserver(sync).observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+			var observer = new MutationObserver(sync);
+			observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+			observer.observe(toggler, { attributes: true, attributeFilter: ['aria-expanded'] });
 		}
 		sync();
 	}
