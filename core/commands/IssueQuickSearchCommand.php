@@ -127,6 +127,7 @@ class IssueQuickSearchCommand extends Command {
 		$t_query = new BugFilterQuery( $t_filter, array(
 			'query_type' => BugFilterQuery::QUERY_TYPE_IDS,
 			'project_id' => $this->projectId,
+			'search_candidate_limit' => (int)config_get_global( 'search_live_candidate_limit' ),
 		) );
 		$t_ids = array_map( 'intval', array_column( $t_query->fetch_all(), 'id' ) );
 

@@ -48,7 +48,8 @@ The rules it is built with:
   shows the backend and the queue.
 - **Quick search** (`$g_search_live_enabled`): suggestions under the search box of the navbar while typing, with
   keyboard support (it is a WAI-ARIA 1.2 combobox), a link to all results, and a per-user rate limit
-  (`$g_search_live_rate_limit`, per minute). It only works with an indexed backend, so that it stays fast. It uses
+  (`$g_search_live_rate_limit`, per minute). It asks the engine for at most
+  `$g_search_live_candidate_limit` issues (500), as only the best ten are shown. It only works with an indexed backend, so that it stays fast. It uses
   the same issue filter as every other list, so it cannot show an issue the user may not see.
 - **Similar issues** (`$g_report_similar_issues`): the report page suggests existing issues as the summary is typed,
   to avoid duplicates. It is available when quick search is.

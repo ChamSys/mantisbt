@@ -4328,6 +4328,16 @@ $g_report_similar_issues = ON;
 $g_search_live_rate_limit = 120;
 
 /**
+ * The maximum number of issues the search backend returns for a search as the
+ * user types (see {@see $g_search_live_enabled}), before the rest of the filter
+ * is applied. Only the best ten are shown, and every key press makes a search,
+ * so this is kept small, unlike {@see $g_search_candidate_limit}.
+ *
+ * @global int $g_search_live_candidate_limit
+ */
+$g_search_live_candidate_limit = 500;
+
+/**
  * Allow use of dynamic filter controls.
  *
  * This switch enables the use of AJAX to dynamically load and create filter
@@ -5604,6 +5614,7 @@ $g_global_settings = array(
 	'public_config_names',
 	'search_backend',
 	'search_candidate_limit',
+	'search_live_candidate_limit',
 	'search_live_rate_limit',
 	'user_typeahead_rate_limit',
 	'search_meilisearch_index',

@@ -126,6 +126,7 @@ class BugFilterQuery extends DbQuery {
 	protected $rt_table_alias_cf; # keep track of the custom field table joins, to reuse them in order by, or serach matching.
 	protected $rt_table_alias_bugnote = null; # keep track of the bugnote table joins.
 	protected $rt_search_candidate_ids = null; # the issues the search backend found, best match first, if it was used.
+	protected $search_candidate_limit = null; # the most issues the search backend returns, null for $g_search_candidate_limit.
 	protected $needs_rebuild; # flag to force a rebuild of the final sql when additions are made after the object is first created.
 
 	/**
@@ -149,6 +150,8 @@ class BugFilterQuery extends DbQuery {
 	 *					By default current user is used.
 	 * - 'use_sticky':	(bool) Whether to allow returning the bug list sorted so that sticky
 	 *					bugs are placed first in the result order. This is false by default.
+	 * - 'search_candidate_limit':	(int) The most issues a search backend with an index returns
+	 *					for the text search. By default $g_search_candidate_limit is used.
 	 *
 	 * @param array $p_filter			Filter array
 	 * @param array|integer $p_config	Options array, or single query type identifier
@@ -180,6 +183,9 @@ class BugFilterQuery extends DbQuery {
 						break;
 					case 'use_sticky':
 						$this->use_sticky = (bool)$t_value;
+						break;
+					case 'search_candidate_limit':
+						$this->search_candidate_limit = max( 1, (int)$t_value );
 						break;
 				}
 			}
@@ -1581,7 +1587,7 @@ class BugFilterQuery extends DbQuery {
 		}
 
 		$this->rt_search_candidate_ids = $t_backend->search( $this->filter[FILTER_PROPERTY_SEARCH], array(
-			'limit' => (int)config_get_global( 'search_candidate_limit' ),
+			'limit' => $this->search_candidate_limit ?? (int)config_get_global( 'search_candidate_limit' ),
 			'private_note_project_ids' => array_values( $t_private_note_projects ),
 		) );
 

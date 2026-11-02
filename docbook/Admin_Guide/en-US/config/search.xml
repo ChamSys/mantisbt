@@ -69,6 +69,16 @@
 			</listitem>
 		</varlistentry>
 		<varlistentry>
+			<term>$g_search_live_candidate_limit</term>
+			<listitem>
+				<para>The maximum number of issues an indexed backend returns for a search
+					as the user types (<literal>$g_search_live_enabled</literal>). The default is 500.
+					Only the best ten are shown and every key press makes a search, so this is kept
+					small, unlike <literal>$g_search_candidate_limit</literal>.
+				</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_search_live_enabled</term>
 			<listitem>
 				<para>Whether to suggest issues as the user types in the search box of the menu bar
