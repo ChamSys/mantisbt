@@ -151,6 +151,9 @@ class SearchMeilisearchBackend extends SearchBackend {
 			'indexUid' => $t_index,
 			'q' => $p_text,
 			'limit' => $t_limit,
+			# Every word has to match, as with the SQL search: by default Meilisearch drops words from
+			# the end of the text until it finds something, so "fixture nonsense" finds every fixture.
+			'matchingStrategy' => 'all',
 			'attributesToSearchOn' => self::PUBLIC_FIELDS,
 			'attributesToRetrieve' => array( 'id' ),
 		) );
@@ -161,6 +164,7 @@ class SearchMeilisearchBackend extends SearchBackend {
 				'indexUid' => $t_index,
 				'q' => $p_text,
 				'limit' => $t_limit,
+				'matchingStrategy' => 'all',
 				'attributesToSearchOn' => array_merge( self::PUBLIC_FIELDS, array( 'private_notes' ) ),
 				'attributesToRetrieve' => array( 'id' ),
 				'filter' => 'project_id IN [' . implode( ', ', $t_project_ids ) . ']',
