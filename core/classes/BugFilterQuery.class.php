@@ -99,6 +99,11 @@ require_api( 'utility_api.php' );
 
 class BugFilterQuery extends DbQuery {
 
+	/**
+	 * The fields the text search can be limited to (see the 'search_fields' option).
+	 */
+	const SEARCH_FIELDS = array( 'summary', 'description', 'steps_to_reproduce', 'additional_information', 'notes' );
+
 	const QUERY_TYPE_LIST = 0;
 	const QUERY_TYPE_COUNT = 1;
 	const QUERY_TYPE_IDS = 2;
@@ -126,6 +131,7 @@ class BugFilterQuery extends DbQuery {
 	protected $rt_table_alias_cf; # keep track of the custom field table joins, to reuse them in order by, or serach matching.
 	protected $rt_table_alias_bugnote = null; # keep track of the bugnote table joins.
 	protected $rt_search_candidate_ids = null; # the issues the search backend found, best match first, if it was used.
+	protected $search_fields = null; # the fields the text search looks in, null for all of them.
 	protected $search_candidate_limit = null; # the most issues the search backend returns, null for $g_search_candidate_limit.
 	protected $needs_rebuild; # flag to force a rebuild of the final sql when additions are made after the object is first created.
 
@@ -152,6 +158,10 @@ class BugFilterQuery extends DbQuery {
 	 *					bugs are placed first in the result order. This is false by default.
 	 * - 'search_candidate_limit':	(int) The most issues a search backend with an index returns
 	 *					for the text search. By default $g_search_candidate_limit is used.
+	 * - 'search_fields':	(array) The fields the text search looks in, any of SEARCH_FIELDS.
+	 *					By default it looks in all of them, and a number also finds the issue
+	 *					with that id, which it does not when it is limited to some fields.
+	 *					Names that are not in SEARCH_FIELDS are ignored: with none left, nothing matches.
 	 *
 	 * @param array $p_filter			Filter array
 	 * @param array|integer $p_config	Options array, or single query type identifier
@@ -186,6 +196,9 @@ class BugFilterQuery extends DbQuery {
 						break;
 					case 'search_candidate_limit':
 						$this->search_candidate_limit = max( 1, (int)$t_value );
+						break;
+					case 'search_fields':
+						$this->search_fields = array_values( array_intersect( self::SEARCH_FIELDS, (array)$t_value ) );
 						break;
 				}
 			}
@@ -1560,6 +1573,11 @@ class BugFilterQuery extends DbQuery {
 			return;
 		}
 
+		if( $this->search_fields === array() ) {
+			$this->add_where( '1 = 0' );
+			return;
+		}
+
 		$t_candidate_ids = $this->search_candidate_ids();
 		if( $t_candidate_ids === null ) {
 			$this->build_prop_search_sql();
@@ -1588,6 +1606,7 @@ class BugFilterQuery extends DbQuery {
 
 		$this->rt_search_candidate_ids = $t_backend->search( $this->filter[FILTER_PROPERTY_SEARCH], array(
 			'limit' => $this->search_candidate_limit ?? (int)config_get_global( 'search_candidate_limit' ),
+			'fields' => $this->search_fields,
 			'private_note_project_ids' => array_values( $t_private_note_projects ),
 		) );
 
@@ -1623,9 +1642,10 @@ class BugFilterQuery extends DbQuery {
 			$t_where[] = $this->sql_in( '{bug}.id', $this->helper_array_map_int( $p_bug_ids ) );
 		}
 
-		# As with the SQL search, a number also matches the issue with that id.
+		# As with the SQL search, a number also matches the issue with that id, unless the search is
+		# limited to some fields.
 		foreach( $this->helper_search_terms() as $t_search_term => $t_negate ) {
-			if( !$t_negate && is_numeric( $t_search_term ) && $t_search_term <= DB_MAX_INT ) {
+			if( $this->search_fields === null && !$t_negate && is_numeric( $t_search_term ) && $t_search_term <= DB_MAX_INT ) {
 				$t_where[] = '{bug}.id = ' . $this->param( (int)$t_search_term );
 			}
 		}
@@ -1661,6 +1681,15 @@ class BugFilterQuery extends DbQuery {
 
 		$t_bugnote_table = $this->helper_table_alias_for_bugnote();
 
+		$t_columns = array(
+			'summary' => '{bug}.summary',
+			'description' => '{bug_text}.description',
+			'steps_to_reproduce' => '{bug_text}.steps_to_reproduce',
+			'additional_information' => '{bug_text}.additional_information',
+			'notes' => '{bugnote_text}.note',
+		);
+		$t_fields = $this->search_fields ?? self::SEARCH_FIELDS;
+
 		# build a big where-clause and param list for all search terms, including negations
 		$t_first = true;
 		$t_textsearch_where_clause = '( ';
@@ -1674,13 +1703,13 @@ class BugFilterQuery extends DbQuery {
 			}
 
 			$c_search = '%' . $t_search_term . '%';
-			$t_textsearch_where_clause .= '( ' . $this->sql_like( '{bug}.summary', $c_search )
-					. ' OR ' . $this->sql_like( '{bug_text}.description', $c_search )
-					. ' OR ' . $this->sql_like( '{bug_text}.steps_to_reproduce', $c_search )
-					. ' OR ' . $this->sql_like( '{bug_text}.additional_information', $c_search )
-					. ' OR ' . $this->sql_like( '{bugnote_text}.note', $c_search );
+			$t_conditions = array();
+			foreach( $t_fields as $t_field ) {
+				$t_conditions[] = $this->sql_like( $t_columns[$t_field], $c_search );
+			}
+			$t_textsearch_where_clause .= '( ' . implode( ' OR ', $t_conditions );
 
-			if( is_numeric( $t_search_term ) ) {
+			if( $this->search_fields === null && is_numeric( $t_search_term ) ) {
 				# Note: no need to test negative values, '-' sign has been removed
 				if( $t_search_term <= DB_MAX_INT ) {
 					$c_search_int = (int)$t_search_term;

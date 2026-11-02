@@ -103,6 +103,8 @@ abstract class SearchBackend {
 	 * @param string $p_text    The text to search for, as typed by the user.
 	 * @param array  $p_options Search options:
 	 *        'limit'                      => int, the maximum number of ids to return;
+	 *        'fields'                     => string[]|null, the fields to search in, any of
+	 *                                        BugFilterQuery::SEARCH_FIELDS, or null for all of them;
 	 *        'private_note_project_ids'   => int[], the projects in which the user
 	 *                                        may search in private notes.
 	 *

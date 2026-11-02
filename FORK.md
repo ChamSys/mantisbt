@@ -42,8 +42,13 @@ The rules it is built with:
   narrow them down; the list pages through what is left, so set the limit above the number of issues to see
   every match. `--setup` updates the engine's own limit from the option.
   Private note text is kept apart in the index and only searched for users who may read private notes.
+  Every word has to match, as with the SQL search.
   Settings: `$g_search_meilisearch_url`, `_key`, `_index`, `_timeout`. The backend is an interface, another
   engine can be added.
+- **Searching some fields only:** a caller that builds a `BugFilterQuery` (a command, a plugin) can limit the text
+  search to some fields with the option `search_fields`: `summary`, `description`, `steps_to_reproduce`,
+  `additional_information`, `notes` (`BugFilterQuery::SEARCH_FIELDS`). Both backends honour it, and a number then
+  does not also find the issue with that id. Private notes are still only searched for users who may read them.
 - **Keeping the index up to date:** issues that are created, changed, deleted or have a note change are queued in a
   new table, and `php scripts/search_index.php` drains the queue (run it from cron or as a service).
   `--setup` creates the index or updates its settings, `--reindex` rebuilds it from all the issues, `--status`

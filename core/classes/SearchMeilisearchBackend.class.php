@@ -147,6 +147,17 @@ class SearchMeilisearchBackend extends SearchBackend {
 		$t_limit = max( 1, (int)$p_options['limit'] );
 		$t_index = $this->get_index_name();
 
+		# Only some of the fields, or all of them if there is no list.
+		$t_fields = self::PUBLIC_FIELDS;
+		$t_search_notes = true;
+		if( isset( $p_options['fields'] ) ) {
+			$t_fields = array_values( array_intersect( self::PUBLIC_FIELDS, $p_options['fields'] ) );
+			$t_search_notes = in_array( 'notes', $t_fields, true );
+			if( empty( $t_fields ) ) {
+				return array();
+			}
+		}
+
 		$t_queries = array( array(
 			'indexUid' => $t_index,
 			'q' => $p_text,
@@ -154,18 +165,18 @@ class SearchMeilisearchBackend extends SearchBackend {
 			# Every word has to match, as with the SQL search: by default Meilisearch drops words from
 			# the end of the text until it finds something, so "fixture nonsense" finds every fixture.
 			'matchingStrategy' => 'all',
-			'attributesToSearchOn' => self::PUBLIC_FIELDS,
+			'attributesToSearchOn' => $t_fields,
 			'attributesToRetrieve' => array( 'id' ),
 		) );
 
 		$t_project_ids = array_values( array_unique( array_map( 'intval', $p_options['private_note_project_ids'] ) ) );
-		if( !empty( $t_project_ids ) ) {
+		if( $t_search_notes && !empty( $t_project_ids ) ) {
 			$t_queries[] = array(
 				'indexUid' => $t_index,
 				'q' => $p_text,
 				'limit' => $t_limit,
 				'matchingStrategy' => 'all',
-				'attributesToSearchOn' => array_merge( self::PUBLIC_FIELDS, array( 'private_notes' ) ),
+				'attributesToSearchOn' => array_merge( $t_fields, array( 'private_notes' ) ),
 				'attributesToRetrieve' => array( 'id' ),
 				'filter' => 'project_id IN [' . implode( ', ', $t_project_ids ) . ']',
 			);
