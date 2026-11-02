@@ -4262,11 +4262,15 @@ $g_search_backend = 'database';
  * The maximum number of issues an indexed search backend returns for a search.
  *
  * Its results are then narrowed down by the rest of the filter and by what the
- * user may see, so searches that match more issues than this are incomplete.
+ * user may see, and the issue list pages through what is left, so searches that
+ * match more issues than this are incomplete: set it above the number of issues
+ * for complete results. The ids go into the query, so a very high number makes
+ * the broadest searches slower. A search backend with an index may need its
+ * settings updated after a change, see scripts/search_index.php --setup.
  *
  * @global int $g_search_candidate_limit
  */
-$g_search_candidate_limit = 500;
+$g_search_candidate_limit = 10000;
 
 /**
  * The address of the Meilisearch server used by the 'meilisearch' search backend.

@@ -64,7 +64,13 @@
 			<term>$g_search_candidate_limit</term>
 			<listitem>
 				<para>The maximum number of issues an indexed backend returns for
-					a search. The default is 500 (Meilisearch returns at most 1000).
+					a search. The default is 10000. The results are narrowed down by the rest of the
+					filter and the issue list pages through what is left, so searches that match more
+					issues than this are incomplete: set it above the number of issues for complete
+					results. The ids go into the query, so a very high number makes the broadest searches
+					slower. Meilisearch returns at most 1000 by default; its limit is set from this option
+					and <literal>$g_search_live_candidate_limit</literal> by
+					<literal>php scripts/search_index.php --setup</literal>, so run it after changing them.
 				</para>
 			</listitem>
 		</varlistentry>

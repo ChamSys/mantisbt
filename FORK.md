@@ -38,7 +38,9 @@ The rules it is built with:
   search of the issue filter to a [Meilisearch](https://www.meilisearch.com/) index, which is typo tolerant and
   fast on large trackers. The index holds the summary, description, steps to reproduce, additional information,
   notes, category and tags. The filter still decides what a user may see: the engine only finds candidate issues
-  (at most `$g_search_candidate_limit`), and the rest of the filter and the access rules narrow them down.
+  (at most `$g_search_candidate_limit`, 10000 by default), and the rest of the filter and the access rules
+  narrow them down; the list pages through what is left, so set the limit above the number of issues to see
+  every match. `--setup` updates the engine's own limit from the option.
   Private note text is kept apart in the index and only searched for users who may read private notes.
   Settings: `$g_search_meilisearch_url`, `_key`, `_index`, `_timeout`. The backend is an interface, another
   engine can be added.

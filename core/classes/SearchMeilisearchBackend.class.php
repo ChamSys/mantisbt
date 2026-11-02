@@ -42,12 +42,6 @@ class SearchMeilisearchBackend extends SearchBackend {
 	);
 
 	/**
-	 * The most results Meilisearch returns for a search (its default
-	 * pagination.maxTotalHits).
-	 */
-	const MAX_RESULTS = 1000;
-
-	/**
 	 * @return string
 	 */
 	public function get_name() {
@@ -94,6 +88,12 @@ class SearchMeilisearchBackend extends SearchBackend {
 			'filterableAttributes' => array( 'project_id' ),
 			# Searches only need ids: the text is never sent back.
 			'displayedAttributes' => array( 'id' ),
+			# Meilisearch returns at most this many results for a search, however many are asked
+			# for (1000 by default), so it is kept in step with the limits of the options.
+			'pagination' => array( 'maxTotalHits' => max(
+				(int)config_get_global( 'search_candidate_limit' ),
+				(int)config_get_global( 'search_live_candidate_limit' ),
+				1 ) ),
 		) );
 		return $this->wait_for_task( $t_status, $t_body );
 	}
@@ -144,7 +144,7 @@ class SearchMeilisearchBackend extends SearchBackend {
 	 * @return int[]|null The ids of the matching issues, or null on failure.
 	 */
 	public function search( $p_text, array $p_options ) {
-		$t_limit = min( self::MAX_RESULTS, max( 1, (int)$p_options['limit'] ) );
+		$t_limit = max( 1, (int)$p_options['limit'] );
 		$t_index = $this->get_index_name();
 
 		$t_queries = array( array(
