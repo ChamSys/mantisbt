@@ -1767,6 +1767,13 @@ function mci_issue_data_as_array( BugData $p_issue_data, $p_user_id, $p_lang, $p
 		}
 	}
 
+	if( $t_fields === null || isset( $t_fields['team'] ) ) {
+		if( !empty( $p_issue_data->team_id ) && team_exists( $p_issue_data->team_id ) &&
+			access_has_bug_level( config_get( 'view_handler_threshold', null, null, $t_project_id ), $t_id, $p_user_id ) ) {
+			$t_issue['team'] = array( 'id' => (int)$p_issue_data->team_id, 'name' => team_get_name( $p_issue_data->team_id ) );
+		}
+	}
+
 	if( $t_fields === null || isset( $t_fields['status'] ) ) {
 		$t_issue['status'] = mci_enum_get_array_by_id( $p_issue_data->status, 'status', $p_lang );
 	}

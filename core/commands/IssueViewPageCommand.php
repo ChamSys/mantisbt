@@ -250,6 +250,7 @@ class IssueViewPageCommand extends Command {
 		$t_flags['reporter_show'] = in_array( 'reporter', $t_fields ) && isset( $t_issue['reporter'] );
 		$t_flags['reproducibility_show'] = in_array( 'reproducibility', $t_fields ) && isset( $t_issue['reproducibility'] );
 		$t_flags['resolution_show'] = in_array( 'resolution', $t_fields ) && isset( $t_issue['resolution'] );
+		$t_flags['team_show'] = in_array( 'team', $t_fields ) && isset( $t_issue['team'] );
 		$t_flags['severity_show'] = in_array( 'severity', $t_fields ) && isset( $t_issue['severity'] );
 		$t_flags['status_show'] = in_array( 'status', $t_fields ) && isset( $t_issue['status'] );
 		$t_flags['view_state_show'] = in_array( 'view_state', $t_fields ) && isset( $t_issue['view_state'] );

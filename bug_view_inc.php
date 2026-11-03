@@ -345,6 +345,17 @@ if( $t_flags['reporter_show'] || $t_flags['handler_show'] || $t_flags['due_date_
 }
 
 #
+# Team
+#
+
+if( $t_flags['team_show'] ) {
+	echo '<tr data-section="team">';
+	echo '<th class="bug-team category">', lang_get( 'team' ), '</th>';
+	echo '<td class="bug-team" colspan="5">', string_display_line( $t_issue['team']['name'] ), '</td>';
+	echo '</tr>';
+}
+
+#
 # Priority, Severity, Reproducibility
 #
 
