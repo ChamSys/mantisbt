@@ -1567,6 +1567,12 @@ $s_team_name = 'Name';
 $s_team_create = 'Create Team';
 $s_team_members = 'Members';
 $s_team_issues = 'Issues';
+$s_team_update = 'Update Team';
+$s_team_delete = 'Delete Team';
+$s_team_delete_confirm_msg = 'Do you really want to delete the team "%1$s"? The %2$d issues assigned to it are left without a team.';
+$s_team_add_member = 'Add Member';
+$s_team_remove_member = 'Remove';
+$s_team_no_members = 'This team has no members.';
 
 # Time Tracking
 $s_time_tracking_billing_link = 'Time Tracking';

@@ -91,7 +91,7 @@ print_manage_menu( 'manage_team_page.php' );
 	foreach( $t_teams as $t_team_id => $t_team ) {
 ?>
 			<tr>
-				<td><?php echo string_display_line( $t_team['name'] ) ?></td>
+				<td><a href="manage_team_edit_page.php?team_id=<?php echo $t_team_id ?>"><?php echo string_display_line( $t_team['name'] ) ?></a></td>
 				<td><?php echo string_display_line( $t_team['description'] ) ?></td>
 				<td><?php echo isset( $t_member_counts[$t_team_id] ) ? $t_member_counts[$t_team_id] : 0 ?></td>
 				<td><?php echo isset( $t_issue_counts[$t_team_id] ) ? $t_issue_counts[$t_team_id] : 0 ?></td>

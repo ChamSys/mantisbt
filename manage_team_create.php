@@ -45,8 +45,8 @@ access_ensure_global_level( config_get( 'manage_team_threshold' ) );
 $f_name = gpc_get_string( 'name' );
 $f_description = gpc_get_string( 'description', '' );
 
-team_create( $f_name, $f_description );
+$t_team_id = team_create( $f_name, $f_description );
 
 form_security_purge( 'manage_team_create' );
 
-print_header_redirect( 'manage_team_page.php' );
+print_header_redirect( 'manage_team_edit_page.php?team_id=' . $t_team_id );
