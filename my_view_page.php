@@ -35,6 +35,7 @@
  * @uses html_api.php
  * @uses lang_api.php
  * @uses print_api.php
+ * @uses team_api.php
  * @uses user_api.php
  */
 
@@ -51,6 +52,7 @@ require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'layout_api.php' );
 require_css( 'status_config.php' );
@@ -111,6 +113,12 @@ foreach( $t_boxes as $t_box_title => $t_box_display ) {
 		(  $t_box_title == 'assigned'
 		&& (  $t_anonymous_user
 		   || !access_has_any_project_level('handle_bug_threshold', $t_project_ids_to_check, $t_current_user_id )
+		   )
+		) ||
+		# Remove "Assigned to My Teams" box for users that are in no team
+		(  $t_box_title == 'team'
+		&& (  $t_anonymous_user
+		   || empty( user_get_team_ids( $t_current_user_id ) )
 		   )
 		) ||
 		# Remove "Monitored by Me" box for users that can't monitor issues

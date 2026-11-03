@@ -1055,6 +1055,7 @@ $s_my_view_title_unassigned = 'Unassigned';
 $s_my_view_title_recent_mod = 'Recently Modified';
 $s_my_view_title_reported = 'Reported by Me';
 $s_my_view_title_assigned = 'Assigned to Me (Unresolved)';
+$s_my_view_title_team = 'Assigned to My Teams (Unresolved)';
 $s_my_view_title_resolved = 'Resolved';
 $s_my_view_title_monitored = 'Monitored by Me';
 $s_my_view_title_feedback = 'Awaiting Feedback from Me';

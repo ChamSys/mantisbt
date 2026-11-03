@@ -1973,6 +1973,29 @@ function filter_create_assigned_to_unresolved( $p_project_id, $p_user_id ) {
 }
 
 /**
+ * Create a filter for getting issues assigned to the teams of the current user
+ * in the specified project that are not yet resolved.
+ *
+ * @param integer $p_project_id The project id or ALL_PROJECTS.
+ * @param integer $p_user_id    The user id, whose teams they are.
+ * @return array valid filter.
+ */
+function filter_create_assigned_to_team_unresolved( $p_project_id, $p_user_id ) {
+	$t_filter = filter_get_default();
+
+	$t_filter[FILTER_PROPERTY_TEAM_ID] = array( '0' => META_FILTER_MYSELF );
+
+	$t_bug_resolved_status_threshold = config_get( 'bug_resolved_status_threshold', null, $p_user_id, $p_project_id );
+	$t_filter[FILTER_PROPERTY_HIDE_STATUS] = array( '0' => $t_bug_resolved_status_threshold );
+
+	if( $p_project_id != ALL_PROJECTS ) {
+		$t_filter[FILTER_PROPERTY_PROJECT_ID] = array( '0' => $p_project_id );
+	}
+
+	return filter_ensure_valid_filter( $t_filter );
+}
+
+/**
  * Create a filter for getting issues reported by the specified project and user.
  * @param integer $p_project_id The project id or ALL_PROJECTS.
  * @param integer $p_user_id    A valid user identifier.

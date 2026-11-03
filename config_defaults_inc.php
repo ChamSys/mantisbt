@@ -4822,6 +4822,9 @@ $g_my_view_bug_count = 10;
  *
  * A box that is not to be shown can have its value set to 0.
  *
+ * The box 'team' lists the unresolved issues of the teams the user is in, and is
+ * not shown to users who are in none.
+ *
  * @global array $g_my_view_boxes
  */
 $g_my_view_boxes = array(
@@ -4833,7 +4836,8 @@ $g_my_view_boxes = array(
 	'monitored'     => '6',
 	'feedback'      => '0',
 	'verify'        => '0',
-	'my_comments'   => '0'
+	'my_comments'   => '0',
+	'team'          => '0'
 );
 
 

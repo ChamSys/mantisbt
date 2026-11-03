@@ -75,6 +75,12 @@ $t_url_link_parameters['assigned'] = [
 	FILTER_PROPERTY_HIDE_STATUS => $t_bug_resolved_status_threshold,
 ];
 
+$c_filter['team'] = filter_create_assigned_to_team_unresolved( helper_get_current_project(), $t_current_user_id );
+$t_url_link_parameters['team'] = [
+	FILTER_PROPERTY_TEAM_ID => META_FILTER_MYSELF,
+	FILTER_PROPERTY_HIDE_STATUS => $t_bug_resolved_status_threshold,
+];
+
 # @TODO cproensa: make this value configurable
 $t_recent_days = 30;
 $c_filter['recent_mod'] = filter_create_recently_modified( $t_recent_days );

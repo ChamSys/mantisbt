@@ -22,11 +22,14 @@ $g_my_view_boxes = array(
 	'monitored'     => '6',
 	'feedback'      => '0',
 	'verify'        => '0',
-	'my_comments'   => '0'
+	'my_comments'   => '0',
+	'team'          => '0'
 );
 </programlisting>
 					If you want to change the definition, copy the default value and
-					apply the changes.
+					apply the changes. The <emphasis>team</emphasis> box lists the unresolved
+					issues assigned to the teams the user is in, and is not shown to users
+					who are in none.
 				</para>
 			</listitem>
 		</varlistentry>
