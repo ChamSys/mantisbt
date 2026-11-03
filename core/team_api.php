@@ -346,6 +346,42 @@ function user_get_team_ids( $p_user_id = null ) {
 }
 
 /**
+ * Count the members of every team.
+ *
+ * @return int[] The number of members, by team id, for the teams that have any.
+ * @access public
+ */
+function team_get_member_counts() {
+	$t_query = new DbQuery( 'SELECT team_id, COUNT(*) AS num FROM {team_user} GROUP BY team_id' );
+	$t_query->execute();
+
+	$t_counts = array();
+	while( $t_row = $t_query->fetch() ) {
+		$t_counts[(int)$t_row['team_id']] = (int)$t_row['num'];
+	}
+
+	return $t_counts;
+}
+
+/**
+ * Count the issues assigned to every team.
+ *
+ * @return int[] The number of issues, by team id, for the teams that have any.
+ * @access public
+ */
+function team_get_issue_counts() {
+	$t_query = new DbQuery( 'SELECT team_id, COUNT(*) AS num FROM {bug} WHERE team_id > 0 GROUP BY team_id' );
+	$t_query->execute();
+
+	$t_counts = array();
+	while( $t_row = $t_query->fetch() ) {
+		$t_counts[(int)$t_row['team_id']] = (int)$t_row['num'];
+	}
+
+	return $t_counts;
+}
+
+/**
  * Check if a user is in a team.
  *
  * @param int $p_team_id A team identifier.

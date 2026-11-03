@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+ <!ENTITY % BOOK_ENTITIES SYSTEM "Admin_Guide.ent">
+]>
+<section id="admin.config.teams">
+	<title>Teams</title>
+
+	<para>A team is a named group of users that an issue can be assigned to.  Teams are created and
+		filled in <emphasis>Manage</emphasis> &gt; <emphasis>Teams</emphasis>.  They belong to no
+		project, and a user can be in any number of them.  A team does not give its members access to
+		anything: who can see and change an issue is still what the access levels of the project say.
+	</para>
+
+	<variablelist>
+		<varlistentry>
+			<term>$g_manage_team_threshold</term>
+			<listitem>
+				<para>The access level needed to manage teams: create them, change them, delete them and
+					put users in them. The default is ADMINISTRATOR.</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</section>

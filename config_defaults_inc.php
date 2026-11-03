@@ -3657,6 +3657,13 @@ $g_project_user_threshold = MANAGER;
 $g_manage_user_threshold = ADMINISTRATOR;
 
 /**
+ * Threshold needed to manage teams: create them, change them, and put users in them.
+ *
+ * @global int $g_manage_team_threshold
+ */
+$g_manage_team_threshold = ADMINISTRATOR;
+
+/**
  * Threshold needed to impersonate a user or NOBODY to disable the feature.
  *
  * @global int $g_impersonate_user_threshold
