@@ -209,6 +209,10 @@ function filter_get_url( array $p_custom_filter ) {
 		$t_query[] = filter_encode_field_and_value( FILTER_PROPERTY_HANDLER_ID, $p_custom_filter[FILTER_PROPERTY_HANDLER_ID] );
 	}
 
+	if( !filter_field_is_any( $p_custom_filter[FILTER_PROPERTY_TEAM_ID] ) ) {
+		$t_query[] = filter_encode_field_and_value( FILTER_PROPERTY_TEAM_ID, $p_custom_filter[FILTER_PROPERTY_TEAM_ID] );
+	}
+
 	if( !filter_field_is_any( $p_custom_filter[FILTER_PROPERTY_NOTE_USER_ID] ) ) {
 		$t_query[] = filter_encode_field_and_value( FILTER_PROPERTY_NOTE_USER_ID, $p_custom_filter[FILTER_PROPERTY_NOTE_USER_ID] );
 	}
@@ -723,6 +727,7 @@ function filter_ensure_valid_filter( array $p_filter_arr ) {
 		FILTER_PROPERTY_STATUS => 'int',
 		FILTER_PROPERTY_REPORTER_ID => 'int',
 		FILTER_PROPERTY_HANDLER_ID => 'int',
+		FILTER_PROPERTY_TEAM_ID => 'int',
 		FILTER_PROPERTY_NOTE_USER_ID => 'int',
 		FILTER_PROPERTY_RESOLUTION => 'int',
 		FILTER_PROPERTY_PRIORITY => 'int',
@@ -893,6 +898,7 @@ function filter_get_default_array( $p_view_type = null ) {
 		FILTER_PROPERTY_HIGHLIGHT_CHANGED => $t_default_show_changed,
 		FILTER_PROPERTY_REPORTER_ID => $t_meta_filter_any_array,
 		FILTER_PROPERTY_HANDLER_ID => $t_meta_filter_any_array,
+		FILTER_PROPERTY_TEAM_ID => $t_meta_filter_any_array,
 		FILTER_PROPERTY_PROJECT_ID => array( META_FILTER_CURRENT ),
 		FILTER_PROPERTY_PROJECTION => $t_meta_filter_any_array,
 		FILTER_PROPERTY_RESOLUTION => $t_meta_filter_any_array,
@@ -2041,6 +2047,7 @@ function filter_gpc_get( ?array $p_filter = null ): array {
 	$f_hide_status = gpc_get( FILTER_PROPERTY_HIDE_STATUS, $t_filter[FILTER_PROPERTY_HIDE_STATUS] );
 	$f_reporter_id = gpc_get( FILTER_PROPERTY_REPORTER_ID, $t_filter[FILTER_PROPERTY_REPORTER_ID] );
 	$f_handler_id = gpc_get( FILTER_PROPERTY_HANDLER_ID, $t_filter[FILTER_PROPERTY_HANDLER_ID] );
+	$f_team_id = gpc_get( FILTER_PROPERTY_TEAM_ID, $t_filter[FILTER_PROPERTY_TEAM_ID] );
 	$f_project_id = gpc_get( FILTER_PROPERTY_PROJECT_ID, $t_filter[FILTER_PROPERTY_PROJECT_ID] );
 	$f_projection = gpc_get( FILTER_PROPERTY_PROJECTION, $t_filter[FILTER_PROPERTY_PROJECTION] );
 	$f_show_resolution = gpc_get( FILTER_PROPERTY_RESOLUTION, $t_filter[FILTER_PROPERTY_RESOLUTION] );
@@ -2280,6 +2287,7 @@ function filter_gpc_get( ?array $p_filter = null ): array {
 	$t_filter_input[FILTER_PROPERTY_HIGHLIGHT_CHANGED] 		= $f_highlight_changed;
 	$t_filter_input[FILTER_PROPERTY_REPORTER_ID] 			= $f_reporter_id;
 	$t_filter_input[FILTER_PROPERTY_HANDLER_ID] 				= $f_handler_id;
+	$t_filter_input[FILTER_PROPERTY_TEAM_ID] 				= $f_team_id;
 	$t_filter_input[FILTER_PROPERTY_PROJECT_ID] 				= $f_project_id;
 	$t_filter_input[FILTER_PROPERTY_PROJECTION] 				= $f_projection;
 	$t_filter_input[FILTER_PROPERTY_SORT_FIELD_NAME] 		= $f_sort;

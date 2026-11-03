@@ -35,6 +35,7 @@
  * @uses project_api.php
  * @uses search_api.php
  * @uses tag_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses utility_api.php
  */
@@ -53,6 +54,7 @@ require_api( 'logging_api.php' );
 require_api( 'project_api.php' );
 require_api( 'search_api.php' );
 require_api( 'tag_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 
@@ -440,6 +442,9 @@ class BugFilterQuery extends DbQuery {
 					break;
 				case FILTER_PROPERTY_HANDLER_ID:
 					$this->build_prop_handler();
+					break;
+				case FILTER_PROPERTY_TEAM_ID:
+					$this->build_prop_team();
 					break;
 				case FILTER_PROPERTY_MONITOR_USER_ID:
 					$this->build_prop_monitor_by();
@@ -878,6 +883,55 @@ class BugFilterQuery extends DbQuery {
 		$t_user_ids = $this->helper_process_users_property( $this->filter[FILTER_PROPERTY_HANDLER_ID] );
 		$t_query = $this->sql_in( '{bug}.handler_id', $t_user_ids ) . $t_view_condition;
 		log_event( LOG_FILTERING, 'handler query = ' . $t_query );
+		$this->add_where( $t_query );
+	}
+
+	/**
+	 * Build the query parts for the filter property "team"
+	 *
+	 * Like the handler, the team of an issue is only for those that may see who
+	 * it is assigned to ('view_handler_threshold'), and for the members of the team.
+	 *
+	 * @return void
+	 */
+	protected function build_prop_team() {
+		if( filter_field_is_any( $this->filter[FILTER_PROPERTY_TEAM_ID] ) ) {
+			return;
+		}
+
+		$t_my_team_ids = user_get_team_ids( $this->user_id );
+
+		$t_team_ids = array();
+		foreach( $this->filter[FILTER_PROPERTY_TEAM_ID] as $t_team ) {
+			if( filter_field_is_none( $t_team ) ) {
+				$t_team_ids[] = 0;
+			} else if( filter_field_is_myself( $t_team ) ) {
+				$t_team_ids = array_merge( $t_team_ids, $t_my_team_ids );
+			} else {
+				$t_team_ids[] = (int)$t_team;
+			}
+		}
+
+		# A filter on "my teams" for a user in no team finds nothing
+		if( empty( $t_team_ids ) ) {
+			$this->add_where( '1 = 0' );
+			return;
+		}
+
+		$t_projects_can_view = $this->helper_filter_projects_using_access( 'view_handler_threshold' );
+		if( ALL_PROJECTS == $t_projects_can_view ) {
+			$t_view_condition = null;
+		} else {
+			$t_view_condition = empty( $t_my_team_ids ) ? '1 = 0' : $this->sql_in( '{bug}.team_id', $t_my_team_ids );
+			if( !empty( $t_projects_can_view ) ) {
+				$t_view_condition = '(' . $t_view_condition . ' OR '
+						. $this->sql_in( '{bug}.project_id', $t_projects_can_view ) . ')';
+			}
+			$t_view_condition = ' AND ' . $t_view_condition;
+		}
+
+		$t_query = $this->sql_in( '{bug}.team_id', $t_team_ids ) . $t_view_condition;
+		log_event( LOG_FILTERING, 'team query = ' . $t_query );
 		$this->add_where( $t_query );
 	}
 

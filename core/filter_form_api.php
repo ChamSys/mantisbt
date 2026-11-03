@@ -37,6 +37,7 @@
  * @uses print_api.php
  * @uses relationship_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses user_picker_api.php
  *
@@ -61,6 +62,7 @@ require_api( 'logging_api.php' );
 require_api( 'print_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'user_picker_api.php' );
 
@@ -358,6 +360,71 @@ function print_filter_values_handler_id( array $p_filter ) {
 			echo $t_output;
 		}
 	}
+}
+
+/**
+ * Print the filter field's current value as a visible string and a hidden form input.
+ *
+ * @param array $p_filter Filter array
+ *
+ * @return void
+ */
+function print_filter_values_team_id( array $p_filter ) {
+	$t_output = '';
+	$t_any_found = false;
+	if( count( $p_filter[FILTER_PROPERTY_TEAM_ID] ) == 0 ) {
+		echo lang_get( 'any' );
+	} else {
+		$t_first_flag = true;
+		foreach( $p_filter[FILTER_PROPERTY_TEAM_ID] as $t_current ) {
+			echo '<input type="hidden" name="', FILTER_PROPERTY_TEAM_ID, '[]" value="', string_attribute( $t_current ), '" />';
+			$t_this_name = '';
+			if( filter_field_is_none( $t_current ) ) {
+				$t_this_name = lang_get( 'none' );
+			} else if( filter_field_is_any( $t_current ) ) {
+				$t_any_found = true;
+			} else if( filter_field_is_myself( $t_current ) ) {
+				$t_this_name = '[' . lang_get( 'my_teams' ) . ']';
+			} else {
+				$t_this_name = team_get_name( $t_current );
+			}
+			if( !$t_first_flag ) {
+				$t_output .= '<br />';
+			} else {
+				$t_first_flag = false;
+			}
+			$t_output .= string_display_line( $t_this_name );
+		}
+		if( $t_any_found ) {
+			echo lang_get( 'any' );
+		} else {
+			echo $t_output;
+		}
+	}
+}
+
+/**
+ * Print the team field.
+ *
+ * @param array|null $p_filter Filter array
+ *
+ * @return void
+ * @global array     $g_filter
+ */
+function print_filter_team_id( ?array $p_filter = null ) {
+	global $g_filter;
+	if( null === $p_filter ) {
+		$p_filter = $g_filter;
+	}
+	?>
+		<!-- Team -->
+		<select class="input-xs" <?php echo filter_select_modifier( $p_filter ) ?> name="<?php echo FILTER_PROPERTY_TEAM_ID;?>[]">
+			<option value="<?php echo META_FILTER_ANY?>"<?php check_selected( $p_filter[FILTER_PROPERTY_TEAM_ID], META_FILTER_ANY );?>>[<?php echo lang_get( 'any' )?>]</option>
+			<option value="<?php echo META_FILTER_NONE?>"<?php check_selected( $p_filter[FILTER_PROPERTY_TEAM_ID], META_FILTER_NONE );?>>[<?php echo lang_get( 'none' )?>]</option>
+			<option value="<?php echo META_FILTER_MYSELF?>"<?php check_selected( $p_filter[FILTER_PROPERTY_TEAM_ID], META_FILTER_MYSELF );?>>[<?php echo lang_get( 'my_teams' )?>]</option>
+			<?php print_team_option_list( $p_filter[FILTER_PROPERTY_TEAM_ID] ) ?>
+		</select>
+		<?php
 }
 
 /**
@@ -2671,6 +2738,15 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 			null /* class */,
 			'handler_id_filter_target' /* content id */
 			));
+	if( access_has_any_project_level( 'view_handler_threshold' ) && !empty( team_get_all() ) ) {
+		$t_row1->add_item( new TableFieldsItem(
+				$get_field_header( 'team_id_filter', lang_get( 'team' ) ),
+				filter_form_get_input( $t_filter, 'team_id', $t_show_inputs ),
+				1 /* colspan */,
+				null /* class */,
+				'team_id_filter_target' /* content id */
+				));
+	}
 	$t_row1->add_item( new TableFieldsItem(
 			$get_field_header( 'user_monitor_filter', lang_get( 'monitored_by' ) ),
 			filter_form_get_input( $t_filter, 'user_monitor', $t_show_inputs ),

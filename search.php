@@ -52,6 +52,7 @@ gpc_make_array( FILTER_PROPERTY_SEVERITY );
 gpc_make_array( FILTER_PROPERTY_STATUS );
 gpc_make_array( FILTER_PROPERTY_REPORTER_ID );
 gpc_make_array( FILTER_PROPERTY_HANDLER_ID );
+gpc_make_array( FILTER_PROPERTY_TEAM_ID );
 gpc_make_array( FILTER_PROPERTY_PROJECT_ID );
 gpc_make_array( FILTER_PROPERTY_PROJECTION );
 gpc_make_array( FILTER_PROPERTY_RESOLUTION );
@@ -77,6 +78,7 @@ $t_my_filter[FILTER_PROPERTY_SEARCH] = gpc_get_string( FILTER_PROPERTY_SEARCH, '
 $t_my_filter[FILTER_PROPERTY_CATEGORY_ID] = gpc_get_string_array( FILTER_PROPERTY_CATEGORY_ID, $t_meta_filter_any_array );
 $t_my_filter[FILTER_PROPERTY_REPORTER_ID] = gpc_get_string_array( FILTER_PROPERTY_REPORTER_ID, $t_meta_filter_any_array );
 $t_my_filter[FILTER_PROPERTY_HANDLER_ID] = gpc_get_string_array( FILTER_PROPERTY_HANDLER_ID, $t_meta_filter_any_array );
+$t_my_filter[FILTER_PROPERTY_TEAM_ID] = gpc_get_string_array( FILTER_PROPERTY_TEAM_ID, $t_meta_filter_any_array );
 $t_my_filter[FILTER_PROPERTY_SEVERITY] = gpc_get_string_array( FILTER_PROPERTY_SEVERITY, $t_meta_filter_any_array );
 
 $t_my_filter[FILTER_PROPERTY_STATUS] = gpc_get_string_array( FILTER_PROPERTY_STATUS, $t_meta_filter_any_array );

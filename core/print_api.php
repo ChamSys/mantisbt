@@ -373,13 +373,13 @@ function print_user_option_list( $p_user_id, $p_project_id = null, $p_access = A
 /**
  * Print the options of a list of teams.
  *
- * @param integer $p_team_id The team that is selected, 0 for none.
+ * @param integer|array $p_team_id The team that is selected, 0 for none, or a list of them.
  * @return void
  */
 function print_team_option_list( $p_team_id = 0 ) {
 	foreach( team_get_all() as $t_team_id => $t_team ) {
 		echo '<option value="' . $t_team_id . '" ';
-		check_selected( (int)$p_team_id, $t_team_id );
+		check_selected( $p_team_id, $t_team_id );
 		echo '>' . string_attribute( $t_team['name'] ) . '</option>';
 	}
 }
