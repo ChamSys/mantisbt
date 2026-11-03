@@ -1966,6 +1966,7 @@ function email_format_bug_message( array $p_visible_bug_data ) {
 
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_reporter' );
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_handler' );
+	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_team' );
 	$t_message .= $t_email_separator1 . " \n";
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_project' );
 	$t_message .= email_format_attribute( $p_visible_bug_data, 'email_bug' );
@@ -2157,6 +2158,11 @@ function email_build_visible_bug_data( $p_user_id, $p_bug_id, $p_message_id ) {
 		} else {
 			$t_bug_data['email_handler'] = '';
 		}
+	}
+
+	if( $t_row['team_id'] > 0 && team_exists( $t_row['team_id'] )
+		&& access_compare_level( $t_user_access_level, config_get( 'view_handler_threshold' ) ) ) {
+		$t_bug_data['email_team'] = team_get_name( $t_row['team_id'] );
 	}
 
 	$t_bug_data['email_reporter'] = user_get_name( $t_row['reporter_id'] );

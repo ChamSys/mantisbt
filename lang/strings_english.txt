@@ -322,6 +322,7 @@ $s_email_notification_title_for_action_monitor = 'Issue %1$s is now monitored by
 
 $s_email_reporter = 'Reported By';
 $s_email_handler = 'Assigned To';
+$s_email_team = 'Team';
 $s_email_project = 'Project';
 $s_email_bug = 'Issue ID';
 $s_email_category = 'Category';
@@ -784,6 +785,7 @@ $s_colour_project = 'Project setting overrides others.';
 $s_colour_global = 'All Project settings override default configuration.';
 $s_issue_reporter = 'User who reported the issue';
 $s_issue_handler = 'User who is handling the issue';
+$s_issue_team = 'Members of the team the issue is assigned to';
 $s_users_added_bugnote = 'Users who added Issue Notes';
 $s_category_assigned_to = 'Category Owner';
 $s_email_notify_users = 'Any user with access level';
