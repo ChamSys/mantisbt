@@ -39,6 +39,7 @@
  * @uses project_api.php
  * @uses relationship_api.php
  * @uses sponsorship_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses utility_api.php
  */
@@ -59,6 +60,7 @@ require_api( 'lang_api.php' );
 require_api( 'project_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'sponsorship_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 
@@ -404,7 +406,7 @@ function history_get_event_from_row( $p_result, $p_user_id = null, $p_check_acce
 				continue;
 			}
 
-			if( ( $v_field_name == 'handler_id' ) &&
+			if( ( $v_field_name == 'handler_id' || $v_field_name == 'team_id' ) &&
 				!access_has_bug_level( config_get( 'view_handler_threshold', null, $t_user_id, $t_project_id ), $v_bug_id, $t_user_id ) ) {
 				continue;
 			}
@@ -588,6 +590,9 @@ function history_localize_field_name( $p_field_name ) {
 			break;
 		case 'handler_id':
 			$t_field_localized = lang_get( 'assigned_to' );
+			break;
+		case 'team_id':
+			$t_field_localized = lang_get( 'team' );
 			break;
 		case 'reporter_id':
 			$t_field_localized = lang_get( 'reporter' );
@@ -811,6 +816,11 @@ function history_localize_item( $p_bug_id, $p_field_name, $p_type, $p_old_value,
 			} else {
 				$p_new_value = user_get_name( $p_new_value );
 			}
+			break;
+		case 'team_id':
+			# A team that was deleted is shown by its id
+			$p_old_value = ( 0 == $p_old_value ) ? '' : ( team_exists( $p_old_value ) ? team_get_name( $p_old_value ) : '@' . $p_old_value . '@' );
+			$p_new_value = ( 0 == $p_new_value ) ? '' : ( team_exists( $p_new_value ) ? team_get_name( $p_new_value ) : '@' . $p_new_value . '@' );
 			break;
 		case 'date_submitted':
 		case 'last_updated':
