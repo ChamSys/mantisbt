@@ -32,6 +32,7 @@
  * @uses helper_api.php
  * @uses project_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses user_api.php
  *
  * @noinspection PhpDocMissingThrowsInspection
@@ -48,6 +49,7 @@ require_api( 'file_api.php' );
 require_api( 'helper_api.php' );
 require_api( 'project_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 
 /**
@@ -235,6 +237,19 @@ function csv_format_reporter_id( BugData $p_bug ) {
 function csv_format_handler_id( BugData $p_bug ) {
 	if( $p_bug->handler_id > 0 ) {
 		return csv_escape_string( user_get_name( $p_bug->handler_id ) );
+	}
+	return '';
+}
+
+/**
+ * returns the team name corresponding to the supplied bug
+ * @param BugData $p_bug A BugData object.
+ * @return string formatted team name
+ * @access public
+ */
+function csv_format_team_id( BugData $p_bug ) {
+	if( $p_bug->team_id > 0 ) {
+		return csv_escape_string( team_get_name( $p_bug->team_id ) );
 	}
 	return '';
 }

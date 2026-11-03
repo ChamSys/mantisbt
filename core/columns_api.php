@@ -41,6 +41,7 @@
  * @uses project_api.php
  * @uses sponsorship_api.php
  * @uses string_api.php
+ * @uses team_api.php
  */
 
 require_api( 'access_api.php' );
@@ -62,6 +63,7 @@ require_api( 'print_api.php' );
 require_api( 'project_api.php' );
 require_api( 'sponsorship_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 
 /**
  * Filters an array of columns based on configuration options.  The filtering can remove
@@ -124,6 +126,13 @@ function columns_filter_disabled( array $p_columns ) {
 
 			case 'like_count':
 				if( config_get( 'enable_likes' ) == OFF ) {
+					continue 2;
+				}
+				break;
+
+			case 'team_id':
+				# Only where there are teams, and for those who may see who an issue is assigned to
+				if( empty( team_get_all() ) || !access_has_project_level( config_get( 'view_handler_threshold' ) ) ) {
 					continue 2;
 				}
 				break;
@@ -445,6 +454,8 @@ function column_get_title( $p_column ) {
 			return lang_get( 'updated' );
 		case 'like_count':
 			return lang_get( 'likes' );
+		case 'team_id':
+			return lang_get( 'team' );
 		case 'os_build':
 			return lang_get( 'os_build' );
 		case 'project_id':
@@ -592,6 +603,22 @@ function print_column_title_reporter_id( $p_sort, $p_dir, $p_columns_target = CO
 	echo '<th class="column-reporter">';
 	print_view_bug_sort_link( lang_get( 'reporter' ), 'reporter_id', $p_sort, $p_dir, $p_columns_target );
 	print_sort_icon( $p_dir, $p_sort, 'reporter_id' );
+	echo '</th>';
+}
+
+/**
+ * Print table header for column team id
+ *
+ * @param string  $p_sort           Sort.
+ * @param string  $p_dir            Direction.
+ * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
+ * @return void
+ * @access public
+ */
+function print_column_title_team_id( $p_sort, $p_dir, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
+	echo '<th class="column-team">';
+	print_view_bug_sort_link( lang_get( 'team' ), 'team_id', $p_sort, $p_dir, $p_columns_target );
+	print_sort_icon( $p_dir, $p_sort, 'team_id' );
 	echo '</th>';
 }
 
@@ -1479,6 +1506,25 @@ function print_column_handler_id( BugData $p_bug, $p_columns_target = COLUMNS_TA
 	# list of columns to view.  In case of ALL_PROJECTS, then we need to check the access per row.
 	if( $p_bug->handler_id > 0 && ( helper_get_current_project() != ALL_PROJECTS || access_has_project_level( config_get( 'view_handler_threshold' ), $p_bug->project_id ) ) ) {
 		echo prepare_user_name( $p_bug->handler_id );
+	}
+
+	echo '</td>';
+}
+
+/**
+ * Print column content for column team id
+ *
+ * @param BugData $p_bug            BugData object.
+ * @param integer $p_columns_target See COLUMNS_TARGET_* in constant_inc.php.
+ * @return void
+ * @access public
+ */
+function print_column_team_id( BugData $p_bug, $p_columns_target = COLUMNS_TARGET_VIEW_PAGE ) {
+	echo '<td class="column-team">';
+
+	# As for the handler, in case of ALL_PROJECTS the access has to be checked per row.
+	if( $p_bug->team_id > 0 && ( helper_get_current_project() != ALL_PROJECTS || access_has_project_level( config_get( 'view_handler_threshold' ), $p_bug->project_id ) ) ) {
+		echo string_display_line( team_get_name( $p_bug->team_id ) );
 	}
 
 	echo '</td>';

@@ -34,6 +34,7 @@
  * @uses lang_api.php
  * @uses project_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses user_api.php
  */
 
@@ -48,6 +49,7 @@ require_api( 'helper_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'project_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 
 /**
@@ -261,6 +263,19 @@ function excel_format_reporter_id( BugData $p_bug ) {
 function excel_format_handler_id( BugData $p_bug ) {
 	if( $p_bug->handler_id > 0 ) {
 		return excel_prepare_string( user_get_name( $p_bug->handler_id ) );
+	} else {
+		return excel_prepare_string( '' );
+	}
+}
+
+/**
+ * Gets the formatted team id.
+ * @param BugData $p_bug A bug object.
+ * @return string The team name or empty string.
+ */
+function excel_format_team_id( BugData $p_bug ) {
+	if( $p_bug->team_id > 0 ) {
+		return excel_prepare_string( team_get_name( $p_bug->team_id ) );
 	} else {
 		return excel_prepare_string( '' );
 	}

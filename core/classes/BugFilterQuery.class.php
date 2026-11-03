@@ -1863,6 +1863,13 @@ class BugFilterQuery extends DbQuery {
 				return '{project}.name';
 				break;
 
+			case 'team_id':
+				# sorting by team name, issues without a team first
+				$this->add_join( 'LEFT JOIN {team} team_sort_table ON {bug}.team_id = team_sort_table.id' );
+				$this->add_select( 'COALESCE( team_sort_table.name, \'\' ) AS team_sort_alias' );
+				return 'team_sort_alias';
+				break;
+
 			case 'handler_id':
 			case 'reporter_id':
 				$t_table_alias = $p_prop . '_sort_table';
