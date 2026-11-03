@@ -37,6 +37,7 @@
  * @uses lang_api.php
  * @uses print_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses utility_api.php
  * @uses version_api.php
  */
@@ -56,6 +57,7 @@ require_api( 'helper_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
 
@@ -194,6 +196,11 @@ switch( $f_action ) {
 		$t_question_title 		= lang_get( 'assign_bugs_conf_msg' );
 		$t_button_title 		= lang_get( 'assign_group_bugs_button' );
 		$t_form 				= 'assign';
+		break;
+	case 'ASSIGN_TEAM' :
+		$t_question_title 		= lang_get( 'assign_team_bugs_conf_msg' );
+		$t_button_title 		= lang_get( 'assign_team_group_bugs_button' );
+		$t_form 				= 'team_id';
 		break;
 	case 'RESOLVE' :
 		$t_question_title 		= lang_get( 'resolve_bugs_conf_msg' );
@@ -345,6 +352,10 @@ if( $t_multiple_projects ) {
 					break;
 				case 'ASSIGN':
 					print_assign_to_option_list( 0, $t_project_id );
+					break;
+				case 'ASSIGN_TEAM':
+					echo '<option value="0">[' . lang_get( 'none' ) . ']</option>';
+					print_team_option_list( 0 );
 					break;
 				case 'RESOLVE':
 					print_enum_string_option_list( 'resolution', config_get( 'bug_resolution_fixed_threshold' ) );

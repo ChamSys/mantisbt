@@ -30,6 +30,7 @@
  * @uses html_api.php
  * @uses lang_api.php
  * @uses string_api.php
+ * @uses team_api.php
  */
 
 require_api( 'bug_api.php' );
@@ -39,6 +40,7 @@ require_api( 'helper_api.php' );
 require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 
 /**
  * Initialise bug action group api
@@ -235,6 +237,11 @@ function bug_group_action_get_commands( array $p_project_ids = [] ) {
 		if( !isset( $t_commands['ASSIGN'] ) &&
 			access_has_project_level( config_get( 'update_bug_assign_threshold', null, $t_user_id, $t_project_id ), $t_project_id ) ) {
 			$t_commands['ASSIGN'] = lang_get( 'actiongroup_menu_assign' );
+		}
+
+		if( !isset( $t_commands['ASSIGN_TEAM'] ) && !empty( team_get_all() ) &&
+			access_has_project_level( config_get( 'update_bug_assign_threshold', null, $t_user_id, $t_project_id ), $t_project_id ) ) {
+			$t_commands['ASSIGN_TEAM'] = lang_get( 'actiongroup_menu_assign_team' );
 		}
 
 		if( !isset( $t_commands['RESOLVE'] ) && $t_update_bug_status_allowed &&

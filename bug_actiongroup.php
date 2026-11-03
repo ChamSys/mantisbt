@@ -39,6 +39,7 @@
  * @uses lang_api.php
  * @uses print_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses utility_api.php
  * @uses version_api.php
  */
@@ -60,6 +61,7 @@ require_api( 'html_api.php' );
 require_api( 'lang_api.php' );
 require_api( 'print_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
 
@@ -177,6 +179,23 @@ foreach( $f_bug_arr as $t_bug_id ) {
 					}
 				} else {
 					$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_handler' );
+				}
+			} else {
+				$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_access' );
+			}
+			break;
+		case 'ASSIGN_TEAM':
+			if( access_has_bug_level( config_get( 'update_bug_assign_threshold', config_get( 'update_bug_threshold' ) ), $t_bug_id ) ) {
+				$f_team_id = gpc_get_int( 'team_id' );
+				if( $f_team_id == 0 || team_exists( $f_team_id ) ) {
+					$t_old_team_id = $t_bug->team_id;
+					if( $t_old_team_id != $f_team_id ) {
+						bug_set_field( $t_bug_id, 'team_id', $f_team_id );
+						email_team_changed( $t_bug_id, $t_old_team_id, $f_team_id );
+						helper_call_custom_function( 'issue_update_notify', array( $t_bug_id ) );
+					}
+				} else {
+					$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_team' );
 				}
 			} else {
 				$t_failed_ids[$t_bug_id] = lang_get( 'bug_actiongroup_access' );
