@@ -926,6 +926,26 @@ $g_upgrade[218] = array( 'AddColumnSQL', array( db_get_table( 'bug' ), "
 	like_count				I		UNSIGNED NOTNULL DEFAULT '0'" ) );
 $g_upgrade[219] = array( 'CreateIndexSQL', array( 'idx_bug_like_count', db_get_table( 'bug' ), 'like_count' ) );
 
+# Teams: groups of users an issue can be assigned to, see team_api.php. An issue
+# has at most one team, in {bug}.team_id, next to its handler.
+$g_upgrade[220] = array( 'CreateTableSQL', array( db_get_table( 'team' ), "
+	id						I		UNSIGNED NOTNULL PRIMARY AUTOINCREMENT,
+	name					C(128)	NOTNULL DEFAULT \" '' \",
+	description				XL		$t_notnull,
+	date_created			I		UNSIGNED NOTNULL DEFAULT '1'",
+	$t_table_options
+	) );
+$g_upgrade[221] = array( 'CreateIndexSQL', array( 'idx_team_name', db_get_table( 'team' ), 'name', array( 'UNIQUE' ) ) );
+$g_upgrade[222] = array( 'CreateTableSQL', array( db_get_table( 'team_user' ), "
+	team_id					I		UNSIGNED NOTNULL PRIMARY DEFAULT '0',
+	user_id					I		UNSIGNED NOTNULL PRIMARY DEFAULT '0'",
+	$t_table_options
+	) );
+$g_upgrade[223] = array( 'CreateIndexSQL', array( 'idx_team_user_user_id', db_get_table( 'team_user' ), 'user_id' ) );
+$g_upgrade[224] = array( 'AddColumnSQL', array( db_get_table( 'bug' ), "
+	team_id					I		UNSIGNED NOTNULL DEFAULT '0'" ) );
+$g_upgrade[225] = array( 'CreateIndexSQL', array( 'idx_bug_team_id', db_get_table( 'bug' ), 'team_id' ) );
+
 # ----------------------------------------------------------------------------
 # End of schema definition, clear local variables
 #

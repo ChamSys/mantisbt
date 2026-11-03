@@ -89,6 +89,7 @@ use Mantis\Exceptions\ClientException;
  * @property int $project_id
  * @property int $reporter_id
  * @property int $handler_id
+ * @property int $team_id
  * @property int $duplicate_id
  * @property int $priority
  * @property int $severity
@@ -140,6 +141,11 @@ class BugData {
 	 * Bug Handler ID
 	 */
 	protected $handler_id = 0;
+
+	/**
+	 * ID of the team the issue is assigned to, 0 for none, see team_api.php
+	 */
+	protected $team_id = 0;
 
 	/**
 	 * Duplicate ID
@@ -345,6 +351,7 @@ class BugData {
 			case 'project_id':
 			case 'reporter_id':
 			case 'handler_id':
+			case 'team_id':
 			case 'duplicate_id':
 			case 'priority':
 			case 'severity':
@@ -1971,6 +1978,7 @@ function bug_set_field( $p_bug_id, $p_field_name, $p_value ) {
 		case 'project_id':
 		case 'reporter_id':
 		case 'handler_id':
+		case 'team_id':
 		case 'duplicate_id':
 		case 'priority':
 		case 'severity':
