@@ -38,6 +38,7 @@
  * @uses project_api.php
  * @uses project_hierarchy_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses tokens_api.php
  * @uses user_pref_api.php
  * @uses utility_api.php
@@ -58,6 +59,7 @@ require_api( 'like_api.php' );
 require_api( 'project_api.php' );
 require_api( 'project_hierarchy_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'tokens_api.php' );
 require_api( 'user_pref_api.php' );
 require_api( 'utility_api.php' );
@@ -902,6 +904,9 @@ function user_delete( $p_user_id ) {
 
 	# Remove the likes of the user
 	user_like_delete_all( $p_user_id );
+
+	# Take the user out of their teams
+	user_team_delete_all( $p_user_id );
 
 	db_param_push();
 	$t_query = 'DELETE FROM {user_print_pref} WHERE user_id=' . db_param();

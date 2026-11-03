@@ -90,6 +90,7 @@ function user_merge_get_unique_references() {
 	return array(
 		'{bug_monitor}' => array( 'bug_id' ),
 		'{bug_like}' => array( 'bug_id' ),
+		'{team_user}' => array( 'team_id' ),
 		'{project_user_list}' => array( 'project_id' ),
 		'{config}' => array( 'config_id', 'project_id' ),
 	);
@@ -122,7 +123,7 @@ function user_merge_count_references( $p_user_id ) {
  *
  * The issues they reported or handle, their notes, files, history entries,
  * revisions, tags, categories, news, sponsorships, filters and profiles are
- * given to the other user. Their monitoring of issues, likes, project access
+ * given to the other user. Their monitoring of issues, likes, teams, project access
  * and configuration are given too, except where the other user has their own:
  * that is kept. The account, preferences, tokens and API tokens of the first user
  * are deleted. Plugins that keep rows for users do the same on
