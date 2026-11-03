@@ -142,6 +142,9 @@ function mci_issue_get_history( $p_issue_id, $p_user_id, $p_lang ) {
 				case 'handler_id':
 					$t_field = 'handler';
 					break;
+				case 'team_id':
+					$t_field = 'team';
+					break;
 				case 'sponsorship_total':
 					# Skip sponsorship fields
 					$t_skip = true;
@@ -288,6 +291,9 @@ function mci_issue_get_history( $p_issue_id, $p_user_id, $p_lang ) {
 				case 'reporter':
 				case 'handler':
 					$t_value = mci_account_get_array_by_id( (int)$p_value );
+					break;
+				case 'team':
+					$t_value = mci_team_as_array_by_id( (int)$p_value ) ?? array( 'id' => (int)$p_value );
 					break;
 				default:
 					$t_value = $p_value;
@@ -1065,6 +1071,20 @@ function mc_issue_update( $p_username, $p_password, $p_issue_id, stdClass $p_iss
 		$t_bug_data->handler_id = $t_handler_id;
 	}
 
+	# Only check that user can assign the issue if the team was changed by the update.
+	try {
+		$t_team_id = isset( $p_issue['team'] ) ? mci_get_team_id( $p_issue['team'] ) : $t_bug_data->team_id;
+	} catch( ClientException $e ) {
+		return ApiObjectFactory::faultNotFound( $e->getMessage() );
+	}
+	if( $t_bug_data->team_id != $t_team_id ) {
+		if( !access_has_bug_level( config_get( 'update_bug_assign_threshold' ), $p_issue_id, $t_user_id ) ) {
+			return mci_fault_access_denied( $t_user_id, 'Not enough rights to assign issues' );
+		}
+
+		$t_bug_data->team_id = $t_team_id;
+	}
+
 	$t_bug_data->category_id = $t_category_id;
 	$t_bug_data->summary = $t_summary;
 	$t_bug_data->description = $t_description;
@@ -1768,9 +1788,11 @@ function mci_issue_data_as_array( BugData $p_issue_data, $p_user_id, $p_lang, $p
 	}
 
 	if( $t_fields === null || isset( $t_fields['team'] ) ) {
-		if( !empty( $p_issue_data->team_id ) && team_exists( $p_issue_data->team_id ) &&
-			access_has_bug_level( config_get( 'view_handler_threshold', null, null, $t_project_id ), $t_id, $p_user_id ) ) {
-			$t_issue['team'] = array( 'id' => (int)$p_issue_data->team_id, 'name' => team_get_name( $p_issue_data->team_id ) );
+		if( access_has_bug_level( config_get( 'view_handler_threshold', null, null, $t_project_id ), $t_id, $p_user_id ) ) {
+			$t_team = mci_team_as_array_by_id( $p_issue_data->team_id );
+			if( $t_team !== null ) {
+				$t_issue['team'] = $t_team;
+			}
 		}
 	}
 

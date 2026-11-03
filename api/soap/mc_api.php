@@ -625,6 +625,58 @@ function mci_get_user_id( $p_user, $p_default = 0, $p_allow_all_users = false ) 
 }
 
 /**
+ * Get the id of the team that an API call names, by id or by name.
+ *
+ * @param array|object|null $p_team An array with 'id' or 'name', or null or empty for no team.
+ *
+ * @return int The team id, 0 for no team.
+ * @throws ClientException if there is no such team.
+ */
+function mci_get_team_id( $p_team ) {
+	if( is_object( $p_team ) ) {
+		$p_team = ApiObjectFactory::objectToArray( $p_team );
+	}
+
+	if( empty( $p_team ) ) {
+		return 0;
+	}
+
+	if( isset( $p_team['id'] ) ) {
+		$t_team_id = (int)$p_team['id'];
+		$t_reference = $t_team_id;
+	} else if( isset( $p_team['name'] ) ) {
+		$t_team_id = team_get_id_by_name( $p_team['name'] );
+		$t_reference = $p_team['name'];
+	} else {
+		return 0;
+	}
+
+	if( $t_team_id > 0 && !team_exists( $t_team_id ) || $t_team_id === false ) {
+		throw new ClientException(
+			sprintf( "Team '%s' not found.", $t_reference ),
+			ERROR_TEAM_NOT_FOUND,
+			array( $t_reference ) );
+	}
+
+	return (int)$t_team_id;
+}
+
+/**
+ * Given a team id, return its id and name as an array, or null if the id is 0 or unknown.
+ *
+ * @param int $p_team_id A team id, can be 0.
+ *
+ * @return array|null
+ */
+function mci_team_as_array_by_id( $p_team_id ) {
+	if( empty( $p_team_id ) || !team_exists( $p_team_id ) ) {
+		return null;
+	}
+
+	return array( 'id' => (int)$p_team_id, 'name' => team_get_name( $p_team_id ) );
+}
+
+/**
  * Given a profile id, return its information as an array or null
  * if profile id is 0 or not found.
  *

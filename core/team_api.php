@@ -175,6 +175,25 @@ function team_get_name( $p_team_id ) {
 }
 
 /**
+ * Get the id of the team with a name. Case does not matter.
+ *
+ * @param string $p_name A team name.
+ * @return int|false The team id, or false if there is no such team.
+ * @access public
+ */
+function team_get_id_by_name( $p_name ) {
+	$t_name = mb_strtolower( trim( $p_name ) );
+
+	foreach( team_cache_all() as $t_team_id => $t_team ) {
+		if( mb_strtolower( $t_team['name'] ) === $t_name ) {
+			return $t_team_id;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Check that no other team has a name. Names are compared the way the
  * database compares them, which is without regard to case.
  *

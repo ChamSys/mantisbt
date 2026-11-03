@@ -225,6 +225,14 @@ class IssueAddCommand extends Command {
 			}
 		}
 
+		# Prevent unauthorized users setting the team when reporting issue
+		$t_team_id = mci_get_team_id( $t_issue['team'] ?? null );
+		if( $t_team_id > 0 && !access_has_project_level( config_get( 'update_bug_assign_threshold' ) ) ) {
+			throw new ClientException(
+				'User not allowed to assign issues',
+				ERROR_ACCESS_DENIED );
+		}
+
 		# Validate tags and make sure user is allowed to create them if needed
 		if( isset( $t_issue['tags'] ) && is_array( $t_issue['tags'] ) ) {
 			foreach( $t_issue['tags'] as $t_tag ) {
@@ -250,6 +258,7 @@ class IssueAddCommand extends Command {
 		$this->issue->steps_to_reproduce = $t_issue['steps_to_reproduce'] ?? '';
 		$this->issue->additional_information = $t_issue['additional_information'] ?? '';
 		$this->issue->handler_id = $t_handler_id;
+		$this->issue->team_id = $t_team_id;
 		$this->issue->priority = $t_priority_id;
 		$this->issue->severity = $t_severity_id;
 		$this->issue->reproducibility = $t_reproducibility_id;
