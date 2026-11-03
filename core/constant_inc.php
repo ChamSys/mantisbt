@@ -460,6 +460,11 @@ define( 'ERROR_API_TOKEN_NAME_NOT_UNIQUE', 3000 );
 # ERROR_GRAPH_*
 define( 'ERROR_GRAPH_TOOL_NOT_FOUND', 3100 );
 
+# ERROR_TEAM_*
+define( 'ERROR_TEAM_NOT_FOUND', 3200 );
+define( 'ERROR_TEAM_NAME_NOT_UNIQUE', 3201 );
+define( 'ERROR_TEAM_NAME_INVALID', 3202 );
+
 # Generic position constants
 define( 'POSITION_NONE', 0 );
 define( 'POSITION_TOP', 1 );

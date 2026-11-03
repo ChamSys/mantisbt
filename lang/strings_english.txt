@@ -1806,6 +1806,9 @@ $MANTIS_ERROR[ERROR_LOGFILE_NOT_WRITABLE] = 'The file specified in $g_log_destin
 $MANTIS_ERROR[ERROR_MONITOR_ACCESS_TOO_LOW] = 'Added user does not have sufficient access rights to monitor this issue.';
 $MANTIS_ERROR[ERROR_USER_TOKEN_NOT_FOUND] = 'User API token with id "%d" not found.';
 $MANTIS_ERROR[ERROR_GRAPH_TOOL_NOT_FOUND] = 'Graphviz tool "%s" not found or execution failed. Make sure the library is installed and $g_graphviz_path is correctly set.';
+$MANTIS_ERROR[ERROR_TEAM_NOT_FOUND] = 'Team "%d" not found.';
+$MANTIS_ERROR[ERROR_TEAM_NAME_NOT_UNIQUE] = 'A team with that name already exists. Please go back and enter a different name.';
+$MANTIS_ERROR[ERROR_TEAM_NAME_INVALID] = 'Invalid team name specified. Team names cannot be blank.';
 
 # dropzone.js - placeholders format is defined by the library
 $s_dropzone_default_message = 'Attach files by dragging & dropping, selecting or pasting them.';
