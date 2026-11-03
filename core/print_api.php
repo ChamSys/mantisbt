@@ -48,6 +48,7 @@
  * @uses project_hierarchy_api.php
  * @uses string_api.php
  * @uses tag_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses utility_api.php
  * @uses version_api.php
@@ -78,6 +79,7 @@ require_api( 'project_api.php' );
 require_api( 'project_hierarchy_api.php' );
 require_api( 'string_api.php' );
 require_api( 'tag_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
@@ -365,6 +367,20 @@ function print_user_option_list( $p_user_id, $p_project_id = null, $p_access = A
 		echo '<option value="' . $t_row['id'] . '" ';
 		check_selected( $p_user_id, (int)$t_row['id'] );
 		echo '>' . string_attribute( $t_display[$i] ) . '</option>';
+	}
+}
+
+/**
+ * Print the options of a list of teams.
+ *
+ * @param integer $p_team_id The team that is selected, 0 for none.
+ * @return void
+ */
+function print_team_option_list( $p_team_id = 0 ) {
+	foreach( team_get_all() as $t_team_id => $t_team ) {
+		echo '<option value="' . $t_team_id . '" ';
+		check_selected( (int)$p_team_id, $t_team_id );
+		echo '>' . string_attribute( $t_team['name'] ) . '</option>';
 	}
 }
 

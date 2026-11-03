@@ -58,6 +58,7 @@
 					steps_to_reproduce,
 					tags,
 					target_version,
+					team,
 					view_state.
 				</para>
 				<para>
@@ -121,6 +122,7 @@
 					summary,
 					tags,
 					target_version,
+					team,
 					view_state.
 				</para>
 				<para>
@@ -169,6 +171,7 @@
 					steps_to_reproduce,
 					summary,
 					target_version,
+					team,
 					view_state.
 				</para>
 				<para>

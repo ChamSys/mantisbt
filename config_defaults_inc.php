@@ -3195,6 +3195,7 @@ $g_enable_product_build = OFF;
  *   - steps_to_reproduce
  *   - tags
  *   - target_version
+ *   - team
  *   - view_state
  *
  * The summary and description fields are always shown and do not need to be
@@ -3231,6 +3232,7 @@ $g_bug_report_page_fields = array(
 	'steps_to_reproduce',
 	'tags',
 	'target_version',
+	'team',
 	'view_state',
 );
 
@@ -3266,6 +3268,7 @@ $g_bug_report_page_fields = array(
  *   - summary
  *   - tags
  *   - target_version
+ *   - team
  *   - view_state
  *
  * Fields not listed above cannot be shown on the bug view page. Visibility of
@@ -3306,6 +3309,7 @@ $g_bug_view_page_fields = array(
 	'summary',
 	'tags',
 	'target_version',
+	'team',
 	'view_state',
 );
 
@@ -3339,6 +3343,7 @@ $g_bug_view_page_fields = array(
  *   - steps_to_reproduce
  *   - summary
  *   - target_version
+ *   - team
  *   - view_state
  *
  * Fields not listed above cannot be shown on the bug update page. Visibility
@@ -3377,6 +3382,7 @@ $g_bug_update_page_fields = array(
 	'steps_to_reproduce',
 	'summary',
 	'target_version',
+	'team',
 	'view_state',
 );
 

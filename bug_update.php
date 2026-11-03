@@ -109,6 +109,7 @@ if( $t_due_date !== null ) {
 $t_updated_bug->duplicate_id = gpc_get_int( 'duplicate_id', 0 );
 $t_updated_bug->eta = gpc_get_int( 'eta', $t_existing_bug->eta );
 $t_updated_bug->handler_id = gpc_get_int( 'handler_id', $t_existing_bug->handler_id );
+$t_updated_bug->team_id = gpc_get_int( 'team_id', $t_existing_bug->team_id );
 $t_updated_bug->last_updated = gpc_get_string( 'last_updated' );
 $t_updated_bug->os = gpc_get_string( 'os', $t_existing_bug->os );
 $t_updated_bug->os_build = gpc_get_string( 'os_build', $t_existing_bug->os_build );
@@ -284,6 +285,11 @@ if( $t_existing_bug->handler_id != $t_updated_bug->handler_id ) {
 			trigger_error( ERROR_SPONSORSHIP_ASSIGNER_ACCESS_LEVEL_TOO_LOW, ERROR );
 		}
 	}
+}
+
+# Changing the team of an issue takes the same access as changing its handler.
+if( $t_existing_bug->team_id != $t_updated_bug->team_id ) {
+	access_ensure_bug_level( config_get( 'update_bug_assign_threshold' ), $f_bug_id );
 }
 
 # Check whether the category has been undefined when it's compulsory.

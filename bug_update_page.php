@@ -42,6 +42,7 @@
  * @uses print_api.php
  * @uses project_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses version_api.php
  */
@@ -66,6 +67,7 @@ require_api( 'prepare_api.php' );
 require_api( 'print_api.php' );
 require_api( 'project_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'version_api.php' );
 
@@ -115,6 +117,7 @@ $t_show_date_submitted = in_array( 'date_submitted', $t_fields );
 $t_show_last_updated = in_array( 'last_updated', $t_fields );
 $t_show_reporter = in_array( 'reporter', $t_fields );
 $t_show_handler = in_array( 'handler', $t_fields ) && access_has_bug_level( config_get( 'view_handler_threshold' ), $t_bug_id );
+$t_show_team = in_array( 'team', $t_fields ) && access_has_bug_level( config_get( 'view_handler_threshold' ), $t_bug_id ) && !empty( team_get_all() );
 $t_show_priority = in_array( 'priority', $t_fields );
 $t_show_severity = in_array( 'severity', $t_fields );
 $t_show_reproducibility = in_array( 'reproducibility', $t_fields );
@@ -372,6 +375,28 @@ if( $t_show_reporter || $t_show_handler || $t_show_due_date ) {
 	if( $t_spacer > 0 ) {
 		echo '<td colspan="', $t_spacer, '">&#160;</td>';
 	}
+	echo '</tr>';
+}
+
+#
+# Team
+#
+
+if( $t_show_team ) {
+	echo '<tr>';
+	echo '<th class="category"><label for="team_id">' . lang_get( 'team' ) . '</label></th>';
+	echo '<td colspan="5">';
+
+	if( access_has_project_level( config_get( 'update_bug_assign_threshold', config_get( 'update_bug_threshold' ) ) ) ) {
+		echo '<select ' . helper_get_tab_index() . ' id="team_id" name="team_id" class="input-sm">';
+		echo '<option value="0">&nbsp;</option>';
+		print_team_option_list( $t_bug->team_id );
+		echo '</select>';
+	} else {
+		echo string_display_line( team_get_name( $t_bug->team_id ) );
+	}
+
+	echo '</td>';
 	echo '</tr>';
 }
 
