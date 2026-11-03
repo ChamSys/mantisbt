@@ -11,6 +11,19 @@
 		anything: who can see and change an issue is still what the access levels of the project say.
 	</para>
 
+	<para>The team of an issue is kept next to its handler, not instead of it: an issue can be assigned to
+		a team before anybody has taken it on, and keeps the team when someone does.  It is set with the
+		<emphasis>Team</emphasis> field of the report and update pages, with the bulk action
+		<emphasis>Assign Team</emphasis> of the issue list, or in the REST API
+		(<literal>"team": {"id": 3}</literal> or <literal>{"name": "Support"}</literal>), by users who can assign
+		issues ($g_update_bug_assign_threshold).  It is shown to the users who can see who an issue is assigned
+		to ($g_view_handler_threshold).  The issue list can be filtered by team (<emphasis>[my teams]</emphasis>
+		is the teams of the user) and has a sortable <emphasis>Team</emphasis> column, and the
+		<emphasis>team</emphasis> box of My View lists the unresolved issues of the teams of the user.  The
+		members of the team of an issue are sent what is mailed about it, see the notify flag
+		<literal>team</literal>.
+	</para>
+
 	<variablelist>
 		<varlistentry>
 			<term>$g_enable_teams</term>

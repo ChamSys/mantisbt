@@ -24,6 +24,7 @@ The rules it is built with:
 | Look up users as you type in the user filters | `$g_user_typeahead_min_users` | 0 (never) |
 | Hide other users from the user lists | `$g_show_user_list_threshold` | ANYBODY (as stock) |
 | Likes on issues | `$g_enable_likes` | OFF |
+| Teams: assign an issue to a group of users | `$g_enable_teams` | OFF |
 | Layout for phones | `$g_mobile_layout` | OFF |
 | Several favicons (SVG, PNG sizes, Apple icon) | `$g_favicon_image` as a list | one icon, as stock |
 | An image for the brand in the navbar | `$g_navbar_logo_image` | empty (the site name) |
@@ -91,7 +92,25 @@ updated and never sends mail. Access is `$g_like_bug_threshold`, with `$g_like_o
 `$g_like_readonly_issues`. Also in the REST API (`/issues/{id}/likes`) and as the events `EVENT_BUG_LIKE` and
 `EVENT_BUG_UNLIKE`.
 
-## Phones
+## Teams
+
+A team is a named group of users that an issue can be assigned to (`$g_enable_teams`). The team is kept next to the
+issue's handler, not instead of it: an issue can be "Team: Support, Assigned to: nobody yet", and a member who takes
+it on keeps the team on it. Teams belong to no project and a user can be in several. Being in a team gives no access
+to anything, who may see and change an issue is still what the access levels of the project say.
+
+- **Manage > Teams** (`$g_manage_team_threshold`, ADMINISTRATOR) creates teams and puts users in them.
+- **Setting it**: a Team field after the assignee on the report and update pages and a bulk action "Assign Team" in
+  the issue list, for users who may assign issues (`$g_update_bug_assign_threshold`); in the REST API as
+  `"team": {"id": 3}` or `{"name": "Support"}` on `POST /issues` and `PATCH /issues/{id}`. The issue page, the
+  REST issue and its history show it, to users who may see who an issue is assigned to
+  (`$g_view_handler_threshold`).
+- **Finding**: a Team filter in the issue list (`[any]`, `[none]`, `[my teams]` or teams), a sortable Team column
+  (also for CSV and Excel), and a My View box `team` (off by default) for the unresolved issues of my teams.
+- **Mail**: the notify flag `team` (in `$g_default_notify_flags`) makes the members of the team recipients of what
+  is mailed about the issue, and a change of team mails the members of the new and the old team.
+- Deleting a team, or a user, takes the members out; the issues of a deleted team are left without one, with a line
+  in each history. A merge of two users gives the first one's teams to the other.
 
 `$g_mobile_layout` adds a stylesheet and a script that apply below 768 pixels and change nothing on larger screens:
 
@@ -204,8 +223,8 @@ of an account, protected ones too when asked), `user_create()` with an option to
 
 ## Upgrading from 2.28.4
 
-- The schema has new steps (214 to 219): the search queue table, the likes table and `like_count` on issues. Run
-  `admin/install.php` as for any upgrade. Downgrading is not supported.
+- The schema has new steps (214 to 225): the search queue table, the likes table and `like_count` on issues, the
+  team tables and `team_id` on issues. Run `admin/install.php` as for any upgrade. Downgrading is not supported.
 - Nothing changes in behaviour until an option above is set, apart from the bug fixes, the accessibility
   and `data-*` markup, and "similar issues" on the report page once quick search is on.
 
