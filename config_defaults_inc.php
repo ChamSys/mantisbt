@@ -3666,6 +3666,15 @@ $g_project_user_threshold = MANAGER;
 $g_manage_user_threshold = ADMINISTRATOR;
 
 /**
+ * Whether to enable teams: groups of users that issues can be assigned to, next to
+ * the user they are assigned to. Without it there is no Manage > Teams page, and no
+ * team on the issue pages, in the filter, the list columns or the bulk actions.
+ *
+ * @global int $g_enable_teams
+ */
+$g_enable_teams = OFF;
+
+/**
  * Threshold needed to manage teams: create them, change them, and put users in them.
  *
  * @global int $g_manage_team_threshold

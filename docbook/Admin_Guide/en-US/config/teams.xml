@@ -13,6 +13,15 @@
 
 	<variablelist>
 		<varlistentry>
+			<term>$g_enable_teams</term>
+			<listitem>
+				<para>Whether to enable teams. It defaults to OFF. Without it there is no
+					<emphasis>Teams</emphasis> page, and no team on the issue pages, in the
+					filter, in the columns of the issue list or in its bulk actions. Issues that
+					were assigned to a team keep it while teams are off.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
 			<term>$g_manage_team_threshold</term>
 			<listitem>
 				<para>The access level needed to manage teams: create them, change them, delete them and

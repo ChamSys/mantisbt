@@ -225,7 +225,7 @@ $t_show_handler = in_array( 'handler', $t_fields )
 	&& access_has_project_level( config_get( 'update_bug_assign_threshold' ) );
 $t_show_team = in_array( 'team', $t_fields )
 	&& access_has_project_level( config_get( 'update_bug_assign_threshold' ) )
-	&& !empty( team_get_all() );
+	&& team_is_in_use();
 $t_show_monitors = in_array( 'monitors', $t_fields )
 	&& access_has_project_level( config_get( 'monitor_add_others_bug_threshold' ) );
 $t_show_profiles = config_get( 'enable_profiles' );

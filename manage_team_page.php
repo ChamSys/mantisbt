@@ -44,6 +44,7 @@ require_api( 'print_api.php' );
 require_api( 'string_api.php' );
 require_api( 'team_api.php' );
 
+team_ensure_enabled();
 access_ensure_global_level( config_get( 'manage_team_threshold' ) );
 
 compress_enable();

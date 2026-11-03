@@ -1075,6 +1075,9 @@ function mc_issue_update( $p_username, $p_password, $p_issue_id, stdClass $p_iss
 	try {
 		$t_team_id = isset( $p_issue['team'] ) ? mci_get_team_id( $p_issue['team'] ) : $t_bug_data->team_id;
 	} catch( ClientException $e ) {
+		if( $e->getCode() == ERROR_ACCESS_DENIED ) {
+			return mci_fault_access_denied( $t_user_id, $e->getMessage() );
+		}
 		return ApiObjectFactory::faultNotFound( $e->getMessage() );
 	}
 	if( $t_bug_data->team_id != $t_team_id ) {

@@ -50,6 +50,7 @@ form_security_validate( 'manage_team_delete' );
 
 auth_reauthenticate();
 
+team_ensure_enabled();
 access_ensure_global_level( config_get( 'manage_team_threshold' ) );
 
 $f_team_id = gpc_get_int( 'team_id' );

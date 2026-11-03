@@ -47,6 +47,7 @@
  * @uses project_api.php
  * @uses rss_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses theme_api.php
  * @uses user_api.php
  * @uses utility_api.php
@@ -75,6 +76,7 @@ require_api( 'print_api.php' );
 require_api( 'project_api.php' );
 require_api( 'rss_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'theme_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
@@ -934,7 +936,7 @@ function print_manage_menu( $p_page = '' ) {
 	if( access_has_project_level( config_get( 'manage_project_threshold' ) ) ) {
 		$t_pages['manage_proj_page.php'] = array( 'url'   => 'manage_proj_page.php', 'label' => 'manage_projects_link' );
 	}
-	if( access_has_global_level( config_get( 'manage_team_threshold' ) ) ) {
+	if( team_is_enabled() && access_has_global_level( config_get( 'manage_team_threshold' ) ) ) {
 		$t_pages['manage_team_page.php'] = array( 'url'   => 'manage_team_page.php', 'label' => 'manage_teams_link' );
 	}
 	if( access_has_global_level( config_get( 'tag_edit_threshold' ) ) ) {

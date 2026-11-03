@@ -239,7 +239,7 @@ function bug_group_action_get_commands( array $p_project_ids = [] ) {
 			$t_commands['ASSIGN'] = lang_get( 'actiongroup_menu_assign' );
 		}
 
-		if( !isset( $t_commands['ASSIGN_TEAM'] ) && !empty( team_get_all() ) &&
+		if( !isset( $t_commands['ASSIGN_TEAM'] ) && team_is_in_use() &&
 			access_has_project_level( config_get( 'update_bug_assign_threshold', null, $t_user_id, $t_project_id ), $t_project_id ) ) {
 			$t_commands['ASSIGN_TEAM'] = lang_get( 'actiongroup_menu_assign_team' );
 		}

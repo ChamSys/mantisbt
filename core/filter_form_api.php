@@ -2738,7 +2738,7 @@ function filter_form_draw_inputs( $p_filter, $p_for_screen = true, $p_static = f
 			null /* class */,
 			'handler_id_filter_target' /* content id */
 			));
-	if( access_has_any_project_level( 'view_handler_threshold' ) && !empty( team_get_all() ) ) {
+	if( access_has_any_project_level( 'view_handler_threshold' ) && team_is_in_use() ) {
 		$t_row1->add_item( new TableFieldsItem(
 				$get_field_header( 'team_id_filter', lang_get( 'team' ) ),
 				filter_form_get_input( $t_filter, 'team_id', $t_show_inputs ),

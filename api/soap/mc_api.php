@@ -641,6 +641,10 @@ function mci_get_team_id( $p_team ) {
 		return 0;
 	}
 
+	if( !team_is_enabled() ) {
+		throw new ClientException( 'Teams are not enabled.', ERROR_ACCESS_DENIED );
+	}
+
 	if( isset( $p_team['id'] ) ) {
 		$t_team_id = (int)$p_team['id'];
 		$t_reference = $t_team_id;

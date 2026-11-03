@@ -40,6 +40,7 @@ require_api( 'team_api.php' );
 
 form_security_validate( 'manage_team_member_remove' );
 
+team_ensure_enabled();
 access_ensure_global_level( config_get( 'manage_team_threshold' ) );
 
 $f_team_id = gpc_get_int( 'team_id' );

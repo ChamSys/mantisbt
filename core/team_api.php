@@ -32,8 +32,10 @@
  * @copyright Copyright 2002  MantisBT Team - mantisbt-dev@lists.sourceforge.net
  * @link http://www.mantisbt.org
  *
+ * @uses access_api.php
  * @uses authentication_api.php
  * @uses bug_api.php
+ * @uses config_api.php
  * @uses constant_inc.php
  * @uses database_api.php
  * @uses error_api.php
@@ -42,8 +44,10 @@
  * @uses utility_api.php
  */
 
+require_api( 'access_api.php' );
 require_api( 'authentication_api.php' );
 require_api( 'bug_api.php' );
+require_api( 'config_api.php' );
 require_api( 'constant_inc.php' );
 require_api( 'database_api.php' );
 require_api( 'error_api.php' );
@@ -55,6 +59,40 @@ require_api( 'utility_api.php' );
 # the users that have been asked for.
 $g_cache_teams = null;
 $g_cache_user_team_ids = array();
+
+/**
+ * Check if teams are enabled.
+ *
+ * @return bool
+ * @access public
+ */
+function team_is_enabled() {
+	# Teams belong to no project, so neither does the option
+	return ON == config_get( 'enable_teams', null, ALL_USERS, ALL_PROJECTS );
+}
+
+/**
+ * Check if teams are enabled and there is at least one, which is when the
+ * pages have a place for them.
+ *
+ * @return bool
+ * @access public
+ */
+function team_is_in_use() {
+	return team_is_enabled() && !empty( team_cache_all() );
+}
+
+/**
+ * Fail unless teams are enabled, for the pages that manage them.
+ *
+ * @return void
+ * @access public
+ */
+function team_ensure_enabled() {
+	if( !team_is_enabled() ) {
+		access_denied();
+	}
+}
 
 /**
  * Load all the teams, ordered by name, into the cache.

@@ -40,6 +40,7 @@ require_api( 'team_api.php' );
 
 form_security_validate( 'manage_team_create' );
 
+team_ensure_enabled();
 access_ensure_global_level( config_get( 'manage_team_threshold' ) );
 
 $f_name = gpc_get_string( 'name' );

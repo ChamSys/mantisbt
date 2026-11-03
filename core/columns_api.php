@@ -131,8 +131,8 @@ function columns_filter_disabled( array $p_columns ) {
 				break;
 
 			case 'team_id':
-				# Only where there are teams, and for those who may see who an issue is assigned to
-				if( empty( team_get_all() ) || !access_has_project_level( config_get( 'view_handler_threshold' ) ) ) {
+				# Only where teams are in use, and for those who may see who an issue is assigned to
+				if( !team_is_in_use() || !access_has_project_level( config_get( 'view_handler_threshold' ) ) ) {
 					continue 2;
 				}
 				break;
