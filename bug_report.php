@@ -161,6 +161,11 @@ if( $t_handler_id != NO_USER ) {
 	$t_issue['handler'] = array( 'id' => $t_handler_id );
 }
 
+$t_team_id = gpc_get_int( 'team_id', 0 );
+if( $t_team_id > 0 ) {
+	$t_issue['team'] = array( 'id' => $t_team_id );
+}
+
 $t_monitors = gpc_get_int_array( 'monitors', array() );
 if( $t_monitors ) {
 	# The API expects a list of arrays with 'id' as key

@@ -45,6 +45,7 @@
  * @uses project_api.php
  * @uses relationship_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses utility_api.php
  * @uses version_api.php
  */
@@ -72,6 +73,7 @@ require_api( 'profile_api.php' );
 require_api( 'project_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'utility_api.php' );
 require_api( 'version_api.php' );
 
@@ -126,6 +128,7 @@ if( $f_master_bug_id > 0 ) {
 	$f_target_version		= $t_bug->target_version;
 	$f_profile_id			= 0;
 	$f_handler_id			= $t_bug->handler_id;
+	$f_team_id				= $t_bug->team_id;
 
 	$f_category_id			= $t_bug->category_id;
 	$f_reproducibility		= $t_bug->reproducibility;
@@ -184,6 +187,7 @@ if( $f_master_bug_id > 0 ) {
 	$f_target_version		= gpc_get_string( 'target_version', '' );
 	$f_profile_id			= gpc_get_int( 'profile_id', 0 );
 	$f_handler_id			= gpc_get_int( 'handler_id', 0 );
+	$f_team_id				= gpc_get_int( 'team_id', 0 );
 
 	$f_category_id			= gpc_get_int( 'category_id', 0 );
 	$f_reproducibility		= gpc_get_int( 'reproducibility', (int)config_get( 'default_bug_reproducibility' ) );
@@ -219,6 +223,9 @@ $t_show_priority = in_array( 'priority', $t_fields );
 $t_show_steps_to_reproduce = in_array( 'steps_to_reproduce', $t_fields );
 $t_show_handler = in_array( 'handler', $t_fields )
 	&& access_has_project_level( config_get( 'update_bug_assign_threshold' ) );
+$t_show_team = in_array( 'team', $t_fields )
+	&& access_has_project_level( config_get( 'update_bug_assign_threshold' ) )
+	&& !empty( team_get_all() );
 $t_show_monitors = in_array( 'monitors', $t_fields )
 	&& access_has_project_level( config_get( 'monitor_add_others_bug_threshold' ) );
 $t_show_profiles = config_get( 'enable_profiles' );
@@ -510,6 +517,20 @@ if( $t_show_attachments ) {
 			<select <?php echo helper_get_tab_index() ?> id="handler_id" name="handler_id" class="input-sm">
 				<option value="0" selected="selected">&nbsp;</option>
 				<?php print_assign_to_option_list( $f_handler_id ) ?>
+			</select>
+		</td>
+	</tr>
+<?php } ?>
+
+<?php if( $t_show_team ) { ?>
+	<tr>
+		<th class="category">
+			<label for="team_id"><?php echo lang_get( 'team' ) ?></label>
+		</th>
+		<td>
+			<select <?php echo helper_get_tab_index() ?> id="team_id" name="team_id" class="input-sm">
+				<option value="0" selected="selected">&nbsp;</option>
+				<?php print_team_option_list( $f_team_id ) ?>
 			</select>
 		</td>
 	</tr>
