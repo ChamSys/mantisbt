@@ -857,6 +857,12 @@ class BugData {
 				return true;
 			}
 
+			# If the team changes, send out the team change email
+			if( $t_old_data->team_id != $this->team_id ) {
+				email_team_changed( $c_bug_id, $t_old_data->team_id, $this->team_id );
+				return true;
+			}
+
 			# status changed
 			if( $t_old_data->status != $this->status ) {
 				$t_status = MantisEnum::getLabel( config_get( 'status_enum_string' ), $this->status );

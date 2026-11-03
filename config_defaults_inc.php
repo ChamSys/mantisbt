@@ -544,6 +544,7 @@ $g_email_notifications_verbose = OFF;
  * The user categories are:
  # - `reporter`:      the Issue's reporter
  * - `handler`:       the user assigned to the Issue
+ * - `team`:          the members of the team the Issue is assigned to
  * - `monitor`:       users who are monitoring the Issue
  * - `bugnotes`:      users who have added a bugnote to the Issue
  * - `category`:      category owners
@@ -558,6 +559,7 @@ $g_email_notifications_verbose = OFF;
 $g_default_notify_flags = array(
 	'reporter'      => ON,
 	'handler'       => ON,
+	'team'          => ON,
 	'monitor'       => ON,
 	'bugnotes'      => ON,
 	'category'      => ON,
@@ -613,6 +615,7 @@ $g_notify_flags = array(
 	'monitor' => array(
 		'reporter'      => OFF,
 		'handler'       => OFF,
+		'team'          => OFF,
 		'monitor'       => OFF,
 		'bugnotes'      => OFF,
 		'explicit'      => ON,

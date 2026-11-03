@@ -43,6 +43,7 @@
  * @uses relationship_api.php
  * @uses sponsorship_api.php
  * @uses string_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses user_pref_api.php
  * @uses utility_api.php
@@ -72,6 +73,7 @@ require_api( 'project_api.php' );
 require_api( 'relationship_api.php' );
 require_api( 'sponsorship_api.php' );
 require_api( 'string_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'user_pref_api.php' );
 require_api( 'utility_api.php' );
@@ -315,6 +317,19 @@ function email_collect_recipients( $p_bug_id, $p_notify_type, array $p_extra_use
 			log_event( LOG_EMAIL_RECIPIENT, 'Issue = #%d, add @U%d (handler)', $p_bug_id, $t_handler_id );
 		} else {
 			log_event( LOG_EMAIL_RECIPIENT, 'Issue = #%d, skip @U%d (handler disabled)', $p_bug_id, $t_handler_id );
+		}
+	}
+
+	# add the members of the team
+	$t_team_id = bug_get_field( $p_bug_id, 'team_id' );
+	if( $t_team_id > 0 ) {
+		if( ON == email_notify_flag( $p_notify_type, 'team' ) ) {
+			foreach( team_get_member_ids( $t_team_id ) as $t_member_id ) {
+				$t_recipients[$t_member_id] = true;
+				log_event( LOG_EMAIL_RECIPIENT, 'Issue = #%d, add @U%d (team %d)', $p_bug_id, $t_member_id, $t_team_id );
+			}
+		} else {
+			log_event( LOG_EMAIL_RECIPIENT, 'Issue = #%d, skip team %d (team disabled)', $p_bug_id, $t_team_id );
 		}
 	}
 
@@ -1343,6 +1358,34 @@ function email_owner_changed($p_bug_id, $p_prev_handler_id, $p_new_handler_id ) 
 		if ( email_notify_flag( 'owner', 'handler' ) == ON ) {
 			$t_extra_user_ids_to_email[] = $p_prev_handler_id;
 		}
+	}
+
+	email_generic( $p_bug_id, 'owner', $t_message_id, /* headers */ [], $t_extra_user_ids_to_email );
+}
+
+/**
+ * Send notices when the team of a bug is changed: to the members of the new
+ * team (as for any message about the issue) and to those of the team it was
+ * taken from.
+ *
+ * @param int $p_bug_id
+ * @param int $p_prev_team_id
+ * @param int $p_new_team_id
+ *
+ * @return void
+ * @throws ClientException
+ */
+function email_team_changed( $p_bug_id, $p_prev_team_id, $p_new_team_id ) {
+	log_event( LOG_EMAIL, sprintf( 'Issue #%d is assigned to team %d instead of team %d.', $p_bug_id, $p_new_team_id, $p_prev_team_id ) );
+
+	# It is not unassigned while it still has a handler
+	$t_message_id = ( $p_new_team_id == 0 && bug_get_field( $p_bug_id, 'handler_id' ) == NO_USER ) ?
+			'email_notification_title_for_action_bug_unassigned' :
+			'email_notification_title_for_action_bug_assigned';
+
+	$t_extra_user_ids_to_email = array();
+	if( $p_prev_team_id > 0 && $p_prev_team_id != $p_new_team_id && email_notify_flag( 'owner', 'team' ) == ON ) {
+		$t_extra_user_ids_to_email = team_get_member_ids( $p_prev_team_id );
 	}
 
 	email_generic( $p_bug_id, 'owner', $t_message_id, /* headers */ [], $t_extra_user_ids_to_email );

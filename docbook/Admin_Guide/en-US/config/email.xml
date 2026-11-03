@@ -100,6 +100,11 @@
 							</para>
 						</listitem>
 						<listitem><para>
+							<literal>team</literal>:
+							the members of the team the Issue is assigned to
+							</para>
+						</listitem>
+						<listitem><para>
 							<literal>monitor</literal>:
 							users who are monitoring the Issue
 							</para>
