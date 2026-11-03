@@ -47,6 +47,7 @@
  * @uses search_api.php
  * @uses sponsorship_api.php
  * @uses tag_api.php
+ * @uses team_api.php
  * @uses user_api.php
  * @uses utility_api.php
  *
@@ -77,6 +78,7 @@ require_api( 'relationship_api.php' );
 require_api( 'search_api.php' );
 require_api( 'sponsorship_api.php' );
 require_api( 'tag_api.php' );
+require_api( 'team_api.php' );
 require_api( 'user_api.php' );
 require_api( 'utility_api.php' );
 
@@ -531,6 +533,11 @@ class BugData {
 			category_ensure_exists( $this->category_id );
 		}
 
+		# Ensure that the team is a valid team
+		if( $this->team_id > 0 ) {
+			team_ensure_exists( $this->team_id );
+		}
+
 		if( !is_blank( $this->duplicate_id ) && ( $this->duplicate_id != 0 ) && ( $this->id == $this->duplicate_id ) ) {
 			trigger_error( ERROR_BUG_DUPLICATE_SELF, ERROR );
 			# never returns
@@ -603,7 +610,7 @@ class BugData {
 					      last_updated,eta, bug_text_id,
 					      os, os_build,platform, version,build,
 					      profile_id, summary, view_state, sponsorship_total, sticky, fixed_in_version,
-					      target_version, due_date
+					      target_version, due_date, team_id
 					    )
 					  VALUES
 					    ( ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
@@ -612,8 +619,9 @@ class BugData {
 					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
 					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
 					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
-					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ')';
-		db_query( $t_query, array( $this->project_id, $this->reporter_id, $this->handler_id, $this->duplicate_id, $this->priority, $this->severity, $this->reproducibility, $t_status, $this->resolution, $this->projection, $this->category_id, $this->date_submitted, $this->last_updated, $this->eta, $t_text_id, $this->os, $this->os_build, $this->platform, $this->version, $this->build, $this->profile_id, $this->summary, $this->view_state, $this->sponsorship_total, $this->sticky, $this->fixed_in_version, $this->target_version, $this->due_date ) );
+					      ' . db_param() . ',' . db_param() . ',' . db_param() . ',' . db_param() . ',
+					      ' . db_param() . ')';
+		db_query( $t_query, array( $this->project_id, $this->reporter_id, $this->handler_id, $this->duplicate_id, $this->priority, $this->severity, $this->reproducibility, $t_status, $this->resolution, $this->projection, $this->category_id, $this->date_submitted, $this->last_updated, $this->eta, $t_text_id, $this->os, $this->os_build, $this->platform, $this->version, $this->build, $this->profile_id, $this->summary, $this->view_state, $this->sponsorship_total, $this->sticky, $this->fixed_in_version, $this->target_version, $this->due_date, $this->team_id ) );
 
 		$this->id = db_insert_id( db_get_table( 'bug' ) );
 
@@ -625,6 +633,7 @@ class BugData {
 		# log changes, if any (compare happens in history_log_event_direct)
 		history_log_event_direct( $this->id, 'status', $t_original_status, $t_status );
 		history_log_event_direct( $this->id, 'handler_id', 0, $this->handler_id );
+		history_log_event_direct( $this->id, 'team_id', 0, $this->team_id );
 
 		return $this->id;
 	}
@@ -712,7 +721,8 @@ class BugData {
 		db_param_push();
 		$t_query = 'UPDATE {bug}
 					SET project_id=' . db_param() . ', reporter_id=' . db_param() . ',
-						handler_id=' . db_param() . ', duplicate_id=' . db_param() . ',
+						handler_id=' . db_param() . ', team_id=' . db_param() . ',
+						duplicate_id=' . db_param() . ',
 						priority=' . db_param() . ', severity=' . db_param() . ',
 						reproducibility=' . db_param() . ', status=' . db_param() . ',
 						resolution=' . db_param() . ', projection=' . db_param() . ',
@@ -723,7 +733,8 @@ class BugData {
 
 		$t_fields = array(
 			$this->project_id, $this->reporter_id,
-			$this->handler_id, $this->duplicate_id,
+			$this->handler_id, $this->team_id,
+			$this->duplicate_id,
 			$this->priority, $this->severity,
 			$this->reproducibility, $this->status,
 			$this->resolution, $this->projection,
@@ -762,6 +773,7 @@ class BugData {
 		history_log_event_direct( $c_bug_id, 'project_id', $t_old_data->project_id, $this->project_id );
 		history_log_event_direct( $c_bug_id, 'reporter_id', $t_old_data->reporter_id, $this->reporter_id );
 		history_log_event_direct( $c_bug_id, 'handler_id', $t_old_data->handler_id, $this->handler_id );
+		history_log_event_direct( $c_bug_id, 'team_id', $t_old_data->team_id, $this->team_id );
 		history_log_event_direct( $c_bug_id, 'priority', $t_old_data->priority, $this->priority );
 		history_log_event_direct( $c_bug_id, 'severity', $t_old_data->severity, $this->severity );
 		history_log_event_direct( $c_bug_id, 'reproducibility', $t_old_data->reproducibility, $this->reproducibility );
