@@ -1010,3 +1010,35 @@ function access_can_view_bugnote_revisions( $p_bugnote_id, $p_user_id = null ) {
 
 	return $t_has_access || bugnote_is_user_reporter( $p_bugnote_id, $t_user_id );
 }
+
+/**
+ * Return true if user is allowed to edit the text of an issue he/she reported.
+ *
+ * User must be the reporter of the issue, have $g_bug_user_edit_threshold, and
+ * the issue must not be read-only. The text is the description, the steps to
+ * reproduce and the additional information; nothing else of the issue.
+ *
+ * @param int $p_bug_id  A bug identifier.
+ * @param int $p_user_id A user identifier, null for the current user.
+ *
+ * @return bool
+ */
+function access_can_edit_bug_text( $p_bug_id, $p_user_id = null ) {
+	if( !bug_exists( $p_bug_id ) ) {
+		return false;
+	}
+	$t_user_id = null === $p_user_id ? auth_get_current_user_id() : $p_user_id;
+	if( user_is_anonymous( $t_user_id ) || !bug_is_user_reporter( $p_bug_id, $t_user_id ) ) {
+		return false;
+	}
+	if( bug_is_readonly( $p_bug_id ) ) {
+		return false;
+	}
+
+	$t_project_id = bug_get_field( $p_bug_id, 'project_id' );
+	return access_has_bug_level(
+		config_get( 'bug_user_edit_threshold', null, $t_user_id, $t_project_id ),
+		$p_bug_id,
+		$t_user_id
+	);
+}
