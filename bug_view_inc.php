@@ -1302,6 +1302,13 @@ function bug_view_action_buttons( $p_bug_id, $p_flags, $p_sheet = false ) {
 		echo '</div>';
 	}
 
+	# EDIT TEXT button: the reporter's own edit, without the rest of the update form
+	if( !empty( $p_flags['can_edit_text'] ) ) {
+		echo '<div class="pull-left padding-right-8">';
+		html_button( 'bug_edit_text_page.php', lang_get( 'edit' ), array( 'bug_id' => $p_bug_id ) );
+		echo '</div>';
+	}
+
 	# ASSIGN button
 	if( $p_flags['can_assign'] ) {
 		echo '<div class="pull-left padding-right-8">';

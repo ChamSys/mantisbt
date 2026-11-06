@@ -256,6 +256,8 @@ class IssueViewPageCommand extends Command {
 		$t_flags['view_state_show'] = in_array( 'view_state', $t_fields ) && isset( $t_issue['view_state'] );
 
 		$t_flags['can_update'] = !$t_issue_readonly && access_has_bug_level( config_get( 'update_bug_threshold' ), $t_issue_id );
+		# A reporter who may not update the issue can still edit its text, see $g_bug_user_edit_threshold
+		$t_flags['can_edit_text'] = !$t_flags['can_update'] && access_can_edit_bug_text( $t_issue_id );
 		$t_flags['can_assign'] = !$t_issue_readonly &&
 			access_has_bug_level( config_get( 'update_bug_assign_threshold', config_get( 'update_bug_threshold' ) ), $t_issue_id );
 		$t_flags['can_change_status'] = !$t_issue_readonly && access_has_bug_level( config_get( 'update_bug_status_threshold' ), $t_issue_id );
