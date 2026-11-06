@@ -630,6 +630,10 @@ $s_bugnote_attached_files = 'Attached Files:';
 $s_bugnote_deleted_msg = 'Note has been successfully deleted...';
 $s_bug_notes_title = 'Notes';
 
+# bug_edit_text_page.php
+$s_edit_bug_text_title = 'Edit Report Text';
+$s_edit_bug_text_hint = 'The text you replace is kept as a revision. The edit is shown on the issue, and the project team can read the original.';
+
 # bugnote_edit_page.php
 $s_edit_bugnote_title = 'Edit Note';
 
