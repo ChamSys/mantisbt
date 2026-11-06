@@ -25,6 +25,7 @@ The rules it is built with:
 | Hide other users from the user lists | `$g_show_user_list_threshold` | ANYBODY (as stock) |
 | Likes on issues | `$g_enable_likes` | OFF |
 | Teams: assign an issue to a group of users | `$g_enable_teams` | OFF |
+| Reporters edit the text of their own issues | `$g_bug_user_edit_threshold` | `$g_update_bug_threshold` (as stock) |
 | Layout for phones | `$g_mobile_layout` | OFF |
 | Several favicons (SVG, PNG sizes, Apple icon) | `$g_favicon_image` as a list | one icon, as stock |
 | An image for the brand in the navbar | `$g_navbar_logo_image` | empty (the site name) |
@@ -91,6 +92,24 @@ summary page. Who liked is shown from `$g_show_likers_threshold`. Liking never c
 updated and never sends mail. Access is `$g_like_bug_threshold`, with `$g_like_own_issue` and
 `$g_like_readonly_issues`. Also in the REST API (`/issues/{id}/likes`) and as the events `EVENT_BUG_LIKE` and
 `EVENT_BUG_UNLIKE`.
+
+## Editing your own report
+
+MantisBT lets a reporter edit his/her own notes (`$g_bugnote_user_edit_threshold`) but not the issue itself: the
+Edit button needs the right to update the whole issue. `$g_bug_user_edit_threshold` lets the reporter of an issue
+edit just its text.
+
+- **What can be edited**: the description, the steps to reproduce and the additional information, on
+  `bug_edit_text_page.php`. `bug_edit_text.php` reads those three fields and nothing else, so it cannot change the
+  status, the handler, the summary or any other field. It is for the reporter only, refuses read-only issues, notices
+  that somebody changed the issue in the meantime, and sends the usual `EVENT_UPDATE_BUG_DATA`, `EVENT_UPDATE_BUG`
+  and update mail. Users who can update the whole issue keep the normal Edit button.
+- **The original is kept**: MantisBT stores each change of these fields as a revision (the first revision is the
+  original text). Who can read them is still `$g_bug_revision_view_threshold`, plus the reporter.
+- **The issue page shows the edit**: under an edited field, "Last edited: <date>" for everybody who can see the
+  text, and a "View N revisions" link for those who may read the revisions.
+- **Switching it on**: `$g_bug_user_edit_threshold = REPORTER;` and, for notes, `$g_bugnote_user_edit_threshold =
+  REPORTER;`. The summary is not editable this way: a change of it is not kept as a revision, only in the history.
 
 ## Teams
 

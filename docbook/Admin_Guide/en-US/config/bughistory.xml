@@ -65,6 +65,27 @@
 				</para>
 			</listitem>
 		</varlistentry>
+		<varlistentry>
+			<term>$g_bug_user_edit_threshold</term>
+			<listitem>
+				<para>Threshold at which a user can edit the text of an
+					issue he/she reported: the description, the steps to
+					reproduce and the additional information, and nothing
+					else of the issue. It never applies to issues reported
+					by somebody else, and not to issues that are read-only.
+					The default value is equal to the configuration setting
+					$g_update_bug_threshold, so nobody gets a new right
+					unless it is lowered, for example to REPORTER.
+				</para>
+				<para>Every edit keeps the previous text as a revision, so
+					$g_bug_revision_view_threshold decides who can read the
+					original. The issue page tells everybody who can see the
+					text that it was edited, and when. Notes are edited with
+					$g_bugnote_user_edit_threshold, which MantisBT has and
+					which also shows "Last edited" on the note.
+				</para>
+			</listitem>
+		</varlistentry>
 	</variablelist>
 
 </section>
