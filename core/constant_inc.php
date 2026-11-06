@@ -223,6 +223,8 @@ define( 'REV_DESCRIPTION', 1 );
 define( 'REV_STEPS_TO_REPRODUCE', 2 );
 define( 'REV_ADDITIONAL_INFO', 3 );
 define( 'REV_BUGNOTE', 4 );
+# the first revision of a text field is its original text: from two on it was edited
+define( 'BUG_TEXT_EDITED_MIN_REVISIONS', 2 );
 
 # bug relationship constants
 define( 'BUG_REL_NONE', -2 );

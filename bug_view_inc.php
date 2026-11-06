@@ -595,7 +595,9 @@ if( $t_flags['summary_show'] && isset( $t_issue['summary'] ) ) {
 if( $t_flags['description_show'] && isset( $t_issue['description'] ) ) {
 	echo '<tr data-section="text">';
 	echo '<th class="bug-description category">', lang_get( 'description' ), '</th>';
-	echo '<td class="bug-description" colspan="5">', string_display_links( $t_issue['description'] ), '</td>';
+	echo '<td class="bug-description" colspan="5">', string_display_links( $t_issue['description'] );
+	bug_view_text_edited_notice( $f_issue_id, REV_DESCRIPTION );
+	echo '</td>';
 	echo '</tr>';
 }
 
@@ -603,7 +605,9 @@ if( $t_flags['description_show'] && isset( $t_issue['description'] ) ) {
 if( $t_flags['steps_to_reproduce_show'] && isset( $t_issue['steps_to_reproduce'] ) ) {
 	echo '<tr data-section="text">';
 	echo '<th class="bug-steps-to-reproduce category">', lang_get( 'steps_to_reproduce' ), '</th>';
-	echo '<td class="bug-steps-to-reproduce" colspan="5">', string_display_links( $t_issue['steps_to_reproduce'] ), '</td>';
+	echo '<td class="bug-steps-to-reproduce" colspan="5">', string_display_links( $t_issue['steps_to_reproduce'] );
+	bug_view_text_edited_notice( $f_issue_id, REV_STEPS_TO_REPRODUCE );
+	echo '</td>';
 	echo '</tr>';
 }
 
@@ -611,7 +615,9 @@ if( $t_flags['steps_to_reproduce_show'] && isset( $t_issue['steps_to_reproduce']
 if( $t_flags['additional_information_show'] && isset( $t_issue['additional_information'] ) ) {
 	echo '<tr data-section="text">';
 	echo '<th class="bug-additional-information category">', lang_get( 'additional_information' ), '</th>';
-	echo '<td class="bug-additional-information" colspan="5">', string_display_links( $t_issue['additional_information'] ), '</td>';
+	echo '<td class="bug-additional-information" colspan="5">', string_display_links( $t_issue['additional_information'] );
+	bug_view_text_edited_notice( $f_issue_id, REV_ADDITIONAL_INFO );
+	echo '</td>';
 	echo '</tr>';
 }
 
@@ -1270,6 +1276,38 @@ function bug_view_button_bug_assign_to( BugData $p_bug ) {
 	echo '<input type="hidden" name="bug_id" value="' . $t_bug_id . '" />' . "\n";
 
 	echo '</form>' . "\n";
+}
+
+/**
+ * Print a line telling that a text field of an issue was edited.
+ *
+ * Everybody who can see the text sees the line. Only users who may read the
+ * revisions, see access_can_view_bug_revisions(), get the link to the original.
+ * The first revision of a field is its original text, so a field with fewer than
+ * two revisions was never edited and nothing is printed.
+ *
+ * @param integer $p_bug_id        A valid bug identifier.
+ * @param integer $p_revision_type The REV_xxx constant of the text field.
+ *
+ * @return void
+ */
+function bug_view_text_edited_notice( $p_bug_id, $p_revision_type ) {
+	$t_revision_count = bug_revision_count( $p_bug_id, $p_revision_type );
+	if( $t_revision_count < BUG_TEXT_EDITED_MIN_REVISIONS ) {
+		return;
+	}
+
+	$t_last_revision = bug_revision_last( $p_bug_id, $p_revision_type );
+
+	echo '<p class="no-margin small lighter bug-text-edited">';
+	print_icon( 'fa-retweet' );
+	echo ' ', lang_get( 'last_edited' ), lang_get( 'word_separator' ),
+		date( config_get( 'normal_date_format' ), $t_last_revision['timestamp'] );
+	if( access_can_view_bug_revisions( $p_bug_id ) ) {
+		echo ' <a href="bug_revision_view_page.php?bug_id=', (int)$p_bug_id, '">',
+			sprintf( lang_get( 'view_num_revisions' ), $t_revision_count ), '</a>';
+	}
+	echo '</p>';
 }
 
 /**
