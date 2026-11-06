@@ -3536,6 +3536,23 @@ $g_bug_reminder_threshold = DEVELOPER;
 $g_bug_revision_view_threshold = DEVELOPER;
 
 /**
+ * Threshold at which a user can edit the text of an issue he/she reported.
+ *
+ * Applies to the reporter of the issue only, and only to the description, the
+ * steps to reproduce and the additional information. Every change is kept as
+ * a revision, which {@see $g_bug_revision_view_threshold} decides who may
+ * read, and the issue page shows that the text was edited. Setting it to
+ * REPORTER lets every reporter correct his/her own report.
+ *
+ * The default value is equal to the configuration setting
+ * {@see $g_update_bug_threshold}, so users who could not edit an issue
+ * before still cannot.
+ *
+ * @global int $g_bug_user_edit_threshold
+ */
+$g_bug_user_edit_threshold = '%update_bug_threshold%';
+
+/**
  * Access level required to drop bug history revisions.
  *
  * @global int $g_bug_revision_drop_threshold
@@ -5734,6 +5751,7 @@ $g_public_config_names = array(
 	'bug_revision_view_threshold',
 	'bug_submit_status',
 	'bug_update_page_fields',
+	'bug_user_edit_threshold',
 	'bug_view_page_fields',
 	'bugnote_link_tag',
 	'bugnote_order',
